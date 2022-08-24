@@ -47,7 +47,8 @@ function Standings({ leagueData }) {
           className={`container-${owners[3].roster_id} container weekly-winner`}
           key={owners[3].ownerID}
         >
-          {" "}
+          <span className="ranking first">1</span>
+          {/* start here */}
           {/* jcheech30 */}
           <img
             src={teams[3].avatar || avatarUrlBase + owners[3].avatar}
@@ -78,6 +79,7 @@ function Standings({ leagueData }) {
               </span>
             </p>
           </div>
+          {/* end here */}
         </li>
 
         {/* 2 */}
@@ -85,7 +87,8 @@ function Standings({ leagueData }) {
           className={`container-${owners[1].roster_id} container `}
           key={owners[1].ownerID}
         >
-          {" "}
+          <span className="ranking">2</span>
+          {/* start here */}
           {/* bmullinger */}
           <img
             src={teams[1].avatar || avatarUrlBase + owners[1].avatar}
@@ -116,6 +119,7 @@ function Standings({ leagueData }) {
               </span>
             </p>
           </div>
+          {/* end here */}
         </li>
         {/* 3 */}
         <li
@@ -123,6 +127,8 @@ function Standings({ leagueData }) {
           key={owners[2].ownerID}
         >
           {" "}
+          <span className="ranking">3</span>
+          {/* start here */}
           {/* jonnychernek */}
           <img
             src={teams[2].avatar || avatarUrlBase + owners[2].avatar}
@@ -153,6 +159,7 @@ function Standings({ leagueData }) {
               </span>
             </p>
           </div>
+          {/* end here */}
         </li>
         {/* 4 */}
         <li
@@ -160,6 +167,8 @@ function Standings({ leagueData }) {
           key={owners[0].ownerID}
         >
           {" "}
+          <span className="ranking">4</span>
+          {/* start here */}
           {/* michaelGragg */}
           <img
             src={teams[0].avatar || avatarUrlBase + owners[0].avatar}
@@ -191,6 +200,7 @@ function Standings({ leagueData }) {
               {/* <br></br>Roster Moves: {owners[0].moves} */}
             </p>
           </div>
+          {/* end here */}
         </li>
         {/* 5 */}
         <li
@@ -198,6 +208,8 @@ function Standings({ leagueData }) {
           key={owners[4].ownerID}
         >
           {" "}
+          <span className="ranking">5</span>
+          {/* start here */}
           {/* jdasch1216 */}
           <img
             src={teams[4].avatar || avatarUrlBase + owners[4].avatar}
@@ -228,6 +240,7 @@ function Standings({ leagueData }) {
               </span>
             </p>
           </div>
+          {/* end here */}
         </li>
         {/* 6 */}
         <li
@@ -235,6 +248,8 @@ function Standings({ leagueData }) {
           key={owners[5].ownerID}
         >
           {" "}
+          <span className="ranking">6</span>
+          {/* start here */}
           {/* bopaskar */}
           <img
             src={teams[5].avatar || avatarUrlBase + owners[5].avatar}
@@ -265,6 +280,7 @@ function Standings({ leagueData }) {
               </span>
             </p>
           </div>
+          {/* end here */}
         </li>
         {/* 7 */}
         <li
@@ -272,6 +288,8 @@ function Standings({ leagueData }) {
           key={owners[6].ownerID}
         >
           {" "}
+          <span className="ranking">7</span>
+          {/* start here */}
           {/* brianhavrilla */}
           <img
             src={teams[6].avatar || avatarUrlBase + owners[6].avatar}
@@ -302,6 +320,7 @@ function Standings({ leagueData }) {
               </span>
             </p>
           </div>
+          {/* end here */}
         </li>
         {/* 8 */}
         <li
@@ -309,6 +328,8 @@ function Standings({ leagueData }) {
           key={owners[7].ownerID}
         >
           {" "}
+          <span className="ranking">8</span>
+          {/* start here */}
           {/* TeddyBald */}
           <img
             src={teams[7].avatar || avatarUrlBase + owners[7].avatar}
@@ -339,6 +360,7 @@ function Standings({ leagueData }) {
               </span>
             </p>
           </div>
+          {/* end here */}
         </li>
         {/* 9 */}
         <li
@@ -346,6 +368,8 @@ function Standings({ leagueData }) {
           key={owners[8].ownerID}
         >
           {" "}
+          <span className="ranking">9</span>
+          {/* start here */}
           {/* kevmullinger */}
           <img
             src={teams[8].avatar || avatarUrlBase + owners[8].avatar}
@@ -376,6 +400,7 @@ function Standings({ leagueData }) {
               </span>
             </p>
           </div>
+          {/* end here */}
         </li>
         {/* 10 */}
         <li
@@ -383,6 +408,8 @@ function Standings({ leagueData }) {
           key={owners[9].ownerID}
         >
           {" "}
+          <span className="ranking">10</span>
+          {/* start here */}
           {/* AaronLam */}
           <img
             src={teams[9].avatar || avatarUrlBase + owners[9].avatar}
@@ -413,6 +440,7 @@ function Standings({ leagueData }) {
               </span>
             </p>
           </div>
+          {/* end here */}
         </li>
         {/* 11 */}
         <li
@@ -420,6 +448,8 @@ function Standings({ leagueData }) {
           key={owners[10].ownerID}
         >
           {" "}
+          <span className="ranking">11</span>
+          {/* start here */}
           {/* Teechen */}
           <img
             src={teams[10].avatar || avatarUrlBase + owners[10].avatar}
@@ -450,17 +480,20 @@ function Standings({ leagueData }) {
               </span>
             </p>
           </div>
+          {/* end here */}
         </li>
         {/* 12 */}
         <li
-          className={`container-${owners[11].roster_id} container `}
+          className={`container-${owners[11].roster_id} container last-place`}
           key={owners[11].ownerID}
         >
           {" "}
+          <span className="ranking last">12</span>
+          {/* start here */}
           {/* courtneyressa */}
           <img
             src={teams[11].avatar || avatarUrlBase + owners[11].avatar}
-            className="avatar "
+            className="avatar last-place"
           />
           <div className="name-desc">
             <h3>
@@ -487,6 +520,7 @@ function Standings({ leagueData }) {
               </span>
             </p>
           </div>
+          {/* end here */}
         </li>
       </div>
 

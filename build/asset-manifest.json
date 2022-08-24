@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/sleeper-ff-rankings/static/css/main.eb5f44fb.chunk.css",
+    "main.js": "/sleeper-ff-rankings/static/js/main.00fa088a.chunk.js",
+    "main.js.map": "/sleeper-ff-rankings/static/js/main.00fa088a.chunk.js.map",
+    "runtime~main.js": "/sleeper-ff-rankings/static/js/runtime~main.0da81726.js",
+    "runtime~main.js.map": "/sleeper-ff-rankings/static/js/runtime~main.0da81726.js.map",
+    "static/js/2.c44a549e.chunk.js": "/sleeper-ff-rankings/static/js/2.c44a549e.chunk.js",
+    "static/js/2.c44a549e.chunk.js.map": "/sleeper-ff-rankings/static/js/2.c44a549e.chunk.js.map",
+    "index.html": "/sleeper-ff-rankings/index.html",
+    "precache-manifest.04276c60f2a86c02a571a883a14e3ab1.js": "/sleeper-ff-rankings/precache-manifest.04276c60f2a86c02a571a883a14e3ab1.js",
+    "service-worker.js": "/sleeper-ff-rankings/service-worker.js",
+    "static/css/main.eb5f44fb.chunk.css.map": "/sleeper-ff-rankings/static/css/main.eb5f44fb.chunk.css.map",
+    "static/media/logo_with_text.png": "/sleeper-ff-rankings/static/media/logo_with_text.7214a3e6.png"
+  }
+}
