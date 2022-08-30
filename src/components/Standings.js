@@ -52,7 +52,7 @@ function Standings({ leagueData }) {
           {/* jcheech30 */}
           <img
             src={teams[3].avatar || avatarUrlBase + owners[3].avatar}
-            className="avatar weekly-winner"
+            className="avatar weekly-winner-circle"
           />
           <div className="name-desc">
             <h3>
@@ -62,7 +62,7 @@ function Standings({ leagueData }) {
             <span className="owner-name">@{teams[3].username}</span>
 
             <p>
-              Best Wrs in the league. With plenty of upside for later in the
+              Best WRs in the league. With plenty of upside for later in the
               year (4 rookies on the bench).
             </p>
           </div>
@@ -148,7 +148,7 @@ function Standings({ leagueData }) {
             </h3>
             <span className="owner-name">@{teams[7].username}</span>
 
-            <p>Third times the charm with McCaffrey</p>
+            <p>Third times the charm with McCaffrey.</p>
           </div>
           <div className="stats">
             <h4>Team Stats</h4>
@@ -232,7 +232,7 @@ function Standings({ leagueData }) {
             </h3>
             <span className="owner-name">@{teams[11].username}</span>
 
-            <p>2 of the best RBs and best TE</p>
+            <p>2 of the best RBs and best TE.</p>
           </div>
           <div className="stats">
             <h4>Team Stats</h4>
@@ -316,7 +316,7 @@ function Standings({ leagueData }) {
             </h3>
             <span className="owner-name">@{teams[6].username}</span>
 
-            <p></p>
+            <p>Forgot RBs were a position... again.</p>
           </div>
           <div className="stats">
             <h4>Team Stats</h4>
@@ -436,7 +436,10 @@ function Standings({ leagueData }) {
             </h3>
             <span className="owner-name">@{teams[1].username}</span>
 
-            <p>Kupp and Lamar might win you some weeks alone but..</p>
+            <p>
+              Kupp and Lamar might win you some weeks alone but Godwin is coming
+              off an injury and Hopkins will be out till week 7.{" "}
+            </p>
           </div>
           <div className="stats">
             <h4>Team Stats</h4>
@@ -509,7 +512,7 @@ function Standings({ leagueData }) {
           {/* kevmullinger */}
           <img
             src={teams[8].avatar || avatarUrlBase + owners[8].avatar}
-            className="avatar last-place"
+            className="avatar last-place-circle"
           />
           <div className="name-desc">
             <h3>
