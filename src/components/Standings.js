@@ -63,7 +63,7 @@ function Standings({ leagueData }) {
 
             <p>
               Best WRs in the league. With plenty of upside for later in the
-              year (4 rookies on the bench).
+              year<br></br> (4 rookies on the bench).
             </p>
           </div>
           <div className="stats">
@@ -274,7 +274,7 @@ function Standings({ leagueData }) {
 
             <p>
               {" "}
-              Getting Lance late was great, but I think it may have ended your
+              Getting Lance late was great, but it may have ended your
               friendship with Josh.
             </p>
           </div>
@@ -396,7 +396,11 @@ function Standings({ leagueData }) {
             </h3>
             <span className="owner-name">@{teams[5].username}</span>
 
-            <p></p>
+            <p>Oldest team in the league. </p>
+            <p>
+              I actually have no idea if that's true but Rodgers is 38 and
+              Keenan Allen has been around awhile.{" "}
+            </p>
           </div>
           <div className="stats">
             <h4>Team Stats</h4>
@@ -521,7 +525,8 @@ function Standings({ leagueData }) {
             </h3>
             <span className="owner-name">@{teams[8].username}</span>
 
-            <p></p>
+            <p>Bad news: Ranked last.</p>
+            <p>Good News: My Preseason rankings are never right.</p>
           </div>
           <div className="stats">
             <h4>Team Stats</h4>
