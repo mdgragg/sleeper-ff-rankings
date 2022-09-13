@@ -80,17 +80,13 @@ function SeasonRecap(props) {
           roster_id: owner.roster_id,
           moves: owner.settings.total_moves,
           waiverOrder: owner.settings.waiver_position,
-          pointsFor: parseInt(
-            owner.settings.fpts + "." + owner.settings.fpts_decimal
-          ),
-          pointsAgainst: parseInt(
+          pointsFor: owner.settings.fpts + "." + owner.settings.fpts_decimal,
+          pointsAgainst:
             owner.settings.fpts_against +
-              "." +
-              owner.settings.fpts_against_decimal
-          ),
-          pointsPossible: parseInt(
-            owner.settings.ppts + "." + owner.settings.ppts_decimal
-          ),
+            "." +
+            owner.settings.fpts_against_decimal,
+          pointsPossible:
+            owner.settings.ppts + "." + owner.settings.ppts_decimal,
           pointsPossiblePerc: (
             (parseInt(owner.settings.fpts + "." + owner.settings.fpts_decimal) /
               parseInt(

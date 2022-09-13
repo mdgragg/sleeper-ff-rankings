@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "3d7bc0236b6b22105002efe344d28763",
+    "revision": "8bb501918979a66824589a49e7c56c63",
     "url": "/sleeper-ff-rankings/index.html"
   },
   {
