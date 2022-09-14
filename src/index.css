@@ -284,9 +284,9 @@ header h3 {
     font-size: 12px;
   }
 
-  .awards h3 {
+  .awards div h3 {
     font-size: 16px;
-    padding: 0px 25px;
+    padding: 0px 30px;
   }
 
   .awards .stat {
