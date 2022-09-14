@@ -33,7 +33,7 @@ function Standings({ leagueData }) {
           <div className="box weekly-winner">
             <h3>
               <span className="emoji" role="img" aria-label="">
-                &#128640;
+                &#128176;
               </span>{" "}
               Highest Scorer{" "}
               <span className="username good"> @{highPF.userName}</span>
@@ -80,7 +80,7 @@ function Standings({ leagueData }) {
           <div className="box">
             <h3>
               <span className="emoji" role="img" aria-label="">
-                &#129301;
+                &#129324;
               </span>
               Worst Luck{" "}
               <span className="username bad">@{highPA.userName}</span>
@@ -160,7 +160,7 @@ function Standings({ leagueData }) {
             </h3>
             <span className="owner-name">@{teams[3].username}</span>
 
-            <p></p>
+            <p>82 points just from top 3 receivers. Enough said.</p>
           </div>
           <div className="stats">
             <h4>Team Stats</h4>
@@ -200,7 +200,7 @@ function Standings({ leagueData }) {
             </h3>
             <span className="owner-name">@{teams[6].username}</span>
 
-            <p></p>
+            <p>Who needs Running Backs.</p>
             <span className="winning-weeks">Highest Scorer: Week 1</span>
           </div>
           <div className="stats">
@@ -242,7 +242,10 @@ function Standings({ leagueData }) {
             </h3>
             <span className="owner-name">@{teams[2].username}</span>
 
-            <p></p>
+            <p>
+              Maybe the least efficient Running Backs (2.0, 2.3, and 2.6 per
+              carry). But that doesn’t matter when you score 130 points.
+            </p>
           </div>
           <div className="stats">
             <h4>Team Stats</h4>
@@ -282,7 +285,7 @@ function Standings({ leagueData }) {
             </h3>
             <span className="owner-name">@{teams[9].username}</span>
 
-            <p> </p>
+            <p>Got the win but might need to change your team name. </p>
           </div>
           <div className="stats">
             <h4>Team Stats</h4>
@@ -322,7 +325,7 @@ function Standings({ leagueData }) {
             </h3>
             <span className="owner-name">@{teams[1].username}</span>
 
-            <p></p>
+            <p>So much for struggling till JK and Hopkins play. </p>
           </div>
           <div className="stats">
             <h4>Team Stats</h4>
@@ -362,7 +365,10 @@ function Standings({ leagueData }) {
             </h3>
             <span className="owner-name">@{teams[0].username}</span>
 
-            <p></p>
+            <p>
+              Barkley looks like a great 2nd round pick, but CeeDee looks like a
+              bust 1st round pick.
+            </p>
           </div>
           <div className="stats">
             <h4>Team Stats</h4>
@@ -403,7 +409,10 @@ function Standings({ leagueData }) {
             </h3>
             <span className="owner-name">@{teams[10].username}</span>
 
-            <p></p>
+            <p>
+              Chase was Chase and Hurts was Hurts. Most weeks that’s enough.
+              This week you needed 7 more points.
+            </p>
           </div>
           <div className="stats">
             <h4>Team Stats</h4>
@@ -443,7 +452,10 @@ function Standings({ leagueData }) {
             </h3>
             <span className="owner-name">@{teams[7].username}</span>
 
-            <p></p>
+            <p>
+              McCaffrey and Akers stayed healthy but need more than 15 points
+              from both or at least a point from Akers.
+            </p>
           </div>
           <div className="stats">
             <h4>Team Stats</h4>
@@ -483,7 +495,7 @@ function Standings({ leagueData }) {
             </h3>
             <span className="owner-name">@{teams[11].username}</span>
 
-            <p></p>
+            <p>Needed better games from mostly everyone but Swift.</p>
           </div>
           <div className="stats">
             <h4>Team Stats</h4>
@@ -523,7 +535,7 @@ function Standings({ leagueData }) {
             </h3>
             <span className="owner-name">@{teams[8].username}</span>
 
-            <p></p>
+            <p>Refuses to believe in defenses.</p>
           </div>
           <div className="stats">
             <h4>Team Stats</h4>
@@ -563,7 +575,7 @@ function Standings({ leagueData }) {
             </h3>
             <span className="owner-name">@{teams[5].username}</span>
 
-            <p></p>
+            <p>Who had Winston scoring more than Rodgers?</p>
           </div>
           <div className="stats">
             <h4>Team Stats</h4>
@@ -603,7 +615,10 @@ function Standings({ leagueData }) {
             </h3>
             <span className="owner-name">@{teams[4].username}</span>
 
-            <p> </p>
+            <p>
+              {" "}
+              Another season of when will Josh get his first win this year?{" "}
+            </p>
           </div>
           <div className="stats">
             <h4>Team Stats</h4>

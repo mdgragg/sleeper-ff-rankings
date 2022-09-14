@@ -230,8 +230,6 @@ header h3 {
   left: 40px;
   color: #6cc49c;
   font-size: 12px;
-  /* font-style: italic; */
-  /* font-weight: 600; */
 }
 
 .stats {
@@ -288,7 +286,7 @@ header h3 {
 
   .awards h3 {
     font-size: 16px;
-    padding: 0px 20px;
+    padding: 0px 25px;
   }
 
   .awards .stat {
@@ -339,6 +337,13 @@ header h3 {
     margin: auto;
     margin-bottom: 20px;
     margin-top: 15px;
+  }
+
+  .name-desc .winning-weeks {
+    position: relative;
+    text-align: center;
+    margin: auto;
+    left: 0px;
   }
 
   .stats {
