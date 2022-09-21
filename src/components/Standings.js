@@ -616,7 +616,7 @@ function Standings({ leagueData }) {
             </h3>
             <span className="owner-name">@{teams[5].username}</span>
 
-            <p>Bold strategy of playing a injured Keenan Allen.</p>
+            <p>Bold strategy of playing an injured Keenan Allen.</p>
           </div>
           <div className="stats">
             <h4>Team Stats</h4>
