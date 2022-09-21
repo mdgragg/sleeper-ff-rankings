@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/sleeper-ff-rankings/precache-manifest.3547a2a17f60fc00d8b390e526c3e9f1.js"
+  "/sleeper-ff-rankings/precache-manifest.39f8706ce6f9e04baba91034a9003c0e.js"
 );
 
 self.addEventListener('message', (event) => {
