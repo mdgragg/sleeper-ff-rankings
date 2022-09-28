@@ -64,7 +64,7 @@ function SeasonRecap(props) {
       const lastweek = leagueData.currentWeek - 1;
 
       let leagueMatchupsResp = await fetch(
-        apiBase + "league/" + "859880880154480640" + "/matchups/2"
+        apiBase + "league/" + "859880880154480640" + "/matchups/3"
       );
       const leagueMatchupsJSON = await leagueMatchupsResp.json();
       console.log("league matchups");
@@ -76,6 +76,7 @@ function SeasonRecap(props) {
         ownersData.push({
           color: ownerColors[idx],
           ownerID: owner.owner_id,
+          streak: owner.metadata.streak,
           wins: owner.settings.wins,
           losses: owner.settings.losses,
           ties: owner.settings.ties,

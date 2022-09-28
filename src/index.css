@@ -192,6 +192,15 @@ header h3 {
   box-shadow: 0px 0px 10px 5px #6cc49c;
 }
 
+.wins {
+  font-size: 14px;
+  color: #6cc49c;
+}
+.losses {
+  font-size: 14px;
+  color: #f85a8b;
+}
+
 .weekly-winner-circle {
   border: #6cc49c 4px solid;
 }
