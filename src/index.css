@@ -233,6 +233,15 @@ header h3 {
   margin-top: 10px;
 }
 
+.name-desc p iframe {
+  margin-bottom: 20px;
+  width: 100%;
+  height: 100%;
+  max-width: 280px;
+ max-height: 200px;
+
+}
+
 .name-desc .winning-weeks {
   position: absolute;
   bottom: 10px;
