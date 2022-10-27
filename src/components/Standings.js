@@ -161,10 +161,7 @@ function Standings({ leagueData }) {
             </h3>
             <span className="owner-name">@{teams[3].username}</span>
 
-            <p>
-              Still the longest winning streak.. 10 games going back to last
-              year.
-            </p>
+            <p>The last unbeaten team.</p>
             <span className="winning-weeks">
               Highest Scorer: Week 3, Week 4
             </span>
@@ -190,28 +187,25 @@ function Standings({ leagueData }) {
 
         {/* 2 */}
         <li
-          className={`container-${owners[1].roster_id} container weekly-winner`}
+          className={`container-${owners[1].roster_id} container`}
           key={owners[1].ownerID}
         >
-          <span className="ranking first">2</span>
+          <span className="ranking ">2</span>
           {/* start here */}
           {/* brianhavrilla */}
           <img
             src={teams[6].avatar || avatarUrlBase + owners[6].avatar}
-            className="avatar weekly-winner-circle"
+            className="avatar "
           />
           <div className="name-desc">
             <h3>
               {owners[6].teamName} ({owners[6].wins}-{owners[6].losses}
               {owners[6].ties ? "-" + owners[6].ties : ""})
-              <span className="wins"> {owners[6].streak}</span>
+              <span className="losses"> {owners[6].streak}</span>
             </h3>
             <span className="owner-name">@{teams[6].username}</span>
 
-            <p>
-              Undefeated, most points scored, and 3rd week of highest scorer.
-              But more importantly, still mad at me.
-            </p>
+            <p>Only counts as one loss but losing Breece for the year hurts.</p>
             <span className="winning-weeks">
               Highest Scorer: Week 1, Week 5, Week 6
             </span>
@@ -256,10 +250,7 @@ function Standings({ leagueData }) {
             </h3>
             <span className="owner-name">@{teams[1].username}</span>
 
-            <p>
-              Showing depth with Kupp and Lamar having okay games yet still
-              winning
-            </p>
+            <p>Doesn’t need any of Kevin's players to win.</p>
           </div>
           <div className="stats">
             <h4>Team Stats</h4>
@@ -281,11 +272,57 @@ function Standings({ leagueData }) {
         </li>
         {/* 4 */}
         <li
-          className={`container-${owners[0].roster_id} container `}
+          className={`container-${owners[0].roster_id} container  weekly-winner`}
           key={owners[0].ownerID}
         >
           {" "}
-          <span className="ranking">4</span>
+          <span className="ranking first">4</span>
+          {/* start here */}
+          {/* jdasch1216 */}
+          <img
+            src={teams[4].avatar || avatarUrlBase + owners[4].avatar}
+            className="avatar weekly-winner-circle"
+          />
+          <div className="name-desc">
+            <h3>
+              {owners[4].teamName} ({owners[4].wins}-{owners[4].losses}
+              {owners[4].ties ? "-" + owners[4].ties : ""})
+              <span className="wins"> {owners[4].streak}</span>
+            </h3>
+            <span className="owner-name">@{teams[4].username}</span>
+
+            <p>
+              Scored the most in the week even with 29 points from Boyd on the
+              bench.
+            </p>
+
+            <span className="winning-weeks">Highest Scorer: Week 7</span>
+          </div>
+          <div className="stats">
+            <h4>Team Stats</h4>
+            <p>
+              <span>Total points: {owners[4].pointsFor}</span>
+              <span>
+                {" "}
+                Week {lastweek} Points: {matchup[4].points}
+              </span>
+              <span> Possible Points: {owners[4].pointsPossible}</span>
+              <span> Points Against: {owners[4].pointsAgainst}</span>
+              <span className="priority">
+                {" "}
+                Waiver Priority: {owners[4].waiverOrder}
+              </span>
+            </p>
+          </div>
+          {/* end here */}
+        </li>
+        {/* 5 */}
+        <li
+          className={`container-${owners[4].roster_id} container `}
+          key={owners[4].ownerID}
+        >
+          {" "}
+          <span className="ranking">5</span>
           {/* start here */}
           {/* michaelGragg */}
           <img
@@ -296,13 +333,11 @@ function Standings({ leagueData }) {
             <h3>
               {owners[0].teamName} ({owners[0].wins}-{owners[0].losses}
               {owners[0].ties ? "-" + owners[0].ties : ""})
-              <span className="losses"> {owners[0].streak}</span>
+              <span className="wins"> {owners[0].streak}</span>
             </h3>
             <span className="owner-name">@{teams[0].username}</span>
 
-            <p>
-              A good record but 4 games have been decided by 5 points or less.
-            </p>
+            <p>Only 33 points from 4 WRs.</p>
           </div>
           <div className="stats">
             <h4>Team Stats</h4>
@@ -323,47 +358,6 @@ function Standings({ leagueData }) {
           </div>
           {/* end here */}
         </li>
-        {/* 5 */}
-        <li
-          className={`container-${owners[4].roster_id} container `}
-          key={owners[4].ownerID}
-        >
-          {" "}
-          <span className="ranking">5</span>
-          {/* start here */}
-          {/* jdasch1216 */}
-          <img
-            src={teams[4].avatar || avatarUrlBase + owners[4].avatar}
-            className="avatar "
-          />
-          <div className="name-desc">
-            <h3>
-              {owners[4].teamName} ({owners[4].wins}-{owners[4].losses}
-              {owners[4].ties ? "-" + owners[4].ties : ""})
-              <span className="wins"> {owners[4].streak}</span>
-            </h3>
-            <span className="owner-name">@{teams[4].username}</span>
-
-            <p>Started the draft RB, RB but being led by WRs.</p>
-          </div>
-          <div className="stats">
-            <h4>Team Stats</h4>
-            <p>
-              <span>Total points: {owners[4].pointsFor}</span>
-              <span>
-                {" "}
-                Week {lastweek} Points: {matchup[4].points}
-              </span>
-              <span> Possible Points: {owners[4].pointsPossible}</span>
-              <span> Points Against: {owners[4].pointsAgainst}</span>
-              <span className="priority">
-                {" "}
-                Waiver Priority: {owners[4].waiverOrder}
-              </span>
-            </p>
-          </div>
-          {/* end here */}
-        </li>
         {/* 6 */}
         <li
           className={`container-${owners[5].roster_id} container `}
@@ -371,50 +365,6 @@ function Standings({ leagueData }) {
         >
           {" "}
           <span className="ranking">6</span>
-          {/* start here */}
-          {/* Teechen */}
-          <img
-            src={teams[10].avatar || avatarUrlBase + owners[10].avatar}
-            className="avatar "
-          />
-          <div className="name-desc">
-            <h3>
-              {owners[10].teamName} ({owners[10].wins}-{owners[10].losses}
-              {owners[10].ties ? "-" + owners[10].ties : ""})
-              <span className="wins"> {owners[10].streak}</span>
-            </h3>
-            <span className="owner-name">@{teams[10].username}</span>
-
-            <p>
-              Great roster management to get Dak coming back from injury with
-              Hurts going on bye.
-            </p>
-          </div>
-          <div className="stats">
-            <h4>Team Stats</h4>
-            <p>
-              <span>Total points: {owners[10].pointsFor}</span>
-              <span>
-                {" "}
-                Week {lastweek} Points: {matchup[10].points}
-              </span>
-              <span> Possible Points: {owners[10].pointsPossible}</span>
-              <span> Points Against: {owners[10].pointsAgainst}</span>
-              <span className="priority">
-                {" "}
-                Waiver Priority: {owners[10].waiverOrder}
-              </span>
-            </p>
-          </div>
-          {/* end here */}
-        </li>
-        {/* 7 */}
-        <li
-          className={`container-${owners[6].roster_id} container `}
-          key={owners[6].ownerID}
-        >
-          {" "}
-          <span className="ranking">7</span>
           {/* start here */}
           {/* TeddyBald */}
           <img
@@ -425,13 +375,13 @@ function Standings({ leagueData }) {
             <h3>
               {owners[7].teamName} ({owners[7].wins}-{owners[7].losses}
               {owners[7].ties ? "-" + owners[7].ties : ""})
-              <span className="losses"> {owners[7].streak}</span>
+              <span className="wins"> {owners[7].streak}</span>
             </h3>
             <span className="owner-name">@{teams[7].username}</span>
 
             <p>
-              Actually, impressive to have 3 wins with 3 Broncos on the team.
-              Let's Ride!
+              McCaffrey traded to the 49ers might be better news than last
+              week's win.
             </p>
           </div>
           <div className="stats">
@@ -447,6 +397,47 @@ function Standings({ leagueData }) {
               <span className="priority">
                 {" "}
                 Waiver Priority: {owners[7].waiverOrder}
+              </span>
+            </p>
+          </div>
+          {/* end here */}
+        </li>
+        {/* 7 */}
+        <li
+          className={`container-${owners[6].roster_id} container `}
+          key={owners[6].ownerID}
+        >
+          {" "}
+          <span className="ranking">7</span>
+          {/* start here */}
+          {/* Teechen */}
+          <img
+            src={teams[10].avatar || avatarUrlBase + owners[10].avatar}
+            className="avatar "
+          />
+          <div className="name-desc">
+            <h3>
+              {owners[10].teamName} ({owners[10].wins}-{owners[10].losses}
+              {owners[10].ties ? "-" + owners[10].ties : ""})
+              <span className="losses"> {owners[10].streak}</span>
+            </h3>
+            <span className="owner-name">@{teams[10].username}</span>
+
+            <p>The closest to beating Cheech all year.</p>
+          </div>
+          <div className="stats">
+            <h4>Team Stats</h4>
+            <p>
+              <span>Total points: {owners[10].pointsFor}</span>
+              <span>
+                {" "}
+                Week {lastweek} Points: {matchup[10].points}
+              </span>
+              <span> Possible Points: {owners[10].pointsPossible}</span>
+              <span> Points Against: {owners[10].pointsAgainst}</span>
+              <span className="priority">
+                {" "}
+                Waiver Priority: {owners[10].waiverOrder}
               </span>
             </p>
           </div>
@@ -470,13 +461,13 @@ function Standings({ leagueData }) {
             <h3>
               {owners[5].teamName} ({owners[5].wins}-{owners[5].losses}
               {owners[5].ties ? "-" + owners[5].ties : ""})
-              <span className="wins"> {owners[5].streak}</span>
+              <span className="losses"> {owners[5].streak}</span>
             </h3>
             <span className="owner-name">@{teams[5].username}</span>
 
             <p>
-              Should be getting top 3 picks back from either injury or bye this
-              week.
+              Coming off a loss but positioned well with Josh Jacobs as a third
+              RB.
             </p>
           </div>
           <div className="stats">
@@ -518,10 +509,7 @@ function Standings({ leagueData }) {
             </h3>
             <span className="owner-name">@{teams[11].username}</span>
 
-            <p>
-              Can make up a lot of ground quick (3rd in points scored) but needs
-              the wins.
-            </p>
+            <p>Has yet to play a team that's scored under 135.</p>
           </div>
           <div className="stats">
             <h4>Team Stats</h4>
@@ -549,6 +537,48 @@ function Standings({ leagueData }) {
           {" "}
           <span className="ranking">10</span>
           {/* start here */}
+          {/* AaronLam */}
+          <img
+            src={teams[9].avatar || avatarUrlBase + owners[9].avatar}
+            className="avatar "
+          />
+          <div className="name-desc">
+            <h3>
+              {owners[9].teamName} ({owners[9].wins}-{owners[9].losses}
+              {owners[9].ties ? "-" + owners[9].ties : ""})
+              <span className="wins"> {owners[9].streak}</span>
+            </h3>
+            <span className="owner-name">@{teams[9].username}</span>
+            <p>Big win over Havrilla. </p>
+
+            <p>Maybe the recent trades weren't long-term trades after all. </p>
+          </div>
+          <div className="stats">
+            <h4>Team Stats</h4>
+            <p>
+              <span>Total points: {owners[9].pointsFor}</span>
+              <span>
+                {" "}
+                Week {lastweek} Points: {matchup[9].points}
+              </span>
+              <span> Possible Points: {owners[9].pointsPossible}</span>
+              <span> Points Against: {owners[9].pointsAgainst}</span>
+              <span className="priority">
+                {" "}
+                Waiver Priority: {owners[9].waiverOrder}
+              </span>
+            </p>
+          </div>
+          {/* end here */}
+        </li>
+        {/* 11 */}
+        <li
+          className={`container-${owners[10].roster_id} container `}
+          key={owners[10].ownerID}
+        >
+          {" "}
+          <span className="ranking">11</span>
+          {/* start here */}
           {/* jonnychernek */}
           <img
             src={teams[2].avatar || avatarUrlBase + owners[2].avatar}
@@ -562,7 +592,7 @@ function Standings({ leagueData }) {
             </h3>
             <span className="owner-name">@{teams[2].username}</span>
 
-            <p>Diggs can only do so much.</p>
+            <p>Longest losing streak after a 2-0 start. </p>
             <span className="winning-weeks">Highest Scorer: Week 2</span>
           </div>
           <div className="stats">
@@ -583,18 +613,18 @@ function Standings({ leagueData }) {
           </div>
           {/* end here */}
         </li>
-        {/* 11 */}
+        {/* 12 */}
         <li
-          className={`container-${owners[10].roster_id} container `}
-          key={owners[10].ownerID}
+          className={`container-${owners[11].roster_id} container last-place`}
+          key={owners[11].ownerID}
         >
           {" "}
-          <span className="ranking">11</span>
+          <span className="ranking last">12</span>
           {/* start here */}
           {/* kevmullinger */}
           <img
             src={teams[8].avatar || avatarUrlBase + owners[8].avatar}
-            className="avatar "
+            className="avatar last-place-circle"
           />
           <div className="name-desc">
             <h3>
@@ -604,7 +634,7 @@ function Standings({ leagueData }) {
             </h3>
             <span className="owner-name">@{teams[8].username}</span>
 
-            <p>Another loss, but still better than Aaron.</p>
+            <p>Might need some of Brien's players to win. </p>
           </div>
           <div className="stats">
             <h4>Team Stats</h4>
@@ -619,47 +649,6 @@ function Standings({ leagueData }) {
               <span className="priority">
                 {" "}
                 Waiver Priority: {owners[8].waiverOrder}
-              </span>
-            </p>
-          </div>
-          {/* end here */}
-        </li>
-        {/* 12 */}
-        <li
-          className={`container-${owners[11].roster_id} container last-place`}
-          key={owners[11].ownerID}
-        >
-          {" "}
-          <span className="ranking last">12</span>
-          {/* start here */}
-          {/* AaronLam */}
-          <img
-            src={teams[9].avatar || avatarUrlBase + owners[9].avatar}
-            className="avatar last-place-circle"
-          />
-          <div className="name-desc">
-            <h3>
-              {owners[9].teamName} ({owners[9].wins}-{owners[9].losses}
-              {owners[9].ties ? "-" + owners[9].ties : ""})
-              <span className="losses"> {owners[9].streak}</span>
-            </h3>
-            <span className="owner-name">@{teams[9].username}</span>
-
-            <p>Stop hurting Quarterbacks!</p>
-          </div>
-          <div className="stats">
-            <h4>Team Stats</h4>
-            <p>
-              <span>Total points: {owners[9].pointsFor}</span>
-              <span>
-                {" "}
-                Week {lastweek} Points: {matchup[9].points}
-              </span>
-              <span> Possible Points: {owners[9].pointsPossible}</span>
-              <span> Points Against: {owners[9].pointsAgainst}</span>
-              <span className="priority">
-                {" "}
-                Waiver Priority: {owners[9].waiverOrder}
               </span>
             </p>
           </div>
