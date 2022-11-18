@@ -203,7 +203,7 @@ function Standings({ leagueData }) {
             <h3>
               {owners[3].teamName} ({owners[3].wins}-{owners[3].losses}
               {owners[3].ties ? "-" + owners[3].ties : ""}){" "}
-              <span className="wins"> {owners[3].streak}</span>
+              <span className="losses"> {owners[3].streak}</span>
             </h3>
             <span className="owner-name">@{teams[3].username}</span>
 
@@ -251,7 +251,7 @@ function Standings({ leagueData }) {
             <h3>
               {owners[0].teamName} ({owners[0].wins}-{owners[0].losses}
               {owners[0].ties ? "-" + owners[0].ties : ""})
-              <span className="losses"> {owners[0].streak}</span>
+              <span className="wins"> {owners[0].streak}</span>
             </h3>
             <span className="owner-name">@{teams[0].username}</span>
 
