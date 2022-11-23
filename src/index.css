@@ -176,6 +176,11 @@ header h3 {
   color: #2e384a;
 }
 
+.container .clinched {
+  background: #af67fb;
+  color: #2e384a;
+}
+
 .avatar {
   border-radius: 50%;
   width: 100px;
@@ -187,9 +192,23 @@ header h3 {
   border: #2e384a 4px solid;
 }
 
+.clinched-playoffs {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  color: #af67fb;
+  font-size: 12px;
+  font-weight: 600;
+}
+
 .weekly-winner {
   border: #6cc49c 4px solid;
   box-shadow: 0px 0px 10px 5px #6cc49c;
+}
+
+.playoffs {
+  border: #af67fb 4px solid;
+  box-shadow: 0px 0px 10px 5px #af67fb;
 }
 
 .wins {
@@ -205,6 +224,10 @@ header h3 {
   border: #6cc49c 4px solid;
 }
 
+.playoffs-circle {
+  border: #af67fb 4px solid;
+}
+
 .last-place {
   border: #f85a8b 4px solid;
   box-shadow: 0px 0px 10px 5px #f85a8b;
@@ -216,6 +239,7 @@ header h3 {
 .name-desc {
   margin-left: 100px;
   margin-right: 33%;
+  position: relative;
 }
 
 .name-desc h3 {
@@ -238,8 +262,7 @@ header h3 {
   width: 100%;
   height: 100%;
   max-width: 280px;
- max-height: 200px;
-
+  max-height: 200px;
 }
 
 .name-desc .winning-weeks {
@@ -248,6 +271,7 @@ header h3 {
   left: 40px;
   color: #6cc49c;
   font-size: 12px;
+  margin-top: 10px;
 }
 
 .stats {
