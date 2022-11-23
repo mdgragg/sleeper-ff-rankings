@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/sleeper-ff-rankings/static/css/main.935ecd46.chunk.css",
-    "main.js": "/sleeper-ff-rankings/static/js/main.d00f8f27.chunk.js",
-    "main.js.map": "/sleeper-ff-rankings/static/js/main.d00f8f27.chunk.js.map",
+    "main.css": "/sleeper-ff-rankings/static/css/main.d5eb614e.chunk.css",
+    "main.js": "/sleeper-ff-rankings/static/js/main.b96d0b82.chunk.js",
+    "main.js.map": "/sleeper-ff-rankings/static/js/main.b96d0b82.chunk.js.map",
     "runtime~main.js": "/sleeper-ff-rankings/static/js/runtime~main.fbbc9e38.js",
     "runtime~main.js.map": "/sleeper-ff-rankings/static/js/runtime~main.fbbc9e38.js.map",
     "static/js/2.4b3c28f7.chunk.js": "/sleeper-ff-rankings/static/js/2.4b3c28f7.chunk.js",
     "static/js/2.4b3c28f7.chunk.js.map": "/sleeper-ff-rankings/static/js/2.4b3c28f7.chunk.js.map",
     "index.html": "/sleeper-ff-rankings/index.html",
-    "precache-manifest.b3c358edb93eb13cdb70391ad347231d.js": "/sleeper-ff-rankings/precache-manifest.b3c358edb93eb13cdb70391ad347231d.js",
+    "precache-manifest.0c9cb64104fdda99896d7e894573e9e7.js": "/sleeper-ff-rankings/precache-manifest.0c9cb64104fdda99896d7e894573e9e7.js",
     "service-worker.js": "/sleeper-ff-rankings/service-worker.js",
-    "static/css/main.935ecd46.chunk.css.map": "/sleeper-ff-rankings/static/css/main.935ecd46.chunk.css.map",
+    "static/css/main.d5eb614e.chunk.css.map": "/sleeper-ff-rankings/static/css/main.d5eb614e.chunk.css.map",
     "static/media/logo_with_text.png": "/sleeper-ff-rankings/static/media/logo_with_text.7214a3e6.png"
   }
 }
