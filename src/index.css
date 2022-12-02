@@ -201,6 +201,15 @@ header h3 {
   font-weight: 600;
 }
 
+.eliminated {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  color: #f85a8b;
+  font-size: 12px;
+  font-weight: 600;
+}
+
 .weekly-winner {
   border: #6cc49c 4px solid;
   box-shadow: 0px 0px 10px 5px #6cc49c;
@@ -239,7 +248,6 @@ header h3 {
 .name-desc {
   margin-left: 100px;
   margin-right: 33%;
-  position: relative;
 }
 
 .name-desc h3 {
