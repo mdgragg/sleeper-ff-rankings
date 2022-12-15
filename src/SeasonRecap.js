@@ -64,7 +64,7 @@ function SeasonRecap(props) {
       const lastweek = leagueData.currentWeek - 1;
 
       let leagueMatchupsResp = await fetch(
-        apiBase + "league/" + "859880880154480640" + "/matchups/13"
+        apiBase + "league/" + "859880880154480640" + "/matchups/14"
       );
       const leagueMatchupsJSON = await leagueMatchupsResp.json();
       console.log("league matchups");

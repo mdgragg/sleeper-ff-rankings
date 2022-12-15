@@ -212,6 +212,16 @@ header h3 {
   width: 80px;
 }
 
+.seed {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  color: #6cc49c;
+  font-size: 12px;
+  font-weight: 600;
+  width: 80px;
+}
+
 .hunt {
   position: absolute;
   top: 15px;
@@ -322,6 +332,17 @@ header h3 {
   margin-top: 20px;
 }
 
+.playoff-list {
+  list-style-type: circle;
+  text-align: left;
+  padding-left: 15px;
+}
+
+.standings .playoff-list li {
+  list-style-type: circle;
+  margin-left: 25px;
+}
+
 .full-screen {
   width: 100%;
   height: 75vh;
@@ -371,6 +392,11 @@ header h3 {
     width: 95%;
     margin: auto;
     margin-top: 65px;
+  }
+
+  .playoff-list {
+    list-style-type: circle;
+    text-align: left;
   }
 
   .avatar {
