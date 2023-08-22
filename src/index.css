@@ -505,10 +505,14 @@ header h3 {
   }
 
   .name-desc .winning-weeks {
+    font-size: 13px;
     position: relative;
     text-align: center;
     margin: auto;
     left: 0px;
+    width: 90%;
+    display: block;
+    line-height: 1.5;
   }
 
   .stats {
