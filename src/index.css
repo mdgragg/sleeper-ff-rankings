@@ -300,7 +300,7 @@ header h3 {
 
 .matchup {
   width: 85%;
-  height: 19px;
+  height: 20px;
   background: #161c29;
   margin: auto;
   padding: 3px 25px 4px;
@@ -411,10 +411,12 @@ header h3 {
   background: #161c29;
   margin: auto;
   margin-left: -15px;
-  padding: 5px 15px 5px;
+  padding: 7px 15px 3px;
   display: block;
   bottom: 0px;
   position: absolute;
+  font-size: 12px;
+  height: 17px;
 }
 
 .current-champ {
@@ -534,7 +536,7 @@ header h3 {
   }
 
   .stats {
-    margin-top: 20px;
+    margin-top: 13px;
     position: relative;
     height: auto;
     border-radius: 0px 0px 35px 35px;

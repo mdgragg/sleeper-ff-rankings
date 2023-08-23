@@ -177,31 +177,6 @@ function Standings({ leagueData }) {
     $("#previousChamp-4").html("2021 Champ");
     $("#previousChamp-11").html("2022 Champ");
     $("#previousChamp-11").addClass("current-champ");
-
-    // function checkEmpty() {
-    //   var targetText = $(".previous-champ").text().trim();
-    //   if (targetText === "") {
-    //     $(".stat-matchup").addClass("no-champ");
-    //   } else {
-    //     $(".stat-matchup").removeClass("no-champ");
-    //   }
-    // }
-    // var timeoutId;
-
-    // $(".previous-champ").on("input", function () {
-    //   clearTimeout(timeoutId);
-    //   timeoutId = setTimeout(checkEmpty, 3000); // Delay of 500 milliseconds
-    // });
-    document.addEventListener("DOMContentLoaded", function () {
-      const previousChamp = document.querySelector(".previous-champ");
-      const statMatchup = previousChamp.previousElementSibling;
-
-      if (previousChamp.textContent.trim() === "") {
-        statMatchup.classList.add("empty-previous-champ");
-      } else {
-        statMatchup.classList.remove("empty-previous-champ");
-      }
-    });
   }, []);
 
   return (
