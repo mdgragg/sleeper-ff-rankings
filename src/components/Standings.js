@@ -177,6 +177,31 @@ function Standings({ leagueData }) {
     $("#previousChamp-4").html("2021 Champ");
     $("#previousChamp-11").html("2022 Champ");
     $("#previousChamp-11").addClass("current-champ");
+
+    // function checkEmpty() {
+    //   var targetText = $(".previous-champ").text().trim();
+    //   if (targetText === "") {
+    //     $(".stat-matchup").addClass("no-champ");
+    //   } else {
+    //     $(".stat-matchup").removeClass("no-champ");
+    //   }
+    // }
+    // var timeoutId;
+
+    // $(".previous-champ").on("input", function () {
+    //   clearTimeout(timeoutId);
+    //   timeoutId = setTimeout(checkEmpty, 3000); // Delay of 500 milliseconds
+    // });
+    document.addEventListener("DOMContentLoaded", function () {
+      const previousChamp = document.querySelector(".previous-champ");
+      const statMatchup = previousChamp.previousElementSibling;
+
+      if (previousChamp.textContent.trim() === "") {
+        statMatchup.classList.add("empty-previous-champ");
+      } else {
+        statMatchup.classList.remove("empty-previous-champ");
+      }
+    });
   }, []);
 
   return (
@@ -310,16 +335,16 @@ function Standings({ leagueData }) {
                     <span key={oppIdx}>
                       Week {current} Opponent:{" "}
                       <span className="team-name">{opponent.teamName}</span>{" "}
-                      <span className="transactions">
-                        Adds/Drops: {owner.addDropCount} | Trades:{" "}
-                        {owner.TradeCount}
+                      <span className="priority">
+                        {" "}
+                        Waiver Priority: {owner.waiverOrder}{" "}
                       </span>
                     </span>
                   ))}
               </div>
               <div className="stats">
                 <h4>Team Stats</h4>
-                <p>
+                <p className="stats-points">
                   <span>Total points: {owner.pointsFor}</span>
                   <span>
                     Week
@@ -331,9 +356,25 @@ function Standings({ leagueData }) {
                   </span>
                   <span> Possible Points: {owner.pointsPossible}</span>
                   <span> Points Against: {owner.pointsAgainst}</span>
-                  <span className="priority">
-                    {" "}
-                    Waiver Priority: {owner.waiverOrder}
+                </p>
+                <p className="stats-other">
+                  <span className="hide">Adds/Drops: {owner.addDropCount}</span>
+                  <span className="hide">Trades: {owner.TradeCount}</span>
+                  <span
+                    className={`stat-matchup-${owner.roster_id}  stat-matchup`}
+                  >
+                    {matchups[owner.matchupID]
+                      .filter((opponent) => opponent !== owner)
+                      .map((opponent, oppIdx) => (
+                        <span key={oppIdx}>
+                          Week {current} Opponent:{" "}
+                          <span className="team-name">{opponent.teamName}</span>{" "}
+                          <span className="priority">
+                            {" "}
+                            Waiver Priority: {owner.waiverOrder}{" "}
+                          </span>
+                        </span>
+                      ))}
                   </span>
                   <span
                     id={`previousChamp-${owner.roster_id}`}

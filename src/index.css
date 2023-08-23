@@ -271,7 +271,7 @@ header h3 {
 .name-desc {
   margin-left: 100px;
   margin-right: 33%;
-  margin-bottom: 35px;
+  margin-bottom: 40px;
 }
 
 .name-desc h3 {
@@ -320,7 +320,7 @@ header h3 {
   font-weight: 600;
 }
 
-.matchup span .transactions {
+.matchup span .priority {
   float: right;
   margin: 4px 25% 0px 10px;
   margin-right: 24%;
@@ -356,6 +356,11 @@ header h3 {
   margin-top: -10px;
 }
 
+/* Delete this after week one */
+.stats-points {
+  display: none;
+}
+
 .stats p span {
   display: block;
   margin-top: 3px;
@@ -366,8 +371,13 @@ header h3 {
   margin-top: 3px;
 }
 
-.stats p .priority {
+/* show this after week 1 */
+/* .stats p.stats-other {
   margin-top: 12px;
+} */
+
+.stats p span.stat-matchup {
+  display: none;
 }
 
 .playoff-list {
@@ -442,14 +452,22 @@ header h3 {
     display: block;
   }
 
+  .name-desc {
+    margin-bottom: 50px;
+    margin-right: 38%;
+  }
+
+  .stats {
+    width: 30%;
+  }
+
   .matchup {
     width: 70%;
     height: auto;
     margin: auto;
-    text-align: center;
   }
 
-  .matchup span .transactions {
+  .matchup span .priority {
     float: none;
     margin: auto;
     display: block;
@@ -516,6 +534,7 @@ header h3 {
   }
 
   .stats {
+    margin-top: 20px;
     position: relative;
     height: auto;
     border-radius: 0px 0px 35px 35px;
@@ -523,35 +542,48 @@ header h3 {
     box-shadow: 0 -8px 10px -6px #000000;
   }
 
-  .stats p .priority {
+  /* Show this after week 1 */
+  /* .stats p.stats-other {
     margin-top: 20px;
-  }
+  } */
   .previous-champ {
     font-size: 14px;
     margin-left: -25px;
   }
 
-  .matchup span {
-    font-size: 14px;
-  }
-
   .matchup {
-    width: 80%;
-    height: auto;
-    background: #161c29;
-    margin: 10px auto 0px;
-    padding: 10px 25px 5px;
-    display: block;
-    left: 0px;
-    bottom: 0px;
-    position: relative;
-    border-radius: 0px;
+    display: none;
   }
 
-  .matchup span .transactions {
+  .matchup span .priority {
     line-height: 2;
     float: none;
     margin: auto;
     display: block;
+  }
+
+  .stats p span.stat-matchup {
+    width: 107%;
+    background: #161c29;
+    margin: auto;
+    margin-left: -25px;
+    padding: 5px 15px 10px;
+    display: block;
+    margin-top: 15px;
+    margin-bottom: -35px;
+  }
+
+  .stats p span.stat-matchup-3,
+  .stats p span.stat-matchup-2,
+  .stats p span.stat-matchup-10,
+  .stats p span.stat-matchup-9,
+  .stats p span.stat-matchup-4,
+  .stats p span.stat-matchup-11 {
+    margin-bottom: -2px;
+  }
+
+  .stats p span.stat-matchup .team-name {
+    display: inline-block;
+    font-weight: 600;
   }
 }
