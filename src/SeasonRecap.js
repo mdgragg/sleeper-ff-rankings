@@ -151,6 +151,7 @@ function SeasonRecap() {
         //   return obj.roster_id === ownersData[i].roster_id;
         // });
 
+        // eslint-disable-next-line
         const CurrentMatchupData = currentMatchupsJSON.filter((obj) => {
           return obj.roster_id === ownersData[i].roster_id;
         });

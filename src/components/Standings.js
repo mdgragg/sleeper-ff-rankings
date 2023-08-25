@@ -21,9 +21,9 @@ function Standings({ leagueData }) {
     jonnychernek: 2,
     jcheech30: 3,
     jdasch1216: 6,
-    bopaskar: 9,
+    bopaskar: 11,
     brianhavrilla: 4,
-    TeddyBald: 11,
+    TeddyBald: 9,
     kevmullinger: 12,
     AaronLam: 8,
     Teechen: 1,
@@ -31,12 +31,12 @@ function Standings({ leagueData }) {
   };
 
   const ownersSorted = owners.slice(0).sort(function (a, b) {
-    return customSorting[a.userName] - customSorting[b.userName];
+    return (
+      b.wins - a.wins ||
+      b.pointsFor - a.pointsFor ||
+      customSorting[a.userName] - customSorting[b.userName]
+    );
   });
-
-  // const ownersSorted = owners.slice(0).sort(function (a, b) {
-  //   return b.wins - a.wins || b.pointsFor - a.pointsFor;
-  // });
 
   // const ownersSortedPF = owners.slice(0).sort(function (a, b) {
   //   return a.pointsFor - b.pointsFor;
@@ -309,7 +309,8 @@ function Standings({ leagueData }) {
                   .map((opponent, oppIdx) => (
                     <span key={oppIdx}>
                       Week {current} Opponent:{" "}
-                      <span className="team-name">{opponent.teamName}</span>{" "}
+                      <span className="team-name">{opponent.teamName} </span> (
+                      {opponent.userName})
                       <span className="priority">
                         {" "}
                         Waiver Priority: {owner.waiverOrder}{" "}
@@ -333,8 +334,8 @@ function Standings({ leagueData }) {
                   <span> Points Against: {owner.pointsAgainst}</span>
                 </p>
                 <p className="stats-other">
-                  <span className="hide">Adds/Drops: {owner.addDropCount}</span>
-                  <span className="hide">Trades: {owner.TradeCount}</span>
+                  <span>Adds/Drops: {owner.addDropCount}</span>
+                  <span>Trades: {owner.TradeCount}</span>
                   <span
                     className={`stat-matchup-${owner.roster_id}  stat-matchup`}
                   >
