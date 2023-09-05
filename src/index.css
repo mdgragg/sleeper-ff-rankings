@@ -1,3 +1,7 @@
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   font-family: "Roboto", sans-serif;
   font-size: 1em;
@@ -148,6 +152,7 @@ header h3 {
   margin-top: 30px;
   margin-left: 4px;
   border: #2e384a 4px solid;
+  scroll-margin-top: 60px;
 }
 
 .container .ranking {
@@ -191,6 +196,22 @@ header h3 {
   margin: auto;
   border: #2e384a 4px solid;
   z-index: 2;
+}
+
+.avatar-buttons {
+  margin: auto;
+  display: flex;
+  flex-wrap: wrap;
+  -webkit-box-pack: center;
+  justify-content: center;
+}
+
+.avatar-link {
+  border-radius: 50%;
+  width: 40px;
+  margin: auto;
+  border: #2e384a 2px solid;
+  margin: 2px 5px;
 }
 
 .clinched-playoffs {

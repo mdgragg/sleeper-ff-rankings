@@ -273,10 +273,23 @@ function Standings({ leagueData }) {
         </div>
       </div> */}
       <div className="standings">
+        <div className="avatar-buttons">
+          {ownersSorted.map((owner, idx) => (
+            <a href={`#${owner.userName}`}>
+              <img
+                alt="team avatar"
+                src={owner.teamAvatar || avatarUrlBase + owner.avatar}
+                className="avatar-link"
+              />
+            </a>
+          ))}
+        </div>
+
         {ownersSorted.map((owner, idx) => (
           <>
             <li
               data-place={idx + 1}
+              id={owner.userName}
               key={owner.ownerID}
               className={`container-${idx}  container`}
             >
