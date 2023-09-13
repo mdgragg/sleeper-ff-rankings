@@ -2,57 +2,51 @@ import React, { useEffect } from "react";
 import $ from "jquery";
 import config from "../config";
 
-// Todos after week 1:
-// change current week to last in stats sidebar
-// Hide custom sorting
-// Bring back sorting by wins and points
-// Bring back season awards
-
 function Standings({ leagueData }) {
   const owners = leagueData.owners;
-  // const lastweek = leagueData.currentWeek - 1;
+  const lastweek = leagueData.currentWeek - 1;
   const current = leagueData.currentWeek;
-  // const lastPos = leagueData.size - 1;
+  const lastPos = leagueData.size - 1;
   const avatarUrlBase = "https://sleepercdn.com/avatars/thumbs/";
 
   const customSorting = {
-    michaelGragg: 5,
-    bmullinger: 10,
-    jonnychernek: 2,
-    jcheech30: 3,
-    jdasch1216: 6,
-    bopaskar: 11,
-    brianhavrilla: 4,
-    TeddyBald: 9,
-    kevmullinger: 12,
-    AaronLam: 8,
-    Teechen: 1,
-    courtneychernek: 7,
+    michaelGragg: 0,
+    bmullinger: 0,
+    jonnychernek: 0,
+    jcheech30: 0,
+    jdasch1216: 0,
+    bopaskar: 0,
+    brianhavrilla: 0,
+    TeddyBald: 0,
+    kevmullinger: 0,
+    AaronLam: 0,
+    Teechen: 0,
+    courtneychernek: 0,
   };
 
   const ownersSorted = owners.slice(0).sort(function (a, b) {
     return (
+      customSorting[a.userName] - customSorting[b.userName] ||
       b.wins - a.wins ||
-      b.pointsFor - a.pointsFor ||
-      customSorting[a.userName] - customSorting[b.userName]
+      b.pointsFor - a.pointsFor
     );
   });
 
-  // const ownersSortedPF = owners.slice(0).sort(function (a, b) {
-  //   return a.pointsFor - b.pointsFor;
-  // });
-  // const ownersSortedPA = owners.slice(0).sort(function (a, b) {
-  //   return a.pointsAgainst - b.pointsAgainst;
-  // });
-  // const ownersSortedPPP = owners.slice(0).sort(function (a, b) {
-  //   return a.pointsPossiblePerc - b.pointsPossiblePerc;
-  // });
-  // const highPF = ownersSortedPF[lastPos];
-  // const lowPF = ownersSortedPF[0];
-  // const highPA = ownersSortedPA[lastPos];
-  // const lowPA = ownersSortedPA[0];
-  // const highPPP = ownersSortedPPP[lastPos];
-  // const lowPPP = ownersSortedPPP[0];
+  const ownersSortedPF = owners.slice(0).sort(function (a, b) {
+    return a.pointsFor - b.pointsFor;
+  });
+  const ownersSortedPA = owners.slice(0).sort(function (a, b) {
+    return a.pointsAgainst - b.pointsAgainst;
+  });
+  const ownersSortedPPP = owners.slice(0).sort(function (a, b) {
+    return a.pointsPossiblePerc - b.pointsPossiblePerc;
+  });
+  const highPF = ownersSortedPF[lastPos];
+  const lowPF = ownersSortedPF[0];
+  const highPA = ownersSortedPA[lastPos];
+  const lowPA = ownersSortedPA[0];
+  const highPPP = ownersSortedPPP[lastPos];
+  const lowPPP = ownersSortedPPP[0];
 
   const winORloss = document.querySelectorAll(".streak");
   for (var i = 0; i < winORloss.length; i++) {
@@ -96,7 +90,7 @@ function Standings({ leagueData }) {
   useEffect(() => {
     const apiKey = config.apiKey;
     const sheetId = config.sheetId;
-    const range = "Sheet1!B2:C13";
+    const range = "Week " + current + "!B2:C13";
 
     async function fetchData() {
       const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=${apiKey}`;
@@ -181,7 +175,19 @@ function Standings({ leagueData }) {
 
   return (
     <>
-      {/* <div id="awards">
+      <div className="avatar-buttons">
+        {ownersSorted.map((owner, idx) => (
+          <a href={`#${owner.userName}`}>
+            <img
+              alt="team avatar"
+              src={owner.teamAvatar || avatarUrlBase + owner.avatar}
+              className="avatar-link"
+            />
+          </a>
+        ))}
+      </div>
+
+      <div id="awards">
         <h2>Season Awards</h2>
         <div className="awards">
           <div className="box weekly-winner">
@@ -271,20 +277,8 @@ function Standings({ leagueData }) {
             </div>
           </div>
         </div>
-      </div> */}
+      </div>
       <div className="standings">
-        <div className="avatar-buttons">
-          {ownersSorted.map((owner, idx) => (
-            <a href={`#${owner.userName}`}>
-              <img
-                alt="team avatar"
-                src={owner.teamAvatar || avatarUrlBase + owner.avatar}
-                className="avatar-link"
-              />
-            </a>
-          ))}
-        </div>
-
         {ownersSorted.map((owner, idx) => (
           <>
             <li
@@ -334,15 +328,16 @@ function Standings({ leagueData }) {
               <div className="stats">
                 <h4>Team Stats</h4>
                 <p className="stats-points">
-                  <span>Total points: {owner.pointsFor}</span>
                   <span>
-                    Week
-                    {/* {lastweek}  */} {current} Points:{" "}
+                    Week {lastweek} Points:{" "}
                     <span className="matchup-points">
                       {" "}
                       {owner.matchupPoints}
                     </span>
                   </span>
+
+                  <span>Total points: {owner.pointsFor}</span>
+
                   <span> Possible Points: {owner.pointsPossible}</span>
                   <span> Points Against: {owner.pointsAgainst}</span>
                 </p>

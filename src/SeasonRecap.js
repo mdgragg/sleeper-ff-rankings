@@ -2,10 +2,6 @@ import React, { useState } from "react";
 import Standings from "./components/Standings";
 import logo from "./assets/images/logo_with_text.png";
 
-// Todo after Week 1
-// show streak
-// show matchupPoints
-
 // 2022
 // const league_ID = "859880880154480640";
 
@@ -99,7 +95,7 @@ function SeasonRecap() {
       leagueRostersJSON.forEach((owner, idx) => {
         ownersData.push({
           ownerID: owner.owner_id,
-          // streak: owner.metadata.streak,
+          streak: owner.metadata.streak,
           wins: owner.settings.wins,
           losses: owner.settings.losses,
           ties: owner.settings.ties,
@@ -147,9 +143,9 @@ function SeasonRecap() {
           return obj.user_id === userID;
         });
 
-        // const standingsData = lastWeekMatchupsJSON.filter((obj) => {
-        //   return obj.roster_id === ownersData[i].roster_id;
-        // });
+        const standingsData = lastWeekMatchupsJSON.filter((obj) => {
+          return obj.roster_id === ownersData[i].roster_id;
+        });
 
         // eslint-disable-next-line
         const CurrentMatchupData = currentMatchupsJSON.filter((obj) => {
@@ -158,7 +154,7 @@ function SeasonRecap() {
 
         const userName = newOwnerData[0].display_name;
         const teamAvatar = newOwnerData[0].metadata.avatar;
-        // const matchupPoints = standingsData[0].points;
+        const matchupPoints = standingsData[0].points;
         const matchupID = CurrentMatchupData[0].matchup_id;
         const teamName = newOwnerData[0].metadata.team_name || userName;
 
@@ -166,7 +162,7 @@ function SeasonRecap() {
         ownersData[i].teamAvatar = teamAvatar;
         ownersData[i].userName = userName;
         ownersData[i].teamName = teamName;
-        // ownersData[i].matchupPoints = matchupPoints;
+        ownersData[i].matchupPoints = matchupPoints;
         ownersData[i].matchupID = matchupID;
       }
 
