@@ -308,7 +308,7 @@ header h3 {
 
 .name-desc p {
   margin-top: 10px;
-  margin-bottom: 40px;
+  /* margin-bottom: 40px; */
 }
 
 .name-desc p iframe {
@@ -317,6 +317,7 @@ header h3 {
   height: 100%;
   max-width: 280px;
   max-height: 200px;
+  border: none;
 }
 
 .matchup {
