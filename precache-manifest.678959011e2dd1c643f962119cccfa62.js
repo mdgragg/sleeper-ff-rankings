@@ -1,19 +1,19 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "f1f25cfd2f14b2fd343efae13d0696d0",
+    "revision": "9850a04934935f64bb8f1a5a700da557",
     "url": "/sleeper-ff-rankings/index.html"
   },
   {
-    "revision": "2d9e2efc0087e91d9cad",
-    "url": "/sleeper-ff-rankings/static/css/main.84826613.chunk.css"
+    "revision": "0aa18c1bbc9784d61372",
+    "url": "/sleeper-ff-rankings/static/css/main.ea8191a2.chunk.css"
   },
   {
     "revision": "3d36fc65dde8cd73eeea",
     "url": "/sleeper-ff-rankings/static/js/2.6ea7b6a9.chunk.js"
   },
   {
-    "revision": "2d9e2efc0087e91d9cad",
-    "url": "/sleeper-ff-rankings/static/js/main.9c3ceb86.chunk.js"
+    "revision": "0aa18c1bbc9784d61372",
+    "url": "/sleeper-ff-rankings/static/js/main.f61ba1f6.chunk.js"
   },
   {
     "revision": "5a6c2efbfa9b11ad2173",
