@@ -111,117 +111,118 @@ function Standings({ leagueData }) {
         //  10 -- Teechen
         //  11 -- courtneyressa
 
-        var iframe1 = document.createElement("iframe");
-        iframe1.src = data.values[10][0] || "";
-        var iframe2 = document.createElement("iframe");
-        iframe2.src = data.values[2][0] || "";
-        var iframe3 = document.createElement("iframe");
-        iframe3.src = data.values[6][0] || "";
-        var iframe4 = document.createElement("iframe");
-        iframe4.src = data.values[8][0] || "";
-        var iframe5 = document.createElement("iframe");
-        iframe5.src = data.values[7][0] || "";
-        var iframe6 = document.createElement("iframe");
-        iframe6.src = data.values[3][0] || "";
-        var iframe7 = document.createElement("iframe");
-        iframe7.src = data.values[1][0] || "";
-        var iframe8 = document.createElement("iframe");
-        iframe8.src = data.values[11][0] || "";
-        var iframe9 = document.createElement("iframe");
-        iframe9.src = data.values[9][0] || "";
-        var iframe10 = document.createElement("iframe");
-        iframe10.src = data.values[0][0] || "";
-        var iframe11 = document.createElement("iframe");
-        iframe11.src = data.values[5][0] || "";
-        var iframe12 = document.createElement("iframe");
-        iframe12.src = data.values[4][0] || "";
+        // For Gif weeks
+        // var iframe1 = document.createElement("iframe");
+        // iframe1.src = data.values[10][0] || "";
+        // var iframe2 = document.createElement("iframe");
+        // iframe2.src = data.values[2][0] || "";
+        // var iframe3 = document.createElement("iframe");
+        // iframe3.src = data.values[6][0] || "";
+        // var iframe4 = document.createElement("iframe");
+        // iframe4.src = data.values[8][0] || "";
+        // var iframe5 = document.createElement("iframe");
+        // iframe5.src = data.values[7][0] || "";
+        // var iframe6 = document.createElement("iframe");
+        // iframe6.src = data.values[3][0] || "";
+        // var iframe7 = document.createElement("iframe");
+        // iframe7.src = data.values[1][0] || "";
+        // var iframe8 = document.createElement("iframe");
+        // iframe8.src = data.values[11][0] || "";
+        // var iframe9 = document.createElement("iframe");
+        // iframe9.src = data.values[9][0] || "";
+        // var iframe10 = document.createElement("iframe");
+        // iframe10.src = data.values[0][0] || "";
+        // var iframe11 = document.createElement("iframe");
+        // iframe11.src = data.values[5][0] || "";
+        // var iframe12 = document.createElement("iframe");
+        // iframe12.src = data.values[4][0] || "";
 
-        document.getElementById("teamBlurb-1").appendChild(iframe1);
-        document.getElementById("teamBlurb-2").appendChild(iframe2);
-        document.getElementById("teamBlurb-3").appendChild(iframe3);
-        document.getElementById("teamBlurb-4").appendChild(iframe4);
-        document.getElementById("teamBlurb-5").appendChild(iframe5);
-        document.getElementById("teamBlurb-6").appendChild(iframe6);
-        document.getElementById("teamBlurb-7").appendChild(iframe7);
-        document.getElementById("teamBlurb-8").appendChild(iframe8);
-        document.getElementById("teamBlurb-9").appendChild(iframe9);
-        document.getElementById("teamBlurb-10").appendChild(iframe10);
-        document.getElementById("teamBlurb-11").appendChild(iframe11);
-        document.getElementById("teamBlurb-12").appendChild(iframe12);
+        // document.getElementById("teamBlurb-1").appendChild(iframe1);
+        // document.getElementById("teamBlurb-2").appendChild(iframe2);
+        // document.getElementById("teamBlurb-3").appendChild(iframe3);
+        // document.getElementById("teamBlurb-4").appendChild(iframe4);
+        // document.getElementById("teamBlurb-5").appendChild(iframe5);
+        // document.getElementById("teamBlurb-6").appendChild(iframe6);
+        // document.getElementById("teamBlurb-7").appendChild(iframe7);
+        // document.getElementById("teamBlurb-8").appendChild(iframe8);
+        // document.getElementById("teamBlurb-9").appendChild(iframe9);
+        // document.getElementById("teamBlurb-10").appendChild(iframe10);
+        // document.getElementById("teamBlurb-11").appendChild(iframe11);
+        // document.getElementById("teamBlurb-12").appendChild(iframe12);
 
-        document.getElementById("winningWeeks-10").innerText =
-          data.values[0][1] || "";
-        document.getElementById("winningWeeks-7").innerText =
-          data.values[1][1] || "";
-        document.getElementById("winningWeeks-2").innerText =
-          data.values[2][1] || "";
-        document.getElementById("winningWeeks-6").innerText =
-          data.values[3][1] || "";
-        document.getElementById("winningWeeks-12").innerText =
-          data.values[4][1] || "";
-        document.getElementById("winningWeeks-11").innerText =
-          data.values[5][1] || "";
-        document.getElementById("winningWeeks-3").innerText =
-          data.values[6][1] || "";
-        document.getElementById("winningWeeks-5").innerText =
-          data.values[7][1] || "";
-        document.getElementById("winningWeeks-4").innerText =
-          data.values[8][1] || "";
-        document.getElementById("winningWeeks-9").innerText =
-          data.values[9][1] || "";
-        document.getElementById("winningWeeks-1").innerText =
-          data.values[10][1] || "";
-        document.getElementById("winningWeeks-8").innerText =
-          data.values[11][1] || "";
-
-        // document.getElementById("teamBlurb-10").innerText =
-        //   data.values[0][0] || "";
         // document.getElementById("winningWeeks-10").innerText =
         //   data.values[0][1] || "";
-        // document.getElementById("teamBlurb-7").innerText =
-        //   data.values[1][0] || "";
         // document.getElementById("winningWeeks-7").innerText =
         //   data.values[1][1] || "";
-        // document.getElementById("teamBlurb-2").innerText =
-        //   data.values[2][0] || "";
         // document.getElementById("winningWeeks-2").innerText =
         //   data.values[2][1] || "";
-        // document.getElementById("teamBlurb-6").innerText =
-        //   data.values[3][0] || "";
         // document.getElementById("winningWeeks-6").innerText =
         //   data.values[3][1] || "";
-        // document.getElementById("teamBlurb-12").innerText =
-        //   data.values[4][0] || "";
         // document.getElementById("winningWeeks-12").innerText =
         //   data.values[4][1] || "";
-        // document.getElementById("teamBlurb-11").innerText =
-        //   data.values[5][0] || "";
         // document.getElementById("winningWeeks-11").innerText =
         //   data.values[5][1] || "";
-        // document.getElementById("teamBlurb-3").innerText =
-        //   data.values[6][0] || "";
         // document.getElementById("winningWeeks-3").innerText =
         //   data.values[6][1] || "";
-        // document.getElementById("teamBlurb-5").innerText =
-        //   data.values[7][0] || "";
         // document.getElementById("winningWeeks-5").innerText =
         //   data.values[7][1] || "";
-        // document.getElementById("teamBlurb-4").innerText =
-        //   data.values[8][0] || "";
         // document.getElementById("winningWeeks-4").innerText =
         //   data.values[8][1] || "";
-        // document.getElementById("teamBlurb-9").innerText =
-        //   data.values[9][0] || "";
         // document.getElementById("winningWeeks-9").innerText =
         //   data.values[9][1] || "";
-        // document.getElementById("teamBlurb-1").innerText =
-        //   data.values[10][0] || "";
         // document.getElementById("winningWeeks-1").innerText =
         //   data.values[10][1] || "";
-        // document.getElementById("teamBlurb-8").innerText =
-        //   data.values[11][0] || "";
         // document.getElementById("winningWeeks-8").innerText =
         //   data.values[11][1] || "";
+
+        document.getElementById("teamBlurb-10").innerText =
+          data.values[0][0] || "";
+        document.getElementById("winningWeeks-10").innerText =
+          data.values[0][1] || "";
+        document.getElementById("teamBlurb-7").innerText =
+          data.values[1][0] || "";
+        document.getElementById("winningWeeks-7").innerText =
+          data.values[1][1] || "";
+        document.getElementById("teamBlurb-2").innerText =
+          data.values[2][0] || "";
+        document.getElementById("winningWeeks-2").innerText =
+          data.values[2][1] || "";
+        document.getElementById("teamBlurb-6").innerText =
+          data.values[3][0] || "";
+        document.getElementById("winningWeeks-6").innerText =
+          data.values[3][1] || "";
+        document.getElementById("teamBlurb-12").innerText =
+          data.values[4][0] || "";
+        document.getElementById("winningWeeks-12").innerText =
+          data.values[4][1] || "";
+        document.getElementById("teamBlurb-11").innerText =
+          data.values[5][0] || "";
+        document.getElementById("winningWeeks-11").innerText =
+          data.values[5][1] || "";
+        document.getElementById("teamBlurb-3").innerText =
+          data.values[6][0] || "";
+        document.getElementById("winningWeeks-3").innerText =
+          data.values[6][1] || "";
+        document.getElementById("teamBlurb-5").innerText =
+          data.values[7][0] || "";
+        document.getElementById("winningWeeks-5").innerText =
+          data.values[7][1] || "";
+        document.getElementById("teamBlurb-4").innerText =
+          data.values[8][0] || "";
+        document.getElementById("winningWeeks-4").innerText =
+          data.values[8][1] || "";
+        document.getElementById("teamBlurb-9").innerText =
+          data.values[9][0] || "";
+        document.getElementById("winningWeeks-9").innerText =
+          data.values[9][1] || "";
+        document.getElementById("teamBlurb-1").innerText =
+          data.values[10][0] || "";
+        document.getElementById("winningWeeks-1").innerText =
+          data.values[10][1] || "";
+        document.getElementById("teamBlurb-8").innerText =
+          data.values[11][0] || "";
+        document.getElementById("winningWeeks-8").innerText =
+          data.values[11][1] || "";
       } catch (error) {
         console.error("Error fetching data:", error);
       }
