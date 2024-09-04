@@ -15,7 +15,7 @@ const league_ID = "1062844227291373568";
 function SeasonRecap() {
   const { id } = useParams();
   const [leagueID, setLeagueID] = useState(league_ID);
-  const [leagueData, setLeagueData] = useState("");
+  const [leagueData, setLeagueData] = useState(null);
   const [appStatus, setAppStatus] = useState("loading");
 
   useEffect(() => {
@@ -191,7 +191,7 @@ function SeasonRecap() {
         </div>
       )}
 
-      {appStatus === "loaded" && (
+      {appStatus === "loaded" && leagueData && (
         <>
           <header>
             <div className="inner">

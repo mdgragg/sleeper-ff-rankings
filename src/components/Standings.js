@@ -6,7 +6,7 @@ function Standings({ leagueData }) {
   const owners = leagueData.owners;
   const lastweek = leagueData.currentWeek - 1;
   const current = leagueData.currentWeek;
-  const lastPos = leagueData.size - 1;
+  // const lastPos = leagueData.size - 1;
   const avatarUrlBase = "https://sleepercdn.com/avatars/thumbs/";
 
   const customSorting = {
@@ -32,21 +32,21 @@ function Standings({ leagueData }) {
     );
   });
 
-  const ownersSortedPF = owners.slice(0).sort(function (a, b) {
-    return a.pointsFor - b.pointsFor;
-  });
-  const ownersSortedPA = owners.slice(0).sort(function (a, b) {
-    return a.pointsAgainst - b.pointsAgainst;
-  });
-  const ownersSortedPPP = owners.slice(0).sort(function (a, b) {
-    return a.pointsPossiblePerc - b.pointsPossiblePerc;
-  });
-  const highPF = ownersSortedPF[lastPos];
-  const lowPF = ownersSortedPF[0];
-  const highPA = ownersSortedPA[lastPos];
-  const lowPA = ownersSortedPA[0];
-  const highPPP = ownersSortedPPP[lastPos];
-  const lowPPP = ownersSortedPPP[0];
+  // const ownersSortedPF = owners.slice(0).sort(function (a, b) {
+  //   return a.pointsFor - b.pointsFor;
+  // });
+  // const ownersSortedPA = owners.slice(0).sort(function (a, b) {
+  //   return a.pointsAgainst - b.pointsAgainst;
+  // });
+  // const ownersSortedPPP = owners.slice(0).sort(function (a, b) {
+  //   return a.pointsPossiblePerc - b.pointsPossiblePerc;
+  // });
+  // const highPF = ownersSortedPF[lastPos];
+  // const lowPF = ownersSortedPF[0];
+  // const highPA = ownersSortedPA[lastPos];
+  // const lowPA = ownersSortedPA[0];
+  // const highPPP = ownersSortedPPP[lastPos];
+  // const lowPPP = ownersSortedPPP[0];
 
   const winORloss = document.querySelectorAll(".streak");
   for (var i = 0; i < winORloss.length; i++) {
@@ -94,10 +94,10 @@ function Standings({ leagueData }) {
 
     async function fetchData() {
       const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=${apiKey}`;
-
       try {
         const response = await fetch(url);
         const data = await response.json();
+
         //   0 -- michaelGragg
         //   1 -- bmullinger
         //   2 -- jonnychernek
@@ -227,6 +227,7 @@ function Standings({ leagueData }) {
         console.error("Error fetching data:", error);
       }
     }
+
     fetchData();
 
     $("#previousChamp-3").html("2015, 2016, 2020 Champ");
@@ -242,7 +243,7 @@ function Standings({ leagueData }) {
     <>
       <div className="avatar-buttons">
         {ownersSorted.map((owner, idx) => (
-          <a href={`#${owner.userName}`}>
+          <a key={owner.ownerID} href={`#${owner.userName}`}>
             <img
               alt="team avatar"
               src={owner.teamAvatar || avatarUrlBase + owner.avatar}
@@ -252,7 +253,7 @@ function Standings({ leagueData }) {
         ))}
       </div>
 
-      <div id="awards">
+      {/* <div id="awards">
         <h2>Season Awards</h2>
         <div className="awards">
           <div className="box weekly-winner">
@@ -342,7 +343,7 @@ function Standings({ leagueData }) {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
       <div className="standings">
         {ownersSorted.map((owner, idx) => (
           <>
