@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/sleeper-ff-rankings/static/css/main.3d560396.css",
-    "main.js": "/sleeper-ff-rankings/static/js/main.01035acc.js",
+    "main.js": "/sleeper-ff-rankings/static/js/main.059014dc.js",
     "static/media/logo_with_text.png": "/sleeper-ff-rankings/static/media/logo_with_text.8c76d8fb261e6bdc5ea3.png",
     "index.html": "/sleeper-ff-rankings/index.html",
     "main.3d560396.css.map": "/sleeper-ff-rankings/static/css/main.3d560396.css.map",
-    "main.01035acc.js.map": "/sleeper-ff-rankings/static/js/main.01035acc.js.map"
+    "main.059014dc.js.map": "/sleeper-ff-rankings/static/js/main.059014dc.js.map"
   },
   "entrypoints": [
     "static/css/main.3d560396.css",
-    "static/js/main.01035acc.js"
+    "static/js/main.059014dc.js"
   ]
 }
