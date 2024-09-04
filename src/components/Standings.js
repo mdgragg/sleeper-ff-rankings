@@ -10,18 +10,18 @@ function Standings({ leagueData }) {
   const avatarUrlBase = "https://sleepercdn.com/avatars/thumbs/";
 
   const customSorting = {
-    michaelGragg: 0,
+    michaelGragg: 9,
     bmullinger: 0,
-    jonnychernek: 0,
-    jcheech30: 0,
-    jdasch1216: 0,
-    bopaskar: 0,
-    brianhavrilla: 0,
-    TeddyBald: 0,
-    kevmullinger: 0,
-    AaronLam: 0,
-    Teechen: 0,
-    courtneychernek: 0,
+    jonnychernek: 5,
+    jcheech30: 6,
+    jdasch1216: 10,
+    bopaskar: 11,
+    brianhavrilla: 4,
+    TeddyBald: 8,
+    kevmullinger: 3,
+    AaronLam: 2,
+    Teechen: 1,
+    courtneychernek: 7,
   };
 
   const ownersSorted = owners.slice(0).sort(function (a, b) {
@@ -230,13 +230,13 @@ function Standings({ leagueData }) {
     fetchData();
 
     $("#previousChamp-3").html("2015, 2016, 2020 Champ");
-    $("#previousChamp-2").html("2017 Champ");
+    $("#previousChamp-2").html("2017, 2023 Champ");
     $("#previousChamp-10").html("2018 Champ");
     $("#previousChamp-9").html("2019 Champ");
     $("#previousChamp-4").html("2021 Champ");
     $("#previousChamp-11").html("2022 Champ");
-    $("#previousChamp-11").addClass("current-champ");
-  }, []);
+    $("#previousChamp-2").addClass("current-champ");
+  }, [current]);
 
   return (
     <>

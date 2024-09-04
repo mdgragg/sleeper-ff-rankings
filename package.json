@@ -4,14 +4,14 @@
   "homepage": "https://mdgragg.github.io/sleeper-ff-rankings",
   "private": true,
   "dependencies": {
-    "chart.js": "^2.9.4",
+    "chart.js": "^4.4.3",
     "googleapis": "^124.0.0",
-    "jquery": "^3.7.0",
-    "node-sass": "^4.14.1",
-    "react": "^16.14.0",
-    "react-dom": "^16.14.0",
-    "react-router-dom": "^5.2.0",
-    "react-scripts": "3.1.0",
+    "jquery": "^3.7.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.26.1",
+    "react-scripts": "^5.0.1",
+    "sass": "^1.77.8",
     "serve": "^11.3.2"
   },
   "scripts": {
@@ -37,6 +37,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "gh-pages": "^4.0.0"
   }
 }
