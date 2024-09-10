@@ -6,47 +6,46 @@ function Standings({ leagueData }) {
   const owners = leagueData.owners;
   const lastweek = leagueData.currentWeek - 1;
   const current = leagueData.currentWeek;
-  // const lastPos = leagueData.size - 1;
+  const lastPos = leagueData.size - 1;
   const avatarUrlBase = "https://sleepercdn.com/avatars/thumbs/";
 
-  const customSorting = {
-    michaelGragg: 9,
-    bmullinger: 0,
-    jonnychernek: 5,
-    jcheech30: 6,
-    jdasch1216: 10,
-    bopaskar: 11,
-    brianhavrilla: 4,
-    TeddyBald: 8,
-    kevmullinger: 3,
-    AaronLam: 2,
-    Teechen: 1,
-    courtneychernek: 7,
-  };
+  // const customSorting = {
+  //   michaelGragg: 9,
+  //   bmullinger: 0,
+  //   jonnychernek: 5,
+  //   jcheech30: 6,
+  //   jdasch1216: 10,
+  //   bopaskar: 11,
+  //   brianhavrilla: 4,
+  //   TeddyBald: 8,
+  //   kevmullinger: 3,
+  //   AaronLam: 2,
+  //   Teechen: 1,
+  //   courtneychernek: 7,
+  // };
 
   const ownersSorted = owners.slice(0).sort(function (a, b) {
     return (
-      customSorting[a.userName] - customSorting[b.userName] ||
-      b.wins - a.wins ||
-      b.pointsFor - a.pointsFor
+      // customSorting[a.userName] - customSorting[b.userName] ||
+      b.wins - a.wins || b.pointsFor - a.pointsFor
     );
   });
 
-  // const ownersSortedPF = owners.slice(0).sort(function (a, b) {
-  //   return a.pointsFor - b.pointsFor;
-  // });
-  // const ownersSortedPA = owners.slice(0).sort(function (a, b) {
-  //   return a.pointsAgainst - b.pointsAgainst;
-  // });
-  // const ownersSortedPPP = owners.slice(0).sort(function (a, b) {
-  //   return a.pointsPossiblePerc - b.pointsPossiblePerc;
-  // });
-  // const highPF = ownersSortedPF[lastPos];
-  // const lowPF = ownersSortedPF[0];
-  // const highPA = ownersSortedPA[lastPos];
-  // const lowPA = ownersSortedPA[0];
-  // const highPPP = ownersSortedPPP[lastPos];
-  // const lowPPP = ownersSortedPPP[0];
+  const ownersSortedPF = owners.slice(0).sort(function (a, b) {
+    return a.pointsFor - b.pointsFor;
+  });
+  const ownersSortedPA = owners.slice(0).sort(function (a, b) {
+    return a.pointsAgainst - b.pointsAgainst;
+  });
+  const ownersSortedPPP = owners.slice(0).sort(function (a, b) {
+    return a.pointsPossiblePerc - b.pointsPossiblePerc;
+  });
+  const highPF = ownersSortedPF[lastPos];
+  const lowPF = ownersSortedPF[0];
+  const highPA = ownersSortedPA[lastPos];
+  const lowPA = ownersSortedPA[0];
+  const highPPP = ownersSortedPPP[lastPos];
+  const lowPPP = ownersSortedPPP[0];
 
   const winORloss = document.querySelectorAll(".streak");
   for (var i = 0; i < winORloss.length; i++) {
@@ -57,23 +56,6 @@ function Standings({ leagueData }) {
     if (winORlossText.endsWith("L")) {
       winORloss[i].classList.add("losses");
     }
-  }
-
-  let containers = document.querySelectorAll(".container");
-  let maxPoints = -Infinity;
-  let containerWithMaxPoints = null;
-  containers.forEach((container) => {
-    let pointsElement = container.querySelector(".matchup-points");
-    let points = parseInt(pointsElement.textContent);
-    if (points > maxPoints) {
-      maxPoints = points;
-      containerWithMaxPoints = container;
-    }
-  });
-  if (containerWithMaxPoints) {
-    containerWithMaxPoints.classList.add("weekly-winner");
-    $(".weekly-winner").children(".ranking").addClass("first");
-    $(".weekly-winner").children(".avatar").addClass("weekly-winner-circle");
   }
 
   const matchups = {};
@@ -237,6 +219,23 @@ function Standings({ leagueData }) {
     $("#previousChamp-4").html("2021 Champ");
     $("#previousChamp-11").html("2022 Champ");
     $("#previousChamp-2").addClass("current-champ");
+
+    let containers = document.querySelectorAll(".container");
+    let maxPoints = -Infinity;
+    let containerWithMaxPoints = null;
+    containers.forEach((container) => {
+      let pointsElement = container.querySelector(".matchup-points");
+      let points = parseInt(pointsElement.textContent);
+      if (points > maxPoints) {
+        maxPoints = points;
+        containerWithMaxPoints = container;
+      }
+    });
+    if (containerWithMaxPoints) {
+      containerWithMaxPoints.classList.add("weekly-winner");
+      $(".weekly-winner").children(".ranking").addClass("first");
+      $(".weekly-winner").children(".avatar").addClass("weekly-winner-circle");
+    }
   }, [current]);
 
   return (
@@ -253,7 +252,7 @@ function Standings({ leagueData }) {
         ))}
       </div>
 
-      {/* <div id="awards">
+      <div id="awards">
         <h2>Season Awards</h2>
         <div className="awards">
           <div className="box weekly-winner">
@@ -343,7 +342,7 @@ function Standings({ leagueData }) {
             </div>
           </div>
         </div>
-      </div> */}
+      </div>
       <div className="standings">
         {ownersSorted.map((owner, idx) => (
           <>
