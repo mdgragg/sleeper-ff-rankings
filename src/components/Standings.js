@@ -67,14 +67,14 @@ function Standings({ leagueData }) {
     matchups[matchupID].push(owner);
   });
 
-  const appendElements = (ids, tagName, values) => {
-    ids.forEach((id, idx) => {
-      const element = document.createElement(tagName);
-      element.src = values[idx] || "";
-      document.getElementById(id).appendChild(element);
-      if (!element.src) element.style.display = "none";
-    });
-  };
+  // const appendElements = (ids, tagName, values) => {
+  //   ids.forEach((id, idx) => {
+  //     const element = document.createElement(tagName);
+  //     element.src = values[idx] || "";
+  //     document.getElementById(id).appendChild(element);
+  //     if (!element.src) element.style.display = "none";
+  //   });
+  // };
 
   useEffect(() => {
     const apiKey = config.apiKey;
@@ -86,64 +86,64 @@ function Standings({ leagueData }) {
       try {
         const response = await fetch(url);
         const data = await response.json();
+        // console.log("Fetched data:", data);
 
-        const iframeIds = [
-          "teamGif-1",
-          "teamGif-2",
-          "teamGif-3",
-          "teamGif-4",
-          "teamGif-5",
-          "teamGif-6",
-          "teamGif-7",
-          "teamGif-8",
-          "teamGif-9",
-          "teamGif-10",
-          "teamGif-11",
-          "teamGif-12",
-        ];
-        const imageIds = [
-          "teamImage-1",
-          "teamImage-2",
-          "teamImage-3",
-          "teamImage-4",
-          "teamImage-5",
-          "teamImage-6",
-          "teamImage-7",
-          "teamImage-8",
-          "teamImage-9",
-          "teamImage-10",
-          "teamImage-11",
-          "teamImage-12",
-        ];
+        if (!data) return;
+        const rosterIdToIndex = {
+          10: 0,
+          7: 1,
+          2: 2,
+          6: 3,
+          12: 4,
+          11: 5,
+          3: 6,
+          5: 7,
+          4: 8,
+          9: 9,
+          1: 10,
+          8: 11,
+        };
 
-        appendElements(
-          iframeIds,
-          "iframe",
-          data.values.map((row) => row[3])
-        );
+        Object.entries(rosterIdToIndex).forEach(([rosterId, index]) => {
+          document.getElementById(`teamBlurb-${rosterId}`).innerText =
+            data.values[index][0] || ""; // <-- use data.values here
+          document.getElementById(`winningWeeks-${rosterId}`).innerText =
+            data.values[index][1] || ""; // <-- use data.values here
+        });
+
+        Object.entries(rosterIdToIndex).forEach(([rosterId, index]) => {
+          const imageId = `teamImage-${rosterId}`;
+          const gifId = `teamGif-${rosterId}`;
+
+          // Set the image
+          const imageElement = document.getElementById(imageId);
+          if (imageElement) {
+            imageElement.src = data.values[index][2] || "";
+            if (!imageElement.src) {
+              imageElement.style.display = "none";
+            }
+          }
+
+          // Set the gif (iframe)
+          const iframeElement = document.getElementById(gifId);
+          if (iframeElement) {
+            iframeElement.src = data.values[index][3] || "";
+            if (!iframeElement.src) {
+              iframeElement.style.display = "none";
+            }
+          }
+        });
+
         document.querySelectorAll("iframe").forEach((iframe) => {
           if (iframe.getAttribute("src") === "") {
             iframe.style.display = "none";
           }
         });
 
-        appendElements(
-          imageIds,
-          "img",
-          data.values.map((row) => row[2])
-        );
-
         document.querySelectorAll("img").forEach((img) => {
           if (img.getAttribute("src") === "") {
             img.style.display = "none";
           }
-        });
-
-        owners.forEach((owner, idx) => {
-          document.getElementById(`teamBlurb-${owner.roster_id}`).innerText =
-            data.values[idx][0] || "";
-          document.getElementById(`winningWeeks-${owner.roster_id}`).innerText =
-            data.values[idx][1] || "";
         });
 
         $("#previousChamp-3").html("2015, 2016, 2020 Champ");
@@ -154,16 +154,24 @@ function Standings({ leagueData }) {
         $("#previousChamp-11").html("2022 Champ");
         $("#previousChamp-2").addClass("current-champ");
 
-        let maxPoints = Math.max(
-          ...owners.map((owner) => owner.matchupPoints || 0)
-        );
-        let winner = owners.find((owner) => owner.matchupPoints === maxPoints);
-        $(`.container-${owners.indexOf(winner)}`)
-          .addClass("weekly-winner")
-          .children(".ranking")
-          .addClass("first")
-          .siblings(".avatar")
-          .addClass("weekly-winner-circle");
+        let containers = document.querySelectorAll(".container");
+        let maxPoints = -Infinity;
+        let containerWithMaxPoints = null;
+        containers.forEach((container) => {
+          let pointsElement = container.querySelector(".matchup-points");
+          let points = parseInt(pointsElement.textContent);
+          if (points > maxPoints) {
+            maxPoints = points;
+            containerWithMaxPoints = container;
+          }
+        });
+        if (containerWithMaxPoints) {
+          containerWithMaxPoints.classList.add("weekly-winner");
+          $(".weekly-winner").children(".ranking").addClass("first");
+          $(".weekly-winner")
+            .children(".avatar")
+            .addClass("weekly-winner-circle");
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -299,8 +307,16 @@ function Standings({ leagueData }) {
                   <span className="streak"> {owner.streak} </span>
                 </h3>
                 <span className="owner-name">@{owner.userName}</span>
-                <span id={`teamImage-${owner.roster_id}`}></span>
-                <span id={`teamGif-${owner.roster_id}`}></span>
+                <img
+                  id={`teamImage-${owner.roster_id}`}
+                  alt="optional img"
+                  src=""
+                />
+                <iframe
+                  id={`teamGif-${owner.roster_id}`}
+                  src=""
+                  title="optional gif"
+                ></iframe>
                 <p
                   id={`teamBlurb-${owner.roster_id}`}
                   className="team-blurb"
