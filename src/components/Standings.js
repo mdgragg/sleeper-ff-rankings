@@ -86,7 +86,8 @@ function Standings({ leagueData }) {
       try {
         const response = await fetch(url);
         const data = await response.json();
-        // console.log("Fetched data:", data);
+        console.log("Fetched data:", data);
+        console.log("Data values:", data.values);
 
         if (!data) return;
         const rosterIdToIndex = {
@@ -105,6 +106,10 @@ function Standings({ leagueData }) {
         };
 
         Object.entries(rosterIdToIndex).forEach(([rosterId, index]) => {
+          console.log("Index:", index, "Value:", data.values[index]);
+          console.log("Number of rows in data.values:", data.values.length);
+          console.log("Roster ID to Index Mapping:", rosterIdToIndex);
+
           document.getElementById(`teamBlurb-${rosterId}`).innerText =
             data.values[index][0] || ""; // <-- use data.values here
           document.getElementById(`winningWeeks-${rosterId}`).innerText =
@@ -309,7 +314,7 @@ function Standings({ leagueData }) {
                 <span className="owner-name">@{owner.userName}</span>
                 <img
                   id={`teamImage-${owner.roster_id}`}
-                  alt="optional img"
+                  // alt="optional img"
                   src=""
                 />
                 <iframe
