@@ -8,7 +8,7 @@ interface WeeklyAwardsProps {
 export default function WeeklyAwards({ owners }: WeeklyAwardsProps) {
   if (!owners || owners.length === 0) return null;
 
-  const ownersSorted = [...owners];
+  // const ownersSorted = [...owners];
 
   const boomTeam = owners.reduce((prev, curr) =>
     (curr.matchupPoints ?? -Infinity) > (prev.matchupPoints ?? -Infinity)

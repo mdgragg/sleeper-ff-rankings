@@ -6,7 +6,7 @@ import Week from "../pages/Week";
 import History from "../pages/History";
 import Update from "../pages/Update";
 
-import Awards from "../pages/Awards";
+// import Awards from "../pages/Awards";
 
 export const router = createBrowserRouter([
   {
@@ -36,15 +36,15 @@ export const router = createBrowserRouter([
     ),
   },
 
-  {
-    path: "/awards",
-    element: (
-      <>
-        <Navbar />
-        <Awards />{" "}
-      </>
-    ),
-  },
+  // {
+  //   path: "/awards",
+  //   element: (
+  //     <>
+  //       <Navbar />
+  //       <Awards />{" "}
+  //     </>
+  //   ),
+  // },
   {
     path: "/update",
     element: (
