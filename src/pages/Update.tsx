@@ -9,18 +9,18 @@ interface TeamConfig {
 }
 
 const ALL_TEAMS = [
-  "1",
-  "2",
-  "3",
-  "4",
-  "5",
-  "6",
-  "7",
-  "8",
-  "9",
-  "10",
-  "11",
-  "12",
+  "michaelGragg",
+  "bmullinger",
+  "jonnychernek",
+  "jcheech30",
+  "jdasch1216",
+  "bopaskar",
+  "brianhavrilla",
+  "TeddyBald",
+  "kevmullinger",
+  "ayayron101",
+  "Teechen",
+  "courtneychernek",
 ]; // list all your roster IDs as strings
 
 export default function Update() {
