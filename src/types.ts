@@ -7,7 +7,7 @@ export interface Owner {
   losses: number;
   ties: number;
   streak: string;
-  matchupPoints?: number;
+  matchupPoints: number;
   addDropCount: number;
   TradeCount: number;
   avatar?: string;
@@ -25,6 +25,14 @@ export interface Owner {
   topScorerWeekPoints?: number;
   topScorerSeason?: string;
   topScorerSeasonPoints?: number;
+  topBenchWeek?: string;
+  topBenchWeekPoints?: number;
+
+  weekPointsPossible?: number;
+  weekPointsPossiblePerc?: number;
+  weekPointsAgainst?: number;
+
+  isWeeklyWinner?: boolean;
 }
 
 export type OwnerWithRanks = Owner & {

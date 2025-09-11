@@ -24,25 +24,27 @@ export default function WeeklyAwards({ owners }: WeeklyAwardsProps) {
     (curr.addDropCount ?? 0) > (prev.addDropCount ?? 0) ? curr : prev
   );
   const bestManager = owners.reduce((prev, curr) =>
-    (curr.pointsPossiblePerc ?? 0) > (prev.pointsPossiblePerc ?? 0)
+    (curr.weekPointsPossiblePerc ?? 0) > (prev.weekPointsPossiblePerc ?? 0)
       ? curr
       : prev
   );
-  const bestManagerPoints = bestManager.pointsPossiblePerc
-    ? Math.round(bestManager.pointsPossiblePerc * 100) / 100
+  const bestManagerPoints = bestManager.weekPointsPossiblePerc
+    ? Math.round(bestManager.weekPointsPossiblePerc * 100) / 100
     : 0;
 
   const worstManager = owners.reduce((prev, curr) =>
-    (curr.pointsPossiblePerc ?? Infinity) <
-    (prev.pointsPossiblePerc ?? Infinity)
+    (curr.weekPointsPossiblePerc ?? Infinity) <
+    (prev.weekPointsPossiblePerc ?? Infinity)
       ? curr
       : prev
   );
-  const worstManagerPoints = worstManager.pointsPossiblePerc
-    ? Math.round(worstManager.pointsPossiblePerc * 100) / 100
+  const worstManagerPoints = worstManager.weekPointsPossiblePerc
+    ? Math.round(worstManager.weekPointsPossiblePerc * 100) / 100
     : 0;
+
   const worstLuck = owners.reduce((prev, curr) =>
-    (curr.pointsAgainst ?? -Infinity) > (prev.pointsAgainst ?? -Infinity)
+    (curr.weekPointsAgainst ?? -Infinity) >
+    (prev.weekPointsAgainst ?? -Infinity)
       ? curr
       : prev
   );
@@ -92,7 +94,7 @@ export default function WeeklyAwards({ owners }: WeeklyAwardsProps) {
             </h3>
             <div className="desc">(most points against)</div>
             <div className="owner-block">
-              <span className="stat">{worstLuck.pointsAgainst} points</span>
+              <span className="stat">{worstLuck.weekPointsAgainst} points</span>
             </div>
           </div>
           <div className="box">

@@ -79,6 +79,11 @@ export default function Standings({
 
       <WeeklyAwards owners={ownersWithRanks} currentWeek={currentWeek} />
 
+      <div className="note">
+        <h3>2025 Update</h3>
+        <p>Click on team Logo to see season stats and rankings.</p>
+      </div>
+
       <div className="standings">
         {ownersWithRanks.map((owner, idx) => (
           <TeamCard

@@ -3,8 +3,8 @@ function SeasonRecap() {
     <>
       <header>
         <div className="inner">
-          <h1>Go to week/#</h1>
-          <h3>Or Update</h3>
+          <h1>Go to /week/#</h1>
+          <h3>Or /update</h3>
         </div>
       </header>
 

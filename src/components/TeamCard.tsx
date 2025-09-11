@@ -69,13 +69,21 @@ export default function TeamCard({
       <li
         data-place={idx + 1}
         id={owner.userName}
-        className={`container-${idx} container`}
+        className={`container-${idx} container ${
+          owner.isWeeklyWinner ? "weekly-winner" : ""
+        }`}
       >
-        <span className="ranking">{idx + 1}</span>
+        <span
+          className={`ranking ${owner.isWeeklyWinner ? "weekly-winner-rank" : ""}`}
+        >
+          {idx + 1}
+        </span>{" "}
         <img
           alt="team avatar"
           src={avatarUrl}
-          className="avatar"
+          className={`avatar-${idx} avatar ${
+            owner.isWeeklyWinner ? "weekly-winner-circle" : ""
+          }`}
           onClick={() => setModalOpen(true)}
           style={{ cursor: "pointer" }}
         />
@@ -169,6 +177,11 @@ export default function TeamCard({
               {owner.topScorerWeekPoints?.toFixed(2) ?? "0"})
             </p>
 
+            <p className="bench-mvp">
+              <b> Bench MVP: </b>
+              {owner.topBenchWeek} (
+              {owner.topBenchWeekPoints?.toFixed(2) ?? "0"})
+            </p>
             {/* <p>
               Top Scorer Season: {owner.topScorerSeason} (
               {owner.topScorerSeasonPoints?.toFixed(2) ?? "0"})

@@ -9,6 +9,7 @@ interface Config {
   teamExtras: Record<number, { blurb?: string; image?: string; gif?: string }>;
 }
 
+// const LEAGUE_ID = import.meta.env.VITE_LEAGUE_ID;
 const LEAGUE_ID = "1247579709596782592";
 
 const previousChampsByOwner: Record<string, string> = {
@@ -20,6 +21,7 @@ const previousChampsByOwner: Record<string, string> = {
   "860701742805970944": "2019 Champ",
   "861681281560334336": "2018 Champ",
 };
+
 const currentChampRosterId = 1;
 
 export default function Week() {
@@ -76,7 +78,6 @@ export default function Week() {
       // Build owners
       const ownersData: OwnerWithRanks[] = rostersRes.map((roster: any) => {
         const user = usersRes.find((u: any) => u.user_id === roster.owner_id);
-
         const pointsFor = parseFloat(
           `${roster.settings.fpts}.${roster.settings.fpts_decimal ?? 0}`
         );
@@ -124,58 +125,103 @@ export default function Week() {
         });
       });
 
-      // Assign matchup IDs
+      // ------------------
+      // Assign matchupPoints & matchupIDs
+      // ------------------
       const matchupsMap: Record<string, OwnerWithRanks[]> = {};
-      matchupsRes.forEach((m: any) => {
-        const owner = ownersData.find((o) => o.roster_id === m.roster_id);
-        if (owner) {
-          const matchupID = m.matchup_id?.toString() || "";
-          owner.matchupID = matchupID;
-          owner.matchupPoints = m.points ?? 0;
-          if (!matchupsMap[matchupID]) matchupsMap[matchupID] = [];
-          matchupsMap[matchupID].push(owner);
-        }
+      matchupsRes.forEach((matchup: any) => {
+        const owner = ownersData.find((o) => o.roster_id === matchup.roster_id);
+        if (!owner) return;
+
+        const matchupID = matchup.matchup_id?.toString() || "";
+        owner.matchupID = matchupID;
+        owner.matchupPoints = matchup.points ?? 0;
+
+        // Week-specific stats
+        const ppts = parseFloat(
+          `${matchup.settings?.ppts ?? 0}.${matchup.settings?.ppts_decimal ?? 0}`
+        );
+        owner.weekPointsPossible = ppts;
+        owner.weekPointsPossiblePerc =
+          ppts > 0 ? (owner.matchupPoints / ppts) * 100 : 0;
+
+        const opponent = matchupsRes.find(
+          (m: any) =>
+            m.matchup_id === matchup.matchup_id &&
+            m.roster_id !== matchup.roster_id
+        );
+        owner.weekPointsAgainst = opponent?.points ?? 0;
+
+        if (!matchupsMap[matchupID]) matchupsMap[matchupID] = [];
+        matchupsMap[matchupID].push(owner);
       });
 
+      // ------------------
+      // Assign next matchups
+      // ------------------
       const nextMatchupsMap: Record<string, OwnerWithRanks[]> = {};
       nextMatchupsRes.forEach((m: any) => {
         const owner = ownersData.find((o) => o.roster_id === m.roster_id);
-        if (owner) {
-          const matchupID = m.matchup_id?.toString() || "";
-          owner.nextMatchupID = matchupID;
-          if (!nextMatchupsMap[matchupID]) nextMatchupsMap[matchupID] = [];
-          nextMatchupsMap[matchupID].push(owner);
-        }
+        if (!owner) return;
+        const matchupID = m.matchup_id?.toString() || "";
+        owner.nextMatchupID = matchupID;
+        if (!nextMatchupsMap[matchupID]) nextMatchupsMap[matchupID] = [];
+        nextMatchupsMap[matchupID].push(owner);
       });
 
-      // --------------------
-      // Top Scorer This Week
-      // --------------------
+      // ------------------
+      // Determine weekly winner
+      // ------------------
+      const maxPoints = Math.max(
+        ...ownersData.map((o) => o.matchupPoints ?? 0)
+      );
+      const weeklyWinnerId = ownersData.find(
+        (o) => (o.matchupPoints ?? 0) === maxPoints
+      )?.roster_id;
+      ownersData.forEach((o) => {
+        o.isWeeklyWinner = o.roster_id === weeklyWinnerId;
+      });
+
+      // ------------------
+      // Top Scorer Week & Bench
+      // ------------------
       ownersData.forEach((owner) => {
         const matchup = matchupsRes.find(
           (m: any) => m.roster_id === owner.roster_id
         );
         if (!matchup?.players_points) return;
 
-        let topWeek = { player_id: "", points: 0 };
-        Object.entries(matchup.players_points).forEach(([pid, pts]) => {
-          const points = Number(pts ?? 0);
-          if (points > topWeek.points) {
-            topWeek = { player_id: pid, points };
-          }
+        // Starter MVP
+        let topStarter = { player_id: "", points: 0 };
+        matchup.starters?.forEach((pid: string) => {
+          const pts = Number(matchup.players_points[pid] ?? 0);
+          if (pts > topStarter.points)
+            topStarter = { player_id: pid, points: pts };
         });
-
         owner.topScorerWeek =
-          playersRes[topWeek.player_id]?.full_name || topWeek.player_id;
-        owner.topScorerWeekPoints = topWeek.points;
+          playersRes[topStarter.player_id]?.full_name || topStarter.player_id;
+        owner.topScorerWeekPoints = topStarter.points;
+
+        // Bench MVP
+        let topBench = { player_id: "", points: 0 };
+        const benchPlayers =
+          matchup.players?.filter(
+            (pid: string) => !matchup.starters?.includes(pid)
+          ) ?? [];
+        benchPlayers.forEach((pid: string) => {
+          const pts = Number(matchup.players_points[pid] ?? 0);
+          if (pts > topBench.points) topBench = { player_id: pid, points: pts };
+        });
+        owner.topBenchWeek =
+          playersRes[topBench.player_id]?.full_name || topBench.player_id;
+        owner.topBenchWeekPoints = topBench.points;
       });
 
-      // --------------------
+      // ------------------
       // Top Scorer Season
-      // --------------------
+      // ------------------
       const totalWeeks = Number(week);
-      const seasonPlayerPoints: Record<number, Record<string, number>> = {}; // { roster_id: { player_id: totalPoints } }
-
+      const seasonPlayerPoints: Record<number, Record<string, number>> = {};
       for (let w = 1; w <= totalWeeks; w++) {
         const matchupsWeekRes = await fetch(
           `https://api.sleeper.app/v1/league/${LEAGUE_ID}/matchups/${w}`
@@ -184,16 +230,13 @@ export default function Week() {
 
         matchupsWeek.forEach((matchup) => {
           const rosterId = matchup.roster_id;
-          if (!seasonPlayerPoints[rosterId]) {
-            seasonPlayerPoints[rosterId] = {};
-          }
-          if (matchup.players_points) {
-            Object.entries(matchup.players_points).forEach(([pid, pts]) => {
-              const points = Number(pts ?? 0);
-              if (!seasonPlayerPoints[rosterId][pid]) {
+          if (!seasonPlayerPoints[rosterId]) seasonPlayerPoints[rosterId] = {};
+          if (matchup.players_points && matchup.starters) {
+            matchup.starters.forEach((pid: string) => {
+              const pts = Number(matchup.players_points[pid] ?? 0);
+              if (!seasonPlayerPoints[rosterId][pid])
                 seasonPlayerPoints[rosterId][pid] = 0;
-              }
-              seasonPlayerPoints[rosterId][pid] += points;
+              seasonPlayerPoints[rosterId][pid] += pts;
             });
           }
         });
@@ -202,28 +245,23 @@ export default function Week() {
       ownersData.forEach((owner) => {
         const seasonPlayers = seasonPlayerPoints[owner.roster_id];
         if (!seasonPlayers) return;
-
         let topSeason = { player_id: "", points: 0 };
         Object.entries(seasonPlayers).forEach(([pid, pts]) => {
           const points = Number(pts ?? 0);
-          if (points > topSeason.points) {
-            topSeason = { player_id: pid, points };
-          }
+          if (points > topSeason.points) topSeason = { player_id: pid, points };
         });
-
         owner.topScorerSeason =
           playersRes[topSeason.player_id]?.full_name || topSeason.player_id;
         owner.topScorerSeasonPoints = topSeason.points;
       });
 
-      // --------------------
-      // Fetch weekly extras
-      // --------------------
+      // ------------------
+      // Weekly Extras
+      // ------------------
       const { data, error } = await supabase
         .from("weekly_data")
         .select("*")
         .eq("week", Number(week));
-
       if (!error && data) {
         const extras: Config["teamExtras"] = {};
         data.forEach((row: any) => {
@@ -256,29 +294,27 @@ export default function Week() {
     );
 
   return (
-    <>
-      <div className="body">
-        {leagueData && (
-          <>
-            <header>
-              <img alt="logo" className="sleeper-logo" src={logo} />
-              <h1>{leagueData.season} Power Rankings</h1>
-              <h2>
-                {leagueData.name} - Week {week}
-              </h2>
-            </header>
-          </>
-        )}
-        <Standings
-          owners={owners}
-          weeklyExtras={weeklyExtras}
-          currentWeek={Number(week)}
-          previousChampsByOwner={previousChampsByOwner}
-          currentChampRosterId={currentChampRosterId}
-          matchups={matchups}
-          nextMatchups={nextMatchups}
-        />
-      </div>
-    </>
+    <div className="body">
+      {leagueData && (
+        <>
+          <header>
+            <img alt="logo" className="sleeper-logo" src={logo} />
+            <h1>{leagueData.season} Power Rankings</h1>
+            <h2>
+              {leagueData.name} - Week {week}
+            </h2>
+          </header>
+        </>
+      )}
+      <Standings
+        owners={owners}
+        weeklyExtras={weeklyExtras}
+        currentWeek={Number(week)}
+        previousChampsByOwner={previousChampsByOwner}
+        currentChampRosterId={currentChampRosterId}
+        matchups={matchups}
+        nextMatchups={nextMatchups}
+      />
+    </div>
   );
 }
