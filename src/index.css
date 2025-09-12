@@ -353,6 +353,7 @@ header h2 {
 .name-desc p {
   margin-top: 10px;
   margin-bottom: 90px;
+  margin-right: 20px;
 }
 
 .name-desc iframe {
@@ -790,4 +791,82 @@ header h2 {
 }
 .bench-mvp {
   color: lightgrey;
+}
+
+.update-page {
+  margin: auto;
+  text-align: center;
+  max-width: 1200px;
+}
+.update-page select,
+.update-page textarea,
+.update-page button {
+  font-family: "Roboto", sans-serif;
+  font-size: 1rem;
+  color: white;
+  margin: 5px;
+}
+
+/* Textareas */
+.update-page textarea {
+  background-color: #283142;
+  border: #2e384a 3px solid;
+  border-radius: 12px;
+  padding: 0.75rem;
+  width: 90%;
+  min-height: 120px;
+  margin: auto;
+  resize: none;
+  color: white;
+  outline: none;
+  transition:
+    border 0.2s,
+    box-shadow 0.2s;
+}
+
+.update-page textarea:focus {
+  border-color: #6cc49c;
+  box-shadow: 0 0 6px #6cc49c;
+}
+
+/* Select Dropdown */
+.update-page select {
+  background-color: #283142;
+  border: 2px solid #2e384a;
+  border-radius: 12px;
+  padding: 0.5rem 0.75rem;
+  color: white;
+  outline: none;
+  transition:
+    border 0.2s,
+    box-shadow 0.2s;
+}
+
+.update-page select:focus {
+  border-color: #6cc49c;
+  box-shadow: 0 0 6px #6cc49c;
+}
+
+/* Button */
+.update-page button {
+  background-color: #6cc49c;
+  color: #161c29;
+  border: none;
+  border-radius: 12px;
+  padding: 0.5rem 1.25rem;
+  font-weight: 600;
+  cursor: pointer;
+  height: 40px;
+  transition:
+    background-color 0.2s,
+    transform 0.1s;
+}
+
+.update-page button:hover:not(:disabled) {
+  background-color: #57a983;
+}
+
+.update-page button:disabled {
+  background-color: #4c6e57;
+  cursor: not-allowed;
 }

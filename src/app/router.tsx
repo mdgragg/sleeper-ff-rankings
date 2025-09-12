@@ -49,7 +49,7 @@ export const router = createBrowserRouter([
     path: "/update",
     element: (
       <>
-        <Navbar />
+        {/* <Navbar /> */}
         <Update />
       </>
     ),

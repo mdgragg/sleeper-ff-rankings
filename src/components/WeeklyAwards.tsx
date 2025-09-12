@@ -32,15 +32,14 @@ export default function WeeklyAwards({ owners }: WeeklyAwardsProps) {
     ? Math.round(bestManager.weekPointsPossiblePerc * 100) / 100
     : 0;
 
-  const worstManager = owners.reduce((prev, curr) =>
-    (curr.weekPointsPossiblePerc ?? Infinity) <
-    (prev.weekPointsPossiblePerc ?? Infinity)
-      ? curr
-      : prev
-  );
-  const worstManagerPoints = worstManager.weekPointsPossiblePerc
-    ? Math.round(worstManager.weekPointsPossiblePerc * 100) / 100
-    : 0;
+  const worstManager = owners.reduce((prev, curr) => {
+    const prevPerc = prev.weekPointsPossiblePerc ?? 0;
+    const currPerc = curr.weekPointsPossiblePerc ?? 0;
+    return currPerc < prevPerc ? curr : prev;
+  });
+
+  const worstManagerPoints =
+    Math.round((worstManager.weekPointsPossiblePerc ?? 0) * 100) / 100;
 
   const worstLuck = owners.reduce((prev, curr) =>
     (curr.weekPointsAgainst ?? -Infinity) >

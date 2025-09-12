@@ -6,7 +6,10 @@ import type { OwnerWithRanks } from "../types";
 import logo from "/images/logo_with_text.png";
 
 interface Config {
-  teamExtras: Record<number, { blurb?: string; image?: string; gif?: string }>;
+  teamExtras: Record<
+    number,
+    { blurb?: string; image?: string; gif?: string; username?: string }
+  >;
 }
 
 // const LEAGUE_ID = import.meta.env.VITE_LEAGUE_ID;
@@ -137,14 +140,80 @@ export default function Week() {
         owner.matchupID = matchupID;
         owner.matchupPoints = matchup.points ?? 0;
 
-        // Week-specific stats
-        const ppts = parseFloat(
-          `${matchup.settings?.ppts ?? 0}.${matchup.settings?.ppts_decimal ?? 0}`
-        );
-        owner.weekPointsPossible = ppts;
-        owner.weekPointsPossiblePerc =
-          ppts > 0 ? (owner.matchupPoints / ppts) * 100 : 0;
+        // ------------------
+        // Optimal Lineup Calculation
+        // ------------------
+        interface PlayerData {
+          pid: string;
+          pos: string;
+          pts: number;
+        }
 
+        const allPlayers: PlayerData[] =
+          matchup.players?.map((pid: string): PlayerData => {
+            const pts = Number(matchup.players_points?.[pid] ?? 0);
+            const pos = playersRes[pid]?.position || "UNK";
+            return { pid, pos, pts };
+          }) ?? [];
+
+        // Separate by position
+        const qbs: PlayerData[] = allPlayers
+          .filter((p) => p.pos === "QB")
+          .sort((a, b) => b.pts - a.pts);
+        const rbs: PlayerData[] = allPlayers
+          .filter((p) => p.pos === "RB")
+          .sort((a, b) => b.pts - a.pts);
+        const wrs: PlayerData[] = allPlayers
+          .filter((p) => p.pos === "WR")
+          .sort((a, b) => b.pts - a.pts);
+        const tes: PlayerData[] = allPlayers
+          .filter((p) => p.pos === "TE")
+          .sort((a, b) => b.pts - a.pts);
+        const defs: PlayerData[] = allPlayers
+          .filter((p) => p.pos === "DEF")
+          .sort((a, b) => b.pts - a.pts);
+        const ks: PlayerData[] = allPlayers
+          .filter((p) => p.pos === "K")
+          .sort((a, b) => b.pts - a.pts);
+
+        // Build optimal lineup
+        const lineup: PlayerData[] = [];
+        if (qbs[0]) lineup.push(qbs[0]); // 1 QB
+        lineup.push(...rbs.slice(0, 2)); // 2 RB
+        lineup.push(...wrs.slice(0, 2)); // 2 WR
+        if (tes[0]) lineup.push(tes[0]); // 1 TE
+        if (ks[0]) lineup.push(ks[0]); // 1 Kicker
+        if (defs[0]) lineup.push(defs[0]); // 1 DEF
+
+        // Flex = next 2 highest from RB/WR/TE not already used
+        const usedPids = new Set(lineup.map((p) => p.pid));
+        const flexPool: PlayerData[] = [
+          ...rbs.slice(2),
+          ...wrs.slice(2),
+          ...tes.slice(1),
+        ]
+          .filter((p) => !usedPids.has(p.pid))
+          .sort((a, b) => b.pts - a.pts);
+        lineup.push(...flexPool.slice(0, 2));
+
+        // Calculate possible points
+        const optimalPoints = lineup.reduce((sum, p) => sum + p.pts, 0);
+        owner.weekPointsPossible = optimalPoints;
+        owner.weekPointsPossiblePerc =
+          optimalPoints > 0 ? (owner.matchupPoints / optimalPoints) * 100 : 0;
+
+        // console.log(
+        //   `Owner: ${owner.userName}, Played: ${owner.matchupPoints}, Optimal: ${optimalPoints}, %: ${owner.weekPointsPossiblePerc.toFixed(2)}`
+        // );
+        // console.log(
+        //   `Optimal lineup for ${owner.userName}:`,
+        //   lineup.map(
+        //     (p) =>
+        //       `${playersRes[p.pid]?.full_name || p.pid} (${p.pos}) - ${p.pts}`
+        // )
+        // );
+
+        // Opponent points
         const opponent = matchupsRes.find(
           (m: any) =>
             m.matchup_id === matchup.matchup_id &&
@@ -258,6 +327,21 @@ export default function Week() {
       // ------------------
       // Weekly Extras
       // ------------------
+      const rosterToUsername: Record<number, string> = {
+        1: "MichaelGragg",
+        2: "bmullinger",
+        3: "Jonny Chernek",
+        4: "J Cheech",
+        5: "J Dasch",
+        6: "B Opaskar",
+        7: "Brian Havrilla",
+        8: "Teddy Bald",
+        9: "Kev Mullinger",
+        10: "Ayayron101",
+        11: "Teechen",
+        12: "Courtney Chernek",
+      };
+
       const { data, error } = await supabase
         .from("weekly_data")
         .select("*")
@@ -269,6 +353,7 @@ export default function Week() {
             blurb: row.blurb,
             image: row.gifs?.[0] || "",
             gif: row.gifs?.[1] || "",
+            username: rosterToUsername[row.team_id],
           };
         });
         setWeeklyExtras(extras);
