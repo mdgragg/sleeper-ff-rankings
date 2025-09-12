@@ -870,3 +870,6 @@ header h2 {
   background-color: #4c6e57;
   cursor: not-allowed;
 }
+.team-blurb {
+  white-space: pre-wrap;
+}
