@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
+import type { OwnerWithRanks } from "../types";
 
 interface WeeklyDataRow {
   id: number;
@@ -8,60 +9,124 @@ interface WeeklyDataRow {
   blurb: string;
 }
 
-interface Owner {
-  id: number; // roster_id
-  label: string; // display name
-}
-
-const ALL_OWNERS: Owner[] = [
-  { id: 8, label: "Teddy Baldassarre" },
-  { id: 3, label: "Jonny Chernek" },
-  { id: 12, label: "Courtney Chernek" },
-  { id: 4, label: "Justin Chicchella" },
-  { id: 5, label: "Josh Dasch" },
-  { id: 1, label: "Michael Gragg" },
-  { id: 7, label: "Brian Havrilla" },
-  { id: 10, label: "Aaron Lam" },
-  { id: 2, label: "Brian Mullinger" },
-  { id: 9, label: "Kevin Mullinger" },
-  { id: 6, label: "Bryan Opaskar" },
-  { id: 11, label: "Eric Tchen" },
-];
+const LEAGUE_ID = import.meta.env.VITE_LEAGUE_ID;
 
 export default function Update() {
+  const [owners, setOwners] = useState<OwnerWithRanks[]>([]);
   const [configs, setConfigs] = useState<WeeklyDataRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedWeek, setSelectedWeek] = useState(1);
   const [savingAll, setSavingAll] = useState(false);
 
+  // Map Supabase team_id to actual display names
+  const teamIdToName: Record<number, string> = {
+    1: "Michael Gragg",
+    2: "Brien Mullinger",
+    3: "Jonny Chernek",
+    4: "Justin Chicchella",
+    5: "Josh Dasch",
+    6: "Bryan Opaskar",
+    7: "Brian Havrilla",
+    8: "Teddy Baldassarre",
+    9: "Kevin Mullinger",
+    10: "Aaron Lam",
+    11: "Eric Tchen",
+    12: "Courtney Chernek",
+  };
+
+  // Fetch owners dynamically from Sleeper API
+  useEffect(() => {
+    const fetchOwners = async () => {
+      try {
+        const rostersRes = await fetch(
+          `https://api.sleeper.app/v1/league/${LEAGUE_ID}/rosters`
+        ).then((r) => r.json());
+
+        const usersRes = await fetch(
+          `https://api.sleeper.app/v1/league/${LEAGUE_ID}/users`
+        ).then((r) => r.json());
+
+        const ownersData: OwnerWithRanks[] = rostersRes.map((roster: any) => {
+          const user = usersRes.find((u: any) => u.user_id === roster.owner_id);
+          return {
+            ownerID: roster.owner_id,
+            roster_id: roster.roster_id,
+            userName: user?.display_name || "Unknown",
+            teamName:
+              teamIdToName[roster.roster_id] || user?.display_name || "",
+            wins: roster.settings?.wins ?? 0,
+            losses: roster.settings?.losses ?? 0,
+            pointsFor: parseFloat(`${roster.settings.fpts ?? 0}`),
+            pointsAgainst: parseFloat(`${roster.settings.fpts_against ?? 0}`),
+            addDropCount: 0,
+            TradeCount: 0,
+            matchupPoints: 0,
+            teamAvatar: user?.metadata?.avatar || "",
+          };
+        });
+
+        // Sort owners same as Standings component
+        const ownersSorted = ownersData.slice().sort((a, b) => {
+          if (a.manualRank !== undefined && b.manualRank !== undefined) {
+            return a.manualRank - b.manualRank;
+          }
+          if (a.manualRank !== undefined) return -1;
+          if (b.manualRank !== undefined) return 1;
+
+          if (b.wins !== a.wins) return b.wins - a.wins;
+
+          return b.pointsFor - a.pointsFor;
+        });
+
+        setOwners(ownersSorted);
+      } catch (err) {
+        console.error("Failed to fetch owners:", err);
+      }
+    };
+
+    fetchOwners();
+  }, []);
+
+  // Fetch weekly configs from Supabase
   const fetchConfigs = async (week: number) => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from("weekly_data")
-      .select("*")
-      .eq("week", week);
+    try {
+      const { data, error } = await supabase
+        .from("weekly_data")
+        .select("*")
+        .eq("week", week);
 
-    if (error) {
-      console.error("Error fetching weekly data:", error);
-      setConfigs([]);
-    } else {
-      const merged = ALL_OWNERS.map((owner) => {
-        const existing = data?.find((d) => Number(d.team_id) === owner.id);
+      if (error) {
+        console.error("Error fetching weekly data:", error);
+        setConfigs([]);
+        setLoading(false);
+        return;
+      }
+
+      // Map Supabase team_id to owner names dynamically
+      const merged: WeeklyDataRow[] = owners.map((owner) => {
+        const existing = data?.find((d) => d.team_id === owner.roster_id);
         return {
           id: existing?.id ?? 0,
           week,
-          team_id: owner.id,
+          team_id: owner.roster_id,
           blurb: existing?.blurb ?? "",
         };
       });
+
       setConfigs(merged);
+    } catch (err) {
+      console.error("Failed to fetch configs:", err);
+      setConfigs([]);
     }
     setLoading(false);
   };
 
   useEffect(() => {
-    fetchConfigs(selectedWeek);
-  }, [selectedWeek]);
+    if (owners.length > 0) {
+      fetchConfigs(selectedWeek);
+    }
+  }, [selectedWeek, owners]);
 
   const handleChange = (team_id: number, value: string) => {
     setConfigs((prev) =>
@@ -72,10 +137,8 @@ export default function Update() {
   const handleSaveAll = async () => {
     setSavingAll(true);
     try {
-      // Remove old entries for the week
       await supabase.from("weekly_data").delete().eq("week", selectedWeek);
 
-      // Insert all at once
       const { error } = await supabase.from("weekly_data").insert(
         configs.map((c) => ({
           week: c.week,
@@ -98,8 +161,11 @@ export default function Update() {
 
   if (loading)
     return (
-      <div className="flex flex-col items-center justify-center h-64">
-        <div className="animate-pulse text-lg">Loading league data...</div>
+      <div className="full-screen-loading">
+        <div className="loading-bar">
+          <div className="loading-bar-progress"></div>
+        </div>
+        <p>Loading league data...</p>
       </div>
     );
 
@@ -107,7 +173,6 @@ export default function Update() {
     <div className="update-page p-6 max-w-4xl mx-auto">
       <h1 className="text-2xl font-bold mb-6">Update Weekly Rankings</h1>
 
-      {/* Week Picker */}
       <div className="mb-6">
         <label className="block mb-2 font-medium">Select Week:</label>
         <select
@@ -127,9 +192,10 @@ export default function Update() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {configs.map((team) => {
-          const ownerLabel = ALL_OWNERS.find(
-            (o) => o.id === team.team_id
-          )?.label;
+          const ownerLabel = owners.find(
+            (o) => o.roster_id === team.team_id
+          )?.teamName;
+
           return (
             <div
               key={team.team_id}

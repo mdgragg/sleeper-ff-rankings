@@ -59,7 +59,11 @@ export default function TeamCard({
     }
   }
 
-  function isTied(owners: OwnerWithRanks[], key: keyof Owner, ownerID: string) {
+  function isTied(
+    owners: OwnerWithRanks[],
+    key: keyof OwnerWithRanks,
+    ownerID: string
+  ) {
     const value = owners.find((o) => o.ownerID === ownerID)?.[key];
     return owners.filter((o) => o[key] === value).length > 1;
   }
@@ -182,12 +186,13 @@ export default function TeamCard({
               {owner.topBenchWeek} (
               {owner.topBenchWeekPoints?.toFixed(2) ?? "0"})
             </p>
-            {/* <p>
-              Top Scorer Season: {owner.topScorerSeason} (
-              {owner.topScorerSeasonPoints?.toFixed(2) ?? "0"})
-            </p> */}
 
             <h3>Season Totals</h3>
+            <p>
+              <b> Top Scorer: </b>
+              {owner.topScorerSeason} (
+              {owner.topScorerSeasonPoints?.toFixed(2) ?? "0"})
+            </p>
             <p>
               <b> Total Points: </b>
               {owner.pointsFor.toFixed(2)}{" "}

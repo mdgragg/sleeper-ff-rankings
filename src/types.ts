@@ -31,6 +31,8 @@ export interface Owner {
   weekPointsPossible?: number;
   weekPointsPossiblePerc?: number;
   weekPointsAgainst?: number;
+  weeklyAddDropCount?: number;
+  weeklyTradeCount?: number;
 
   isWeeklyWinner?: boolean;
 }

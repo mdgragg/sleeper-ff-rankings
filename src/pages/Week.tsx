@@ -12,8 +12,7 @@ interface Config {
   >;
 }
 
-// const LEAGUE_ID = import.meta.env.VITE_LEAGUE_ID;
-const LEAGUE_ID = "1247579709596782592";
+const LEAGUE_ID = import.meta.env.VITE_LEAGUE_ID;
 
 const previousChampsByOwner: Record<string, string> = {
   "779230727840645120": "🏆 2024 Champ",
@@ -117,9 +116,58 @@ export default function Week() {
           topScorerSeasonPoints: 0,
         };
       });
+      function computeTiedRanks(
+        owners: OwnerWithRanks[],
+        key: keyof OwnerWithRanks
+      ): Record<string, number> {
+        // Sort descending (higher is better)
+        const sorted = [...owners].sort(
+          (a, b) => (b[key] as number) - (a[key] as number)
+        );
+        const ranks: Record<string, number> = {};
+        let currentRank = 1;
 
-      // Count adds/drops and trades
+        for (let i = 0; i < sorted.length; i++) {
+          const owner = sorted[i];
+          if (i > 0 && owner[key] === sorted[i - 1][key]) {
+            // Tie: same rank as previous
+            ranks[owner.ownerID] = ranks[sorted[i - 1].ownerID];
+          } else {
+            // New rank
+            ranks[owner.ownerID] = currentRank;
+          }
+          currentRank++;
+        }
+
+        return ranks;
+      }
+
+      // ------------------
+      // Count adds/drops and trades for THIS WEEK (keep for WeeklyAwards)
+      // ------------------
       txRes.forEach((tx: any) => {
+        tx.roster_ids.forEach((rid: number) => {
+          const owner = ownersData.find((o) => o.roster_id === rid);
+          if (!owner) return;
+          if (tx.type === "free_agent")
+            owner.weeklyAddDropCount = (owner.weeklyAddDropCount || 0) + 1;
+          if (tx.type === "trade")
+            owner.weeklyTradeCount = (owner.weeklyTradeCount || 0) + 1;
+        });
+      });
+
+      // ------------------
+      // Count adds/drops and trades FOR SEASON TOTALS
+      // ------------------
+      let seasonTx: any[] = [];
+      for (let w = 1; w <= Number(week); w++) {
+        const txWeekRes = await fetch(
+          `https://api.sleeper.app/v1/league/${LEAGUE_ID}/transactions/${w}`
+        ).then((r) => r.json());
+        seasonTx = seasonTx.concat(txWeekRes);
+      }
+
+      seasonTx.forEach((tx: any) => {
         tx.roster_ids.forEach((rid: number) => {
           const owner = ownersData.find((o) => o.roster_id === rid);
           if (!owner) return;
@@ -322,6 +370,30 @@ export default function Week() {
         owner.topScorerSeason =
           playersRes[topSeason.player_id]?.full_name || topSeason.player_id;
         owner.topScorerSeasonPoints = topSeason.points;
+      });
+
+      const pointsForRanks = computeTiedRanks(ownersData, "pointsFor");
+      const pointsAgainstRanks = computeTiedRanks(ownersData, "pointsAgainst");
+      const pointsPossibleRanks = computeTiedRanks(
+        ownersData,
+        "pointsPossible"
+      );
+      const pointsPossiblePercRanks = computeTiedRanks(
+        ownersData,
+        "pointsPossiblePerc"
+      );
+      const addDropRanks = computeTiedRanks(ownersData, "addDropCount");
+      const tradeRanks = computeTiedRanks(ownersData, "TradeCount");
+
+      ownersData.forEach((owner) => {
+        owner.ranks = {
+          pointsForRank: pointsForRanks[owner.ownerID],
+          pointsAgainstRank: pointsAgainstRanks[owner.ownerID],
+          pointsPossibleRank: pointsPossibleRanks[owner.ownerID],
+          pointsPossiblePercRank: pointsPossiblePercRanks[owner.ownerID],
+          addDropRank: addDropRanks[owner.ownerID],
+          tradeRank: tradeRanks[owner.ownerID],
+        };
       });
 
       // ------------------

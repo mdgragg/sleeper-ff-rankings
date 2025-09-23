@@ -24,27 +24,53 @@ export default function Standings({
   matchups,
   nextMatchups,
 }: StandingsProps) {
-  // Step 1: Sort owners for display
+  // Step 1: Sort owners for display (manual rank > wins > points)
   const ownersSorted = owners.slice().sort((a, b) => {
-    if (a.manualRank !== undefined && b.manualRank !== undefined) {
+    if (a.manualRank !== undefined && b.manualRank !== undefined)
       return a.manualRank - b.manualRank;
-    }
     if (a.manualRank !== undefined) return -1;
     if (b.manualRank !== undefined) return 1;
-
     if (b.wins !== a.wins) return b.wins - a.wins;
-
     return b.pointsFor - a.pointsFor;
   });
 
+  // Step 2: Build tie-aware ranks
+  function buildRanks<T extends { ownerID: string | number }>(
+    arr: T[],
+    key: keyof T
+  ): Record<string | number, number> {
+    const sorted = [...arr].sort(
+      (a, b) => Number(b[key] ?? 0) - Number(a[key] ?? 0)
+    );
+    let currentRank = 1;
+    const ranks: Record<string | number, number> = {};
+
+    for (let i = 0; i < sorted.length; i++) {
+      const owner = sorted[i];
+      const prev = sorted[i - 1];
+      if (i > 0 && Number(owner[key]) === Number(prev[key])) {
+        ranks[owner.ownerID] = ranks[prev.ownerID];
+      } else {
+        ranks[owner.ownerID] = currentRank;
+      }
+      currentRank++;
+    }
+
+    return ranks;
+  }
+
+  const addDropRanks = buildRanks(ownersSorted, "addDropCount");
+  const tradeRanks = buildRanks(ownersSorted, "TradeCount");
+
+  // Step 3: Build ownersWithRanks
   const ownersWithRanks: OwnerWithRanks[] = ownersSorted.map((owner) => {
     const rankHelper = (arr: Owner[], key: keyof Owner) => {
       const sorted = [...arr].sort(
         (a, b) => (b[key] as number) - (a[key] as number)
       );
-      const idx = sorted.findIndex((o) => o.ownerID === owner.ownerID);
-      return idx + 1;
+      return sorted.findIndex((o) => o.ownerID === owner.ownerID) + 1;
     };
+
     return {
       ...owner,
       ranks: {
@@ -52,8 +78,8 @@ export default function Standings({
         pointsAgainstRank: rankHelper(ownersSorted, "pointsAgainst"),
         pointsPossibleRank: rankHelper(ownersSorted, "pointsPossible"),
         pointsPossiblePercRank: rankHelper(ownersSorted, "pointsPossiblePerc"),
-        addDropRank: rankHelper(ownersSorted, "addDropCount"),
-        tradeRank: rankHelper(ownersSorted, "TradeCount"),
+        addDropRank: addDropRanks[owner.ownerID],
+        tradeRank: tradeRanks[owner.ownerID],
       },
     };
   });
@@ -68,7 +94,7 @@ export default function Standings({
               src={
                 owner.teamAvatar ||
                 (owner.avatar
-                  ? "https://sleepercdn.com/avatars/thumbs/" + owner.avatar
+                  ? `https://sleepercdn.com/avatars/thumbs/${owner.avatar}`
                   : "")
               }
               className="avatar-link"
@@ -81,7 +107,7 @@ export default function Standings({
 
       <div className="note">
         <h3>2025 Update</h3>
-        <p>Click on team Logo to see season stats and rankings.</p>
+        <p>Click on team logo to see season stats and rankings.</p>
       </div>
 
       <div className="standings">
