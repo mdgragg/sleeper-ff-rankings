@@ -105,7 +105,9 @@ export default function Update() {
 
       // Map Supabase team_id to owner names dynamically
       const merged: WeeklyDataRow[] = owners.map((owner) => {
-        const existing = data?.find((d) => d.team_id === owner.roster_id);
+        const existing = data?.find(
+          (d) => Number(d.team_id) === Number(owner.roster_id)
+        );
         return {
           id: existing?.id ?? 0,
           week,
@@ -137,8 +139,10 @@ export default function Update() {
   const handleSaveAll = async () => {
     setSavingAll(true);
     try {
+      // Remove old rows for this week
       await supabase.from("weekly_data").delete().eq("week", selectedWeek);
 
+      // Insert all current configs fresh
       const { error } = await supabase.from("weekly_data").insert(
         configs.map((c) => ({
           week: c.week,
@@ -149,6 +153,7 @@ export default function Update() {
 
       if (error) throw error;
 
+      // Refresh after save so textareas repopulate
       await fetchConfigs(selectedWeek);
       alert("All teams saved!");
     } catch (err) {
