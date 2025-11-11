@@ -7,7 +7,13 @@ interface TeamCardProps {
   owners: OwnerWithRanks[];
   weeklyExtras: Record<
     number,
-    { blurb?: string; image?: string; gif?: string }
+    {
+      blurb?: string;
+      image?: string;
+      gifs?: string;
+      username?: string;
+      topWeeks?: number[];
+    }
   >;
   currentWeek: number;
   matchups: Record<string, Owner[]>;
@@ -100,9 +106,22 @@ export default function TeamCard({
           <span className="owner-name">@{owner.userName}</span>
 
           {extras.image && <img src={extras.image} alt="team" />}
-          {extras.gif && <iframe src={extras.gif} title="team gif"></iframe>}
 
           <p className="team-blurb">{extras.blurb || ""}</p>
+          {/* {extras.gifs && (
+            <iframe
+              src={extras.gifs}
+              title="team gif"
+              className="team-gif mt-2 rounded"
+              style={{ width: "100%", height: "150px", border: "none" }}
+            ></iframe>
+          )} */}
+
+          {extras.topWeeks && extras.topWeeks.length > 0 && (
+            <p className="text-sm text-gray-400 mt-2">
+              🏆 Top Scoring Weeks: {extras.topWeeks.join(", ")}
+            </p>
+          )}
         </div>
         <div
           className={`bottom ${

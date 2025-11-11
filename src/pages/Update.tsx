@@ -3,10 +3,11 @@ import { supabase } from "../lib/supabase";
 import type { OwnerWithRanks } from "../types";
 
 interface WeeklyDataRow {
-  id: number;
+  id?: number;
   week: number;
   team_id: number;
   blurb: string;
+  gifs?: string;
 }
 
 const LEAGUE_ID = import.meta.env.VITE_LEAGUE_ID;
@@ -18,7 +19,7 @@ export default function Update() {
   const [selectedWeek, setSelectedWeek] = useState(1);
   const [savingAll, setSavingAll] = useState(false);
 
-  // Map Supabase team_id to actual display names
+  // Map Supabase team_id to display names
   const teamIdToName: Record<number, string> = {
     1: "Michael Gragg",
     2: "Brien Mullinger",
@@ -34,17 +35,18 @@ export default function Update() {
     12: "Courtney Chernek",
   };
 
-  // Fetch owners dynamically from Sleeper API
+  // Fetch owners from Sleeper API
   useEffect(() => {
     const fetchOwners = async () => {
       try {
-        const rostersRes = await fetch(
-          `https://api.sleeper.app/v1/league/${LEAGUE_ID}/rosters`
-        ).then((r) => r.json());
-
-        const usersRes = await fetch(
-          `https://api.sleeper.app/v1/league/${LEAGUE_ID}/users`
-        ).then((r) => r.json());
+        const [rostersRes, usersRes] = await Promise.all([
+          fetch(`https://api.sleeper.app/v1/league/${LEAGUE_ID}/rosters`).then(
+            (r) => r.json()
+          ),
+          fetch(`https://api.sleeper.app/v1/league/${LEAGUE_ID}/users`).then(
+            (r) => r.json()
+          ),
+        ]);
 
         const ownersData: OwnerWithRanks[] = rostersRes.map((roster: any) => {
           const user = usersRes.find((u: any) => u.user_id === roster.owner_id);
@@ -65,16 +67,13 @@ export default function Update() {
           };
         });
 
-        // Sort owners same as Standings component
+        // Sort owners (same logic as standings)
         const ownersSorted = ownersData.slice().sort((a, b) => {
-          if (a.manualRank !== undefined && b.manualRank !== undefined) {
+          if (a.manualRank !== undefined && b.manualRank !== undefined)
             return a.manualRank - b.manualRank;
-          }
           if (a.manualRank !== undefined) return -1;
           if (b.manualRank !== undefined) return 1;
-
           if (b.wins !== a.wins) return b.wins - a.wins;
-
           return b.pointsFor - a.pointsFor;
         });
 
@@ -87,7 +86,7 @@ export default function Update() {
     fetchOwners();
   }, []);
 
-  // Fetch weekly configs from Supabase
+  // Fetch weekly data from Supabase
   const fetchConfigs = async (week: number) => {
     setLoading(true);
     try {
@@ -96,23 +95,18 @@ export default function Update() {
         .select("*")
         .eq("week", week);
 
-      if (error) {
-        console.error("Error fetching weekly data:", error);
-        setConfigs([]);
-        setLoading(false);
-        return;
-      }
+      if (error) throw error;
 
-      // Map Supabase team_id to owner names dynamically
       const merged: WeeklyDataRow[] = owners.map((owner) => {
         const existing = data?.find(
           (d) => Number(d.team_id) === Number(owner.roster_id)
         );
         return {
-          id: existing?.id ?? 0,
+          id: existing?.id,
           week,
           team_id: owner.roster_id,
           blurb: existing?.blurb ?? "",
+          gifs: existing?.gifs ?? "",
         };
       });
 
@@ -120,10 +114,12 @@ export default function Update() {
     } catch (err) {
       console.error("Failed to fetch configs:", err);
       setConfigs([]);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
+  // Refetch when week or owners change
   useEffect(() => {
     if (owners.length > 0) {
       fetchConfigs(selectedWeek);
@@ -139,21 +135,19 @@ export default function Update() {
   const handleSaveAll = async () => {
     setSavingAll(true);
     try {
-      // Remove old rows for this week
-      await supabase.from("weekly_data").delete().eq("week", selectedWeek);
-
-      // Insert all current configs fresh
-      const { error } = await supabase.from("weekly_data").insert(
+      // Use UPSERT instead of delete+insert
+      const { error } = await supabase.from("weekly_data").upsert(
         configs.map((c) => ({
           week: c.week,
           team_id: c.team_id,
           blurb: c.blurb,
-        }))
+          gifs: c.gifs ? [c.gifs] : [],
+        })),
+        { onConflict: "team_id,week" }
       );
 
       if (error) throw error;
 
-      // Refresh after save so textareas repopulate
       await fetchConfigs(selectedWeek);
       alert("All teams saved!");
     } catch (err) {
@@ -178,19 +172,27 @@ export default function Update() {
     <div className="update-page p-6 max-w-4xl mx-auto">
       <h1 className="text-2xl font-bold mb-6">Update Weekly Rankings</h1>
 
-      <div className="mb-6">
-        <label className="block mb-2 font-medium">Select Week:</label>
-        <select
-          value={selectedWeek}
-          onChange={(e) => setSelectedWeek(Number(e.target.value))}
+      <div className="mb-6 flex items-center gap-4">
+        <div>
+          <label className="block mb-2 font-medium">Select Week:</label>
+          <select
+            value={selectedWeek}
+            onChange={(e) => setSelectedWeek(Number(e.target.value))}
+            className="rounded px-2 py-1 bg-gray-800 text-white"
+          >
+            {Array.from({ length: 16 }, (_, i) => i + 1).map((w) => (
+              <option key={w} value={w}>
+                Week {w}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <button
+          onClick={handleSaveAll}
+          disabled={savingAll}
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
         >
-          {Array.from({ length: 16 }, (_, i) => i + 1).map((w) => (
-            <option key={w} value={w}>
-              Week {w}
-            </option>
-          ))}
-        </select>
-        <button onClick={handleSaveAll} disabled={savingAll}>
           {savingAll ? "Saving..." : "SAVE"}
         </button>
       </div>
@@ -207,11 +209,28 @@ export default function Update() {
               className="border rounded-lg p-4 shadow-sm bg-[#283142]"
             >
               <h2 className="font-semibold mb-2">{ownerLabel}</h2>
+              <input
+                type="text"
+                value={team.gifs || ""}
+                onChange={(e) =>
+                  setConfigs((prev) =>
+                    prev.map((c) =>
+                      c.team_id === team.team_id
+                        ? { ...c, gifs: e.target.value }
+                        : c
+                    )
+                  )
+                }
+                placeholder="Enter GIF/image link (optional)"
+                className="w-full rounded bg-gray-900 text-white p-2"
+              />
               <textarea
                 value={team.blurb}
                 onChange={(e) => handleChange(team.team_id, e.target.value)}
                 placeholder="Enter weekly blurb..."
+                className="w-full rounded bg-gray-900 text-white p-2 h-24"
               />
+              <hr></hr>
             </div>
           );
         })}

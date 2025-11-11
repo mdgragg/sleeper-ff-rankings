@@ -3,8 +3,12 @@ function SeasonRecap() {
     <>
       <header>
         <div className="inner">
-          <h1>Go to /week/#</h1>
-          <h3>Or /update</h3>
+          <h1>
+            Go to <a href="/week/1">/week/#</a>
+          </h1>
+          <h3>
+            Or <a href="/update">/update</a>
+          </h3>
         </div>
       </header>
 

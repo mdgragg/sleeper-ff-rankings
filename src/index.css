@@ -808,7 +808,8 @@ header h2 {
 }
 
 /* Textareas */
-.update-page textarea {
+.update-page textarea,
+.update-page input {
   background-color: #283142;
   border: #2e384a 3px solid;
   border-radius: 12px;
@@ -824,9 +825,19 @@ header h2 {
     box-shadow 0.2s;
 }
 
-.update-page textarea:focus {
+.update-page input {
+  min-height: 30px;
+  margin-bottom: 15px;
+}
+
+.update-page textarea:focus,
+.update-page input:focus {
   border-color: #6cc49c;
   box-shadow: 0 0 6px #6cc49c;
+}
+.update-page hr {
+  border: 1px solid #283142;
+  margin: 20px auto 30px;
 }
 
 /* Select Dropdown */

@@ -6,7 +6,7 @@ interface StandingsProps {
   owners: Owner[];
   weeklyExtras: Record<
     number,
-    { blurb?: string; image?: string; gif?: string }
+    { blurb?: string; image?: string; gifs?: string; topWeeks?: number[] }
   >;
   currentWeek: number;
   previousChampsByOwner: Record<string, string>;
