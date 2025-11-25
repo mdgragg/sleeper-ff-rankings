@@ -420,6 +420,13 @@ header h2 {
   font-size: 12px;
   margin-top: 10px;
 }
+.top-scorer {
+  color: #6cc49c;
+  font-size: 12px;
+  margin-top: 20px;
+
+  display: block;
+}
 
 .stats {
   background: #2e384a;

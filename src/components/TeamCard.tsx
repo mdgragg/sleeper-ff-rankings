@@ -12,7 +12,7 @@ interface TeamCardProps {
       image?: string;
       gifs?: string;
       username?: string;
-      topWeeks?: number[];
+      topWeeks?: string;
     }
   >;
   currentWeek: number;
@@ -107,21 +107,16 @@ export default function TeamCard({
 
           {extras.image && <img src={extras.image} alt="team" />}
 
-          <p className="team-blurb">{extras.blurb || ""}</p>
-          {/* {extras.gifs && (
-            <iframe
-              src={extras.gifs}
-              title="team gif"
-              className="team-gif mt-2 rounded"
-              style={{ width: "100%", height: "150px", border: "none" }}
-            ></iframe>
-          )} */}
+          <p className="team-blurb">
+            {extras.blurb || ""}
 
-          {extras.topWeeks && extras.topWeeks.length > 0 && (
-            <p className="text-sm text-gray-400 mt-2">
-              🏆 Top Scoring Weeks: {extras.topWeeks.join(", ")}
-            </p>
-          )}
+            {extras.topWeeks && (
+              <span className="top-scorer">
+                {" "}
+                🏆 Top Scorer for Week {extras.topWeeks}
+              </span>
+            )}
+          </p>
         </div>
         <div
           className={`bottom ${

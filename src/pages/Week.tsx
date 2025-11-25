@@ -13,7 +13,7 @@ interface Config {
       image?: string;
       gifs?: string;
       username?: string;
-      topWeeks?: number[];
+      topWeeks?: string;
     }
   >;
 }
@@ -427,51 +427,6 @@ export default function Week() {
         12: "Courtney Chernek",
       };
 
-      // const { data, error } = await supabase.from("weekly_data").select("*");
-
-      // if (!error && data) {
-      //   const extras: Config["teamExtras"] = {};
-
-      //   // Base blurbs/GIFs
-      //   data.forEach((row: any) => {
-      //     if (!extras[row.team_id]) {
-      //       extras[row.team_id] = {
-      //         blurb: row.blurb,
-      //         image: row.gifs?.[0] || "",
-      //         gifs: row.gifs || "",
-      //         username: rosterToUsername[row.team_id],
-      //       };
-      //     }
-      //   });
-
-      //   // Find all weeks where each team scored highest
-      //   const teamHighWeeks: Record<number, number[]> = {};
-      //   const weeks = [...new Set(data.map((d) => d.week))];
-
-      //   weeks.forEach((w) => {
-      //     const weekRows = data.filter((d) => d.week === w && d.points != null);
-      //     if (weekRows.length === 0) return;
-
-      //     const maxPoints = Math.max(...weekRows.map((d) => Number(d.points)));
-      //     const topTeams = weekRows
-      //       .filter((d) => Number(d.points) === maxPoints)
-      //       .map((d) => d.team_id);
-
-      //     topTeams.forEach((teamId) => {
-      //       if (!teamHighWeeks[teamId]) teamHighWeeks[teamId] = [];
-      //       teamHighWeeks[teamId].push(w);
-      //     });
-      //   });
-
-      //   // Merge top scoring weeks into extras
-      //   Object.entries(teamHighWeeks).forEach(([teamId, weeks]) => {
-      //     if (!extras[Number(teamId)]) extras[Number(teamId)] = {};
-      //     extras[Number(teamId)].topWeeks = weeks;
-      //   });
-
-      //   setWeeklyExtras(extras);
-      // }
-
       const { data, error } = await supabase
         .from("weekly_data")
         .select("*")
@@ -484,6 +439,7 @@ export default function Week() {
             image: row.gifs?.[0] || "",
             gifs: row.gifs || "",
             username: rosterToUsername[row.team_id],
+            topWeeks: row.top_weeks || "",
           };
         });
         setWeeklyExtras(extras);
