@@ -79,7 +79,7 @@ export default function TeamCard({
       <li
         data-place={idx + 1}
         id={owner.userName}
-        className={`container-${idx} container ${
+        className={`container-${idx}  container ${
           owner.isWeeklyWinner ? "weekly-winner" : ""
         }`}
       >
@@ -97,6 +97,8 @@ export default function TeamCard({
           onClick={() => setModalOpen(true)}
           style={{ cursor: "pointer" }}
         />
+        <span className={` playoffs playoffs-${idx}`}>✓</span>
+        <span className={` eliminated eliminated-${idx}`}>x</span>
         <div className="name-desc">
           <h3>
             {owner.teamName} ({owner.wins}-{owner.losses}

@@ -106,8 +106,12 @@ export default function Standings({
       <WeeklyAwards owners={ownersWithRanks} currentWeek={currentWeek} />
 
       <div className="note">
-        <h3>2025 Update</h3>
-        <p>Click on team logo to see season stats and rankings.</p>
+        <h3>Playoffs?! </h3>
+        <p>
+          {" "}
+          <span className={` playoffs-icon`}>✓</span> = Clinched Playoffs{" "}
+          <span className={` eliminated-icon`}>x</span> = Eliminated <br></br>
+        </p>
       </div>
 
       <div className="standings">

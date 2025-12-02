@@ -247,44 +247,65 @@ header h2 {
   margin: 2px 5px;
 }
 
-.clinched-playoffs {
+.playoffs,
+.eliminated {
+  background: #6cc49c;
+  border: solid 2px #2e384a;
+  border-radius: 50%;
+  color: #2e384a;
   position: absolute;
-  top: 15px;
-  right: 15px;
-  color: #af67fb;
-  font-size: 12px;
-  font-weight: 600;
-  width: 100px;
+  top: 130px;
+  left: -15px;
+  width: 15px;
+  height: 15px;
+  padding: 7px;
+  font-size: 1rem;
+  font-weight: 500;
+  text-align: center;
+  z-index: 3;
 }
 
 .eliminated {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  color: #f85a8b;
-  font-size: 12px;
-  font-weight: 600;
-  width: 80px;
+  background: #f85a8b;
+  padding: 3px 6px 9px;
 }
 
-.seed {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  color: #6cc49c;
-  font-size: 12px;
-  font-weight: 600;
-  width: 80px;
+.playoffs-icon,
+.eliminated-icon {
+  background: #6cc49c;
+  border: solid 2px #2e384a;
+  border-radius: 50%;
+  color: #2e384a;
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+
+  padding: 3px 6px 9px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+.eliminated-icon {
+  background: #f85a8b;
 }
 
-.hunt {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  color: #e7692f;
-  font-size: 12px;
-  font-weight: 600;
-  width: 80px;
+.playoffs-11,
+.playoffs-10,
+.playoffs-9,
+.playoffs-8,
+.playoffs-7,
+.playoffs-6,
+.playoffs-5 {
+  display: none;
+}
+
+.eliminated-0,
+.eliminated-1,
+.eliminated-2,
+.eliminated-3,
+.eliminated-4,
+.eliminated-5,
+.eliminated-6 {
+  display: none;
 }
 
 .weekly-winner {
@@ -292,10 +313,13 @@ header h2 {
   box-shadow: 0px 0px 10px 5px #6cc49c;
 }
 
-.playoffs {
+/* .container-0,
+.container-1,
+.container-2,
+.container-3 {
   border: #af67fb 4px solid;
   box-shadow: 0px 0px 10px 5px #af67fb;
-}
+} */
 
 .wins {
   font-size: 14px;
@@ -711,6 +735,11 @@ header h2 {
   .name-desc img {
     width: 85%;
     margin: 15px auto;
+  }
+
+  .playoffs,
+  .eliminated {
+    top: 45px;
   }
 }
 
