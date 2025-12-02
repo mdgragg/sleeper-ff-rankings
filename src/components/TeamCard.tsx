@@ -115,7 +115,7 @@ export default function TeamCard({
             {extras.topWeeks && (
               <span className="top-scorer">
                 {" "}
-                🏆 Top Scorer for Week {extras.topWeeks}
+                🏆 Top Scorer for Week{extras.topWeeks}
               </span>
             )}
           </p>
