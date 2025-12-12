@@ -293,8 +293,7 @@ header h2 {
 .playoffs-9,
 .playoffs-8,
 .playoffs-7,
-.playoffs-6,
-.playoffs-5 {
+.playoffs-6 {
   display: none;
 }
 
@@ -303,8 +302,7 @@ header h2 {
 .eliminated-2,
 .eliminated-3,
 .eliminated-4,
-.eliminated-5,
-.eliminated-6 {
+.eliminated-5 {
   display: none;
 }
 
