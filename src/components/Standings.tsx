@@ -37,10 +37,10 @@ export default function Standings({
   // Step 2: Build tie-aware ranks
   function buildRanks<T extends { ownerID: string | number }>(
     arr: T[],
-    key: keyof T
+    key: keyof T,
   ): Record<string | number, number> {
     const sorted = [...arr].sort(
-      (a, b) => Number(b[key] ?? 0) - Number(a[key] ?? 0)
+      (a, b) => Number(b[key] ?? 0) - Number(a[key] ?? 0),
     );
     let currentRank = 1;
     const ranks: Record<string | number, number> = {};
@@ -66,7 +66,7 @@ export default function Standings({
   const ownersWithRanks: OwnerWithRanks[] = ownersSorted.map((owner) => {
     const rankHelper = (arr: Owner[], key: keyof Owner) => {
       const sorted = [...arr].sort(
-        (a, b) => (b[key] as number) - (a[key] as number)
+        (a, b) => (b[key] as number) - (a[key] as number),
       );
       return sorted.findIndex((o) => o.ownerID === owner.ownerID) + 1;
     };
@@ -103,15 +103,12 @@ export default function Standings({
         ))}
       </div>
 
-      <WeeklyAwards owners={ownersWithRanks} currentWeek={currentWeek} />
-
+      {currentWeek > 0 && (
+        <WeeklyAwards owners={ownersWithRanks} currentWeek={currentWeek} />
+      )}
       <div className="note">
-        <h3>Playoffs?! </h3>
-        <p>
-          {" "}
-          <span className={` playoffs-icon`}>✓</span> = Clinched Playoffs{" "}
-          <span className={` eliminated-icon`}>x</span> = Eliminated <br></br>
-        </p>
+        <h3>Update </h3>
+        <p>View other pages by clicking nav in top right of page</p>
       </div>
 
       <div className="standings">

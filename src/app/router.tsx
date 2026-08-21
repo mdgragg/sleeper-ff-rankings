@@ -1,10 +1,13 @@
 import { createBrowserRouter } from "react-router-dom";
-import Navbar from "../components/Navbar";
+// import Navbar from "../components/Navbar";
+// import NavDrawer from "../components/NavDrawer";
 
 import Home from "../pages/Home";
 import Week from "../pages/Week";
 import History from "../pages/History";
 import Update from "../pages/Update";
+import MarketShare from "../pages/MarketShare";
+import Activity from "../pages/Activity";
 
 // import Awards from "../pages/Awards";
 
@@ -13,7 +16,6 @@ export const router = createBrowserRouter([
     path: "/",
     element: (
       <>
-        {/* <Navbar /> */}
         <Home />
       </>
     ),
@@ -30,8 +32,23 @@ export const router = createBrowserRouter([
     path: "/history",
     element: (
       <>
-        <Navbar />
         <History />{" "}
+      </>
+    ),
+  },
+  {
+    path: "/market-share",
+    element: (
+      <>
+        <MarketShare />{" "}
+      </>
+    ),
+  },
+  {
+    path: "/activity",
+    element: (
+      <>
+        <Activity />{" "}
       </>
     ),
   },

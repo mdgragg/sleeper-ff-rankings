@@ -27,6 +27,7 @@ export default function TeamCard({
   owners,
   idx,
   weeklyExtras,
+  currentWeek,
   matchups,
   nextMatchups,
   previousChampsByOwner,
@@ -34,9 +35,18 @@ export default function TeamCard({
 }: TeamCardProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const extras = weeklyExtras[owner.roster_id] || {};
+
+  // No games have been played in the preseason, so there's no last/next
+  // week to show. With no scores to crown a winner, the highlight goes to
+  // the top ranked team instead.
+  const isPreseason = currentWeek === 0;
+  const isHighlighted = isPreseason ? idx === 0 : !!owner.isWeeklyWinner;
+  const isChamp =
+    owner.roster_id === currentChampRosterId ||
+    !!previousChampsByOwner[owner.ownerID];
   const nextOpp =
     nextMatchups[owner.nextMatchupID || ""]?.filter(
-      (o) => o.roster_id !== owner.roster_id
+      (o) => o.roster_id !== owner.roster_id,
     ) ?? [];
 
   const avatarUrl =
@@ -68,7 +78,7 @@ export default function TeamCard({
   function isTied(
     owners: OwnerWithRanks[],
     key: keyof OwnerWithRanks,
-    ownerID: string
+    ownerID: string,
   ) {
     const value = owners.find((o) => o.ownerID === ownerID)?.[key];
     return owners.filter((o) => o[key] === value).length > 1;
@@ -80,11 +90,11 @@ export default function TeamCard({
         data-place={idx + 1}
         id={owner.userName}
         className={`container-${idx}  container ${
-          owner.isWeeklyWinner ? "weekly-winner" : ""
+          isHighlighted ? "weekly-winner" : ""
         }`}
       >
         <span
-          className={`ranking ${owner.isWeeklyWinner ? "weekly-winner-rank" : ""}`}
+          className={`ranking ${isHighlighted ? "weekly-winner-rank" : ""}`}
         >
           {idx + 1}
         </span>{" "}
@@ -92,13 +102,14 @@ export default function TeamCard({
           alt="team avatar"
           src={avatarUrl}
           className={`avatar-${idx} avatar ${
-            owner.isWeeklyWinner ? "weekly-winner-circle" : ""
+            isHighlighted ? "weekly-winner-circle" : ""
           }`}
           onClick={() => setModalOpen(true)}
           style={{ cursor: "pointer" }}
         />
-        <span className={` playoffs playoffs-${idx}`}>✓</span>
-        <span className={` eliminated eliminated-${idx}`}>x</span>
+        {/* For Playoffs - search .playoffs- in index.css */}
+        {/* <span className={` playoffs playoffs-${idx}`}>✓</span>
+        <span className={` eliminated eliminated-${idx}`}>x</span> */}
         <div className="name-desc">
           <h3>
             {owner.teamName} ({owner.wins}-{owner.losses}
@@ -120,60 +131,60 @@ export default function TeamCard({
             )}
           </p>
         </div>
-        <div
-          className={`bottom ${
-            owner.roster_id === currentChampRosterId ||
-            previousChampsByOwner[owner.ownerID]
-              ? "champ-matchup"
-              : ""
-          }`}
-        >
-          <p>
-            <span className="matchup">
-              Last Week:{" "}
-              <b>
-                {matchups[owner.matchupID || ""]?.length === 2
-                  ? (() => {
-                      const [teamA, teamB] = matchups[owner.matchupID || ""];
-                      const isCurrentOwnerA =
-                        teamA.roster_id === owner.roster_id;
-                      const self = isCurrentOwnerA ? teamA : teamB;
-                      const opp = isCurrentOwnerA ? teamB : teamA;
+        {(!isPreseason || isChamp) && (
+          <div className={`bottom ${isChamp ? "champ-matchup" : ""}`}>
+            <p>
+              {!isPreseason && (
+                <span className="matchup">
+                  Last Week:{" "}
+                  <b>
+                    {matchups[owner.matchupID || ""]?.length === 2
+                      ? (() => {
+                          const [teamA, teamB] =
+                            matchups[owner.matchupID || ""];
+                          const isCurrentOwnerA =
+                            teamA.roster_id === owner.roster_id;
+                          const self = isCurrentOwnerA ? teamA : teamB;
+                          const opp = isCurrentOwnerA ? teamB : teamA;
 
-                      let result = "—";
-                      if (
-                        self.matchupPoints != null &&
-                        opp.matchupPoints != null
-                      ) {
-                        if (self.matchupPoints > opp.matchupPoints)
-                          result = "Win";
-                        else if (self.matchupPoints < opp.matchupPoints)
-                          result = "Loss";
-                        else result = "Tie";
-                      }
+                          let result = "—";
+                          if (
+                            self.matchupPoints != null &&
+                            opp.matchupPoints != null
+                          ) {
+                            if (self.matchupPoints > opp.matchupPoints)
+                              result = "Win";
+                            else if (self.matchupPoints < opp.matchupPoints)
+                              result = "Loss";
+                            else result = "Tie";
+                          }
 
-                      return `${result} vs @${opp.userName} (${
-                        self.matchupPoints?.toFixed(2) ?? "—"
-                      }-${opp.matchupPoints?.toFixed(2) ?? "—"})`;
-                    })()
-                  : "—"}
-              </b>{" "}
-              {"    "}| {"    "} Next Week:{" "}
-              <b>
-                {nextOpp.length
-                  ? nextOpp.map((o) => `@${o.userName}`).join(", ")
-                  : "—"}
-              </b>
-            </span>
-            <span
-              className={`previous-champ ${
-                owner.roster_id === currentChampRosterId ? "current-champ" : ""
-              }`}
-            >
-              {previousChampsByOwner[owner.ownerID] || ""}
-            </span>
-          </p>
-        </div>
+                          return `${result} vs @${opp.userName} (${
+                            self.matchupPoints?.toFixed(2) ?? "—"
+                          }-${opp.matchupPoints?.toFixed(2) ?? "—"})`;
+                        })()
+                      : "—"}
+                  </b>{" "}
+                  {"    "}| {"    "} Next Week:{" "}
+                  <b>
+                    {nextOpp.length
+                      ? nextOpp.map((o) => `@${o.userName}`).join(", ")
+                      : "—"}
+                  </b>
+                </span>
+              )}
+              <span
+                className={`previous-champ ${
+                  owner.roster_id === currentChampRosterId
+                    ? "current-champ"
+                    : ""
+                }`}
+              >
+                {previousChampsByOwner[owner.ownerID] || ""}
+              </span>
+            </p>
+          </div>
+        )}
       </li>
 
       {modalOpen && (

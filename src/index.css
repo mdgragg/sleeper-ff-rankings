@@ -1,3 +1,11 @@
+/* 
+LightBlue: #00fff9
+Blue: #3b82f6
+Yellow: #ffdc00
+Green: #28e757
+Red: #ff005c
+*/
+
 html {
   scroll-behavior: smooth;
 }
@@ -23,6 +31,90 @@ body {
 header {
   margin: auto;
   text-align: center;
+}
+
+.nav-toggle {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 1001;
+  width: 40px;
+  height: 40px;
+  background: #283142;
+  border: none;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.nav-toggle span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: white;
+}
+
+.nav-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.nav-drawer {
+  position: fixed;
+  top: 0;
+  right: -300px;
+  width: 280px;
+  max-width: 80vw;
+  height: 100vh;
+  background: #1b2233;
+  box-shadow: -4px 0 16px rgba(0, 0, 0, 0.4);
+  transition: right 0.25s ease;
+  z-index: 1002;
+  padding: 24px 20px;
+  box-sizing: border-box;
+}
+
+.nav-drawer.open {
+  right: 0;
+}
+
+.nav-close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 28px;
+  cursor: pointer;
+  position: absolute;
+  top: 16px;
+  right: 16px;
+}
+
+.nav-drawer ul {
+  list-style: none;
+  padding: 0;
+  margin: 48px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nav-drawer a {
+  display: block;
+  color: white;
+  text-decoration: none;
+  padding: 12px 8px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.nav-drawer a:hover {
+  background: #283142;
 }
 
 h1,
@@ -55,13 +147,39 @@ header h2 {
   margin-top: -10px;
 }
 
+.week-nav {
+  display: inline-flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+  margin: auto;
+  justify-content: center;
+}
+.week-link {
+  padding: 4px 10px;
+  border-radius: 6px;
+  text-decoration: none;
+  color: white;
+  background: #283142;
+}
+.week-link.active {
+  background: #00fff9;
+  color: #161c29;
+  font-weight: bold;
+}
+.week-link.disabled {
+  opacity: 0.35;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
 .note {
   background-color: #27455d;
   padding: 5px 15px;
   border-radius: 20px;
   text-align: center;
   max-width: 500px;
-  border: solid #0ebcc3 3px;
+  border: solid #00fff9 3px;
   margin: auto;
 }
 .note p {
@@ -120,12 +238,12 @@ header h2 {
 }
 
 .awards .weekly-winner {
-  border: #6cc49c 3px solid;
+  border: #00fff9 3px solid;
 }
 
 .weekly-winner .emoji {
   z-index: 1;
-  border: #6cc49c 3px solid;
+  border: #00fff9 3px solid;
 }
 
 .awards .award-avatar {
@@ -155,12 +273,12 @@ header h2 {
 
 .awards .good,
 .good {
-  color: #6cc49c;
+  color: #00fff9;
 }
 
 .awards .bad,
 .bad {
-  color: #f85a8b;
+  color: #ff005c;
 }
 
 .standings {
@@ -204,17 +322,17 @@ header h2 {
 }
 
 .container .weekly-winner-rank {
-  background: #6cc49c;
+  background: #00fff9;
   color: #2e384a;
 }
 
 .container-11 .ranking {
-  background: #f85a8b;
+  background: #ff005c;
   color: #2e384a;
 }
 
 .container .clinched {
-  background: #af67fb;
+  background: #00fff9;
   color: #2e384a;
 }
 
@@ -249,7 +367,7 @@ header h2 {
 
 .playoffs,
 .eliminated {
-  background: #6cc49c;
+  background: #28e757;
   border: solid 2px #2e384a;
   border-radius: 50%;
   color: #2e384a;
@@ -266,13 +384,13 @@ header h2 {
 }
 
 .eliminated {
-  background: #f85a8b;
+  background: #ff005c;
   padding: 3px 6px 9px;
 }
 
 .playoffs-icon,
 .eliminated-icon {
-  background: #6cc49c;
+  background: #28e757;
   border: solid 2px #2e384a;
   border-radius: 50%;
   color: #2e384a;
@@ -285,10 +403,10 @@ header h2 {
   font-weight: 500;
 }
 .eliminated-icon {
-  background: #f85a8b;
+  background: #ff005c;
 }
 
-.playoffs-11,
+/* .playoffs-11,
 .playoffs-10,
 .playoffs-9,
 .playoffs-8,
@@ -304,11 +422,11 @@ header h2 {
 .eliminated-4,
 .eliminated-5 {
   display: none;
-}
+} */
 
 .weekly-winner {
-  border: #6cc49c 4px solid;
-  box-shadow: 0px 0px 10px 5px #6cc49c;
+  border: #00fff9 4px solid;
+  box-shadow: 0px 0px 10px 5px #00fff9;
 }
 
 /* .container-0,
@@ -325,11 +443,11 @@ header h2 {
 }
 .losses {
   font-size: 14px;
-  color: #f85a8b;
+  color: #ff005c;
 }
 
 .weekly-winner-circle {
-  border: #6cc49c 4px solid;
+  border: #00fff9 4px solid;
 }
 
 .playoffs-circle {
@@ -337,11 +455,11 @@ header h2 {
 }
 
 .container-11 {
-  border: #f85a8b 4px solid;
-  box-shadow: 0px 0px 10px 5px #f85a8b;
+  border: #ff005c 4px solid;
+  box-shadow: 0px 0px 10px 5px #ff005c;
 }
 .container-11 .avatar {
-  border: #f85a8b 4px solid;
+  border: #ff005c 4px solid;
 }
 
 .name-desc {
@@ -438,12 +556,12 @@ header h2 {
   /* position: absolute;
   bottom: 6px;
   right: 300px; */
-  color: #6cc49c;
+  color: #28e757;
   font-size: 12px;
   margin-top: 10px;
 }
 .top-scorer {
-  color: #6cc49c;
+  color: #28e757;
   font-size: 12px;
   margin-top: 20px;
 
@@ -515,7 +633,7 @@ header h2 {
   color: #161c29;
   font-weight: 600;
   height: 20px;
-  background: #6cc49c;
+  background: #ffdc00;
   padding: 6px 20px 12px 15px;
   margin-top: -15px;
   border-bottom-right-radius: 34px;
@@ -590,7 +708,7 @@ header h2 {
     padding: 7px 10px 0px 5px;
   }
   .current-champ {
-    color: #6cc49c;
+    color: #28e757;
     font-weight: 600;
     height: 20px;
     background: #161c29;
@@ -706,7 +824,7 @@ header h2 {
     color: #161c29;
     font-weight: 600;
     height: 20px;
-    background: #6cc49c;
+    background: #28e757;
     padding: 10px 5px 5px 5px;
     border-bottom-right-radius: 32px;
     border-bottom-left-radius: 32px;
@@ -761,7 +879,7 @@ header h2 {
 .loading-bar-progress {
   width: 0;
   height: 100%;
-  background-color: #6cc49c;
+  background-color: #28e757;
   animation: loading 2s infinite;
 }
 
@@ -796,9 +914,7 @@ header h2 {
   width: 90%;
   position: relative;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-
   background: #283142;
-
   border: #2e384a 4px solid;
 }
 .close-button {
@@ -821,7 +937,7 @@ header h2 {
 }
 
 .mvp {
-  color: #6cc49c;
+  color: #28e757;
 }
 .bench-mvp {
   color: lightgrey;
@@ -849,7 +965,7 @@ header h2 {
   border-radius: 12px;
   padding: 0.75rem;
   width: 90%;
-  min-height: 120px;
+  min-height: 80px;
   margin: auto;
   resize: none;
   color: white;
@@ -860,14 +976,14 @@ header h2 {
 }
 
 .update-page input {
-  min-height: 30px;
+  min-height: 20px;
   margin-bottom: 15px;
 }
 
 .update-page textarea:focus,
 .update-page input:focus {
-  border-color: #6cc49c;
-  box-shadow: 0 0 6px #6cc49c;
+  border-color: #28e757;
+  box-shadow: 0 0 6px #28e757;
 }
 .update-page hr {
   border: 1px solid #283142;
@@ -875,7 +991,8 @@ header h2 {
 }
 
 /* Select Dropdown */
-.update-page select {
+.update-page select,
+.filter-row select {
   background-color: #283142;
   border: 2px solid #2e384a;
   border-radius: 12px;
@@ -887,14 +1004,15 @@ header h2 {
     box-shadow 0.2s;
 }
 
-.update-page select:focus {
-  border-color: #6cc49c;
-  box-shadow: 0 0 6px #6cc49c;
+.update-page select:focus,
+.filter-row select:focus {
+  border-color: #28e757;
+  box-shadow: 0 0 6px #28e757;
 }
 
 /* Button */
 .update-page button {
-  background-color: #6cc49c;
+  background-color: #00fff9;
   color: #161c29;
   border: none;
   border-radius: 12px;
@@ -908,13 +1026,856 @@ header h2 {
 }
 
 .update-page button:hover:not(:disabled) {
-  background-color: #57a983;
+  opacity: 0.7;
 }
 
 .update-page button:disabled {
-  background-color: #4c6e57;
+  opacity: 0.7;
   cursor: not-allowed;
 }
 .team-blurb {
   white-space: pre-wrap;
+}
+
+/* ============================================================
+   Shared page shell — History / Market Share / Activity
+   Reuses the power rankings palette:
+   bg #161c29, card #283142, inner #2e384a,
+   good #28e757, bad #ff005c, champ #00fff9, link #4c6ef5
+   ============================================================ */
+
+.history-page,
+.market-share-page,
+.activity-page {
+  max-width: 990px;
+  margin: auto;
+  padding: 5px;
+}
+
+.market-share-page {
+  max-width: 1200px;
+}
+
+/* ---------- Home ---------- */
+
+.home-page {
+  max-width: 800px;
+  margin: auto;
+  padding: 5px;
+}
+
+.home-links {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin: 35px auto 0;
+}
+
+.home-link {
+  position: relative;
+  display: block;
+  background: #283142;
+  border: #2e384a 4px solid;
+  border-radius: 30px;
+  padding: 20px 22px 20px 68px;
+  text-decoration: none;
+  color: white;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s,
+    transform 0.1s;
+}
+
+.home-link:hover,
+.home-link:focus-visible {
+  border-color: #28e757;
+  box-shadow: 0 0 10px 2px rgba(108, 196, 156, 0.35);
+  transform: translateY(-2px);
+  outline: none;
+}
+
+.home-link .emoji {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 30px;
+  height: 30px;
+  padding: 5px;
+  border-radius: 50%;
+  /* background: #2e384a;
+  border: #161c29 3px solid; */
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.home-link-title {
+  display: block;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.home-link-desc {
+  display: block;
+  color: lightgrey;
+  font-size: 13px;
+  margin-top: 3px;
+}
+
+.home-footer {
+  text-align: center;
+  margin-top: 28px;
+}
+
+.home-footer a {
+  color: lightgrey;
+  font-size: 14px;
+}
+
+@media all and (max-width: 600px) {
+  .home-links {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Rounded card, same feel as .container / .awards .box */
+.panel {
+  position: relative;
+  background: #283142;
+  border: #2e384a 4px solid;
+  border-radius: 30px;
+  padding: 20px 25px 25px;
+  margin: 45px auto;
+  scroll-margin-top: 60px;
+}
+
+.panel h2 {
+  font-weight: 500;
+  font-size: 20px;
+  text-align: center;
+  margin: 5px 0 18px;
+}
+
+.panel h2 .panel-count {
+  color: lightgrey;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+/* Floating emoji badge, matching .awards .emoji */
+.panel .emoji {
+  position: absolute;
+  left: -20px;
+  top: -20px;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  background-color: #283142;
+  border: #2e384a 3px solid;
+  padding: 5px;
+  font-size: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+/* Colored border + glow per section, like the power rankings cards */
+.panel.good-panel {
+  border-color: #28e757;
+  box-shadow: 0px 0px 10px 4px #28e757;
+}
+.panel.good-panel .emoji {
+  border-color: #28e757;
+}
+.panel.bad-panel {
+  border-color: #ff005c;
+  box-shadow: 0px 0px 10px 4px #ff005c;
+}
+.panel.bad-panel .emoji {
+  border-color: #ff005c;
+}
+.panel.champ-panel {
+  border-color: #ffdc00;
+  box-shadow: 0px 0px 10px 4px #ffdc00;
+}
+.panel.champ-panel .emoji {
+  border-color: #ffdc00;
+}
+.panel.blue-panel {
+  border-color: #00fff9;
+  box-shadow: 0px 0px 10px 4px #00fff9;
+}
+.panel.blue-panel .emoji {
+  border-color: #00fff9;
+}
+.panel.teal-panel {
+  border-color: #00fff9;
+  box-shadow: 0px 0px 10px 4px #00fff9;
+}
+.panel.teal-panel .emoji {
+  border-color: #00fff9;
+}
+
+.panel-note {
+  color: lightgrey;
+  font-size: 13px;
+  text-align: center;
+  margin: 0px 0 16px;
+}
+
+/* ---------- Record rows (records, hall of fame, hall of shame) ---------- */
+
+.record-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.record-name {
+  flex: 1;
+  min-width: 110px;
+  font-weight: 500;
+}
+
+.record-stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.record-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  background: #283142;
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.chip-label {
+  color: lightgrey;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.chip-icon {
+  font-size: 14px;
+}
+
+.chip-years {
+  color: lightgrey;
+  font-size: 12px;
+}
+
+/* ---------- Ranked score lists ---------- */
+
+.score-list {
+  list-style: none;
+  counter-reset: score;
+  padding: 0;
+  margin: 0;
+}
+
+.score-list li,
+.record-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  background: #2e384a;
+  border-radius: 16px;
+  padding: 8px 14px 8px 48px;
+  margin: 0 0 10px 22px;
+}
+
+.score-list li {
+  counter-increment: score;
+}
+
+/* Avatar hangs off the left edge, like the power rankings cards */
+.score-avatar {
+  position: absolute;
+  left: -22px;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: #283142 4px solid;
+  background: #283142;
+  z-index: 2;
+}
+
+.score-list li::before {
+  content: counter(score);
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #283142;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* .score-list li:first-child::before {
+  background: #6cc49c;
+  color: #2e384a;
+} */
+
+.score-list.bad-list li:first-child::before {
+  background: #ff005c;
+  color: #2e384a;
+}
+
+.score-list .score-name {
+  font-weight: 500;
+  flex: 1;
+}
+
+.score-list .score-value {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: #28e757;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.score-list.bad-list .score-value {
+  color: #ff005c;
+}
+
+.score-list .score-meta {
+  color: lightgrey;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+/* ---------- Market share ---------- */
+
+.filter-row {
+  text-align: center;
+  margin: 20px auto 0;
+  font-size: 15px;
+}
+
+.filter-row label {
+  color: lightgrey;
+}
+
+.filter-row select {
+  font-family: "Roboto", sans-serif;
+  font-size: 1rem;
+  margin: 5px;
+  cursor: pointer;
+}
+
+/* 3-up on desktop, single column on tablet/mobile.
+   Columns rather than a grid so a short card doesn't leave dead space
+   under it waiting on the tallest card in its row. */
+.ms-grid {
+  column-count: 3;
+  column-gap: 20px;
+  margin-top: 75px;
+}
+
+/* Avatar sits on top of the card, like the mobile power rankings */
+.ms-card {
+  /* Bottom margin leaves room for the next card's overhanging avatar */
+  margin: 0 0 75px;
+  padding: 70px 18px 20px;
+  text-align: center;
+  /* border-box so the 4px border + padding stay inside the column */
+  box-sizing: border-box;
+  width: 100%;
+  display: inline-block;
+  break-inside: avoid;
+  -webkit-column-break-inside: avoid;
+}
+
+.ms-card h2 {
+  margin: 0 0 2px;
+  font-weight: 500;
+  font-size: 19px;
+}
+
+.ms-avatar {
+  position: absolute;
+  top: -50px;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: #2e384a 4px solid;
+  background: #283142;
+  z-index: 2;
+}
+
+.ms-player-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+
+.ms-player {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  background: #2e384a;
+  border-radius: 12px;
+  padding: 8px 12px;
+  margin-bottom: 6px;
+}
+
+.ms-player-name {
+  flex: 1;
+  font-weight: 500;
+  font-size: 15px;
+}
+
+.ms-player-years {
+  display: block;
+  color: lightgrey;
+  font-size: 12px;
+  font-weight: 400;
+  margin-top: 2px;
+}
+
+.ms-player-count {
+  color: #28e757;
+  font-weight: 600;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+@media all and (max-width: 900px) {
+  .ms-grid {
+    column-count: 1;
+  }
+}
+
+/* ---------- Activity / transactions ---------- */
+
+.tx-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tx-item {
+  display: grid;
+  grid-template-columns: 100px 85px 1fr;
+  gap: 12px;
+  align-items: center;
+  background: #2e384a;
+  border-radius: 14px;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.tx-date {
+  color: lightgrey;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.tx-label {
+  background: #283142;
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.tx-trade .tx-label {
+  background: #28e757;
+  color: #283142;
+}
+
+.tx-waiver .tx-label {
+  background: #00fff9;
+  color: #283142;
+}
+
+.tx-moves {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+}
+
+.tx-add,
+.tx-drop {
+  white-space: nowrap;
+  color: lightgrey;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.tx-add::first-letter {
+  color: #28e757;
+}
+
+.tx-drop::first-letter {
+  color: #ff005c;
+}
+
+.tx-team {
+  color: lightgrey;
+  font-weight: 400;
+}
+
+/* Trade rows — one card per team showing what they received */
+.tx-trade {
+  align-items: start;
+}
+
+.tx-trade .tx-label,
+.tx-trade .tx-date {
+  margin-top: 6px;
+}
+
+.trade-sides {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.trade-side {
+  flex: 1 1 170px;
+  background: #283142;
+  border-radius: 12px;
+  padding: 8px 12px;
+}
+
+.trade-team {
+  display: block;
+  font-weight: 600;
+  font-size: 13px;
+  /* color: #00fff9; */
+  margin-bottom: 4px;
+}
+
+.trade-gets {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 13px;
+}
+
+.trade-gets li::before {
+  content: "+ ";
+  color: #28e757;
+}
+
+.trade-gets .trade-nothing {
+  color: lightgrey;
+}
+
+.trade-gets .trade-nothing::before {
+  content: "";
+}
+
+.tx-empty {
+  color: lightgrey;
+  text-align: center;
+}
+
+.scroll-container {
+  max-height: 400px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  padding-right: 6px;
+
+  /* Fade the bottom edge so content reads as continuing */
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 45px), transparent);
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 calc(100% - 45px),
+    transparent
+  );
+}
+
+/* Always-visible scrollbar — macOS hides overlay scrollbars until you
+   scroll, which removes the affordance exactly when it's needed. */
+.scroll-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scroll-container::-webkit-scrollbar-track {
+  background: #2e384a;
+  border-radius: 4px;
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+  background: #161c29;
+  border-radius: 4px;
+}
+
+.scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #161c29;
+}
+
+/* Firefox */
+@supports (scrollbar-color: auto) {
+  .scroll-container {
+    scrollbar-width: thin;
+    scrollbar-color: #161c29 #2e384a;
+  }
+}
+
+.discord-section {
+  text-align: center;
+}
+
+/* Mirrored Discord posts */
+.discord-feed {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+}
+
+.discord-post {
+  display: flex;
+  gap: 12px;
+  background: #2e384a;
+  border-radius: 16px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+}
+
+/* One block per Scoop persona. The class is the author name lowercased
+   with non-letters turned into dashes, so "Ai Schefter" -> .author-ai-schefter.
+   Add a block as each reporter goes live. */
+
+.discord-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: #283142 3px solid;
+  background: #283142;
+  flex: none;
+}
+
+.discord-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.discord-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.discord-author {
+  font-weight: 600;
+}
+
+.discord-date {
+  color: lightgrey;
+  font-size: 12px;
+}
+
+.discord-text {
+  margin: 0 0 6px;
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.discord-card {
+  border-left: #00fff9 3px solid;
+  background: #283142;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin: 8px 0;
+}
+.author-ai-schefter .discord-card {
+  border-left: #3b82f6 3px solid;
+}
+
+.discord-card-title {
+  margin: 0 0 6px;
+  font-size: 16px;
+}
+
+/* Link that opens a post's graphic in the lightbox */
+.discord-image-link {
+  display: inline-block;
+
+  border: none;
+  background: #283142;
+  font-family: "Roboto", sans-serif;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    transform 0.1s;
+  text-align: left;
+}
+
+.discord-image-link:hover {
+  opacity: 0.7;
+}
+
+.lightbox-content {
+  max-width: min(900px, 92vw);
+  width: auto;
+  padding: 0px;
+}
+
+.lightbox-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 80vh;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.discord-gallery {
+  display: grid;
+  gap: 8px;
+}
+
+.discord-separator {
+  border: none;
+  border-top: 1px solid #2e384a;
+  margin: 10px 0;
+}
+
+/* Forum post headline (the thread name) */
+.discord-headline {
+  margin: 2px 0 6px;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.scroll-container .author-ai-schefter .discord-headline {
+  color: #3b82f6;
+}
+.scroll-container .author-ai-schefter .discord-text strong {
+  color: #3b82f6;
+}
+
+.discord-image {
+  display: block;
+  width: 100%;
+  max-width: 420px;
+  border-radius: 10px;
+  margin-top: 8px;
+}
+
+.discord-invite-btn {
+  display: inline-block;
+  margin-top: 15px;
+  background-color: #161c29;
+  color: #161c29;
+  text-decoration: none;
+  border-radius: 12px;
+  padding: 0.5rem 1.25rem;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+.discord-invite-btn:hover {
+  background-color: #57a983;
+}
+
+.discord-section code {
+  background: #2e384a;
+  border-radius: 6px;
+  padding: 2px 6px;
+  font-size: 13px;
+}
+
+@media all and (max-width: 600px) {
+  .panel {
+    border-radius: 24px;
+    padding: 18px 14px 20px;
+    margin: 25px 3px;
+  }
+
+  /* Keep room for the overhanging avatar */
+  .ms-card {
+    padding: 58px 14px 18px;
+    margin: 0 0 65px;
+  }
+
+  .score-list li,
+  .record-row {
+    flex-wrap: wrap;
+    gap: 4px 10px;
+  }
+
+  /* Name on its own line, stats underneath */
+  .record-name {
+    flex: 1 0 100%;
+  }
+
+  .record-stats {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .record-chip {
+    white-space: normal;
+  }
+
+  .score-list .score-name {
+    flex: 1;
+  }
+
+  .score-list .score-meta {
+    width: 100%;
+    padding-left: 38px;
+  }
+
+  .tx-item {
+    grid-template-columns: 1fr auto;
+    gap: 6px 10px;
+  }
+
+  .tx-date {
+    order: 2;
+    text-align: right;
+  }
+
+  .tx-label {
+    order: 1;
+    justify-self: start;
+  }
+
+  .tx-moves,
+  .trade-sides {
+    order: 3;
+    grid-column: 1 / -1;
+  }
 }

@@ -1,9 +1,10 @@
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 import Standings from "../components/Standings";
 import type { OwnerWithRanks } from "../types";
 import logo from "/images/logo_with_text.png";
+import NavDrawer from "../components/NavDrawer";
 
 interface Config {
   teamExtras: Record<
@@ -21,16 +22,16 @@ interface Config {
 const LEAGUE_ID = import.meta.env.VITE_LEAGUE_ID;
 
 const previousChampsByOwner: Record<string, string> = {
-  "779230727840645120": "🏆 2024 Champ",
+  "779230727840645120": "2024 Champ",
   "859887658577567744": "2017, 2023 Champ",
   "862404399966818304": "2022 Champ",
   "859903842383425536": "2021 Champ",
-  "859887925402386432": "2015, 2016, 2020 Champ",
+  "859887925402386432": "2015, 2016, 2020, 🏆 2025 Champ",
   "860701742805970944": "2019 Champ",
   "861681281560334336": "2018 Champ",
 };
 
-const currentChampRosterId = 1;
+const currentChampRosterId = 3;
 
 export default function Week() {
   const { week } = useParams<{ week: string }>();
@@ -38,7 +39,7 @@ export default function Week() {
   const [weeklyExtras, setWeeklyExtras] = useState<Config["teamExtras"]>({});
   const [loading, setLoading] = useState(true);
   const [matchups, setMatchups] = useState<Record<string, OwnerWithRanks[]>>(
-    {}
+    {},
   );
   const [nextMatchups, setNextMatchups] = useState<
     Record<string, OwnerWithRanks[]>
@@ -48,6 +49,8 @@ export default function Week() {
   useEffect(() => {
     const fetchData = async () => {
       console.log("Fetching data for week:", week);
+
+      const isPreseason = Number(week) === 0;
 
       const [
         leagueRes,
@@ -59,26 +62,35 @@ export default function Week() {
         playersRes,
       ] = await Promise.all([
         fetch(`https://api.sleeper.app/v1/league/${LEAGUE_ID}`).then((r) =>
-          r.json()
+          r.json(),
         ),
         fetch(`https://api.sleeper.app/v1/league/${LEAGUE_ID}/rosters`).then(
-          (r) => r.json()
+          (r) => r.json(),
         ),
         fetch(`https://api.sleeper.app/v1/league/${LEAGUE_ID}/users`).then(
-          (r) => r.json()
+          (r) => r.json(),
         ),
-        fetch(
-          `https://api.sleeper.app/v1/league/${LEAGUE_ID}/matchups/${week}`
-        ).then((r) => r.json()),
-        fetch(
-          `https://api.sleeper.app/v1/league/${LEAGUE_ID}/matchups/${Number(week) + 1}`
-        ).then((r) => r.json()),
-        fetch(
-          `https://api.sleeper.app/v1/league/${LEAGUE_ID}/transactions/${week}`
-        ).then((r) => r.json()),
-        fetch(`https://api.sleeper.app/v1/players/nfl`).then((r) => r.json()),
+        isPreseason
+          ? Promise.resolve([])
+          : fetch(
+              `https://api.sleeper.app/v1/league/${LEAGUE_ID}/matchups/${week}`,
+            ).then((r) => r.json()),
+        isPreseason
+          ? Promise.resolve([])
+          : fetch(
+              `https://api.sleeper.app/v1/league/${LEAGUE_ID}/matchups/${Number(week) + 1}`,
+            ).then((r) => r.json()),
+        isPreseason
+          ? Promise.resolve([])
+          : fetch(
+              `https://api.sleeper.app/v1/league/${LEAGUE_ID}/transactions/${week}`,
+            ).then((r) => r.json()),
+        isPreseason
+          ? Promise.resolve({})
+          : fetch(`https://api.sleeper.app/v1/players/nfl`).then((r) =>
+              r.json(),
+            ),
       ]);
-
       setLeagueData(leagueRes);
 
       const avatarUrlBase = "https://sleepercdn.com/avatars/thumbs/";
@@ -87,13 +99,13 @@ export default function Week() {
       const ownersData: OwnerWithRanks[] = rostersRes.map((roster: any) => {
         const user = usersRes.find((u: any) => u.user_id === roster.owner_id);
         const pointsFor = parseFloat(
-          `${roster.settings.fpts}.${roster.settings.fpts_decimal ?? 0}`
+          `${roster.settings.fpts}.${roster.settings.fpts_decimal ?? 0}`,
         );
         const pointsAgainst = parseFloat(
-          `${roster.settings.fpts_against}.${roster.settings.fpts_against_decimal ?? 0}`
+          `${roster.settings.fpts_against}.${roster.settings.fpts_against_decimal ?? 0}`,
         );
         const pointsPossible = parseFloat(
-          `${roster.settings.ppts}.${roster.settings.ppts_decimal ?? 0}`
+          `${roster.settings.ppts}.${roster.settings.ppts_decimal ?? 0}`,
         );
         const pointsPossiblePerc =
           pointsPossible > 0 ? (pointsFor / pointsPossible) * 100 : 0;
@@ -124,11 +136,11 @@ export default function Week() {
       });
       function computeTiedRanks(
         owners: OwnerWithRanks[],
-        key: keyof OwnerWithRanks
+        key: keyof OwnerWithRanks,
       ): Record<string, number> {
         // Sort descending (higher is better)
         const sorted = [...owners].sort(
-          (a, b) => (b[key] as number) - (a[key] as number)
+          (a, b) => (b[key] as number) - (a[key] as number),
         );
         const ranks: Record<string, number> = {};
         let currentRank = 1;
@@ -165,12 +177,15 @@ export default function Week() {
       // ------------------
       // Count adds/drops and trades FOR SEASON TOTALS
       // ------------------
+      // season-totals transaction loop
       let seasonTx: any[] = [];
-      for (let w = 1; w <= Number(week); w++) {
-        const txWeekRes = await fetch(
-          `https://api.sleeper.app/v1/league/${LEAGUE_ID}/transactions/${w}`
-        ).then((r) => r.json());
-        seasonTx = seasonTx.concat(txWeekRes);
+      if (!isPreseason) {
+        for (let w = 1; w <= Number(week); w++) {
+          const txWeekRes = await fetch(
+            `https://api.sleeper.app/v1/league/${LEAGUE_ID}/transactions/${w}`,
+          ).then((r) => r.json());
+          seasonTx = seasonTx.concat(txWeekRes);
+        }
       }
 
       seasonTx.forEach((tx: any) => {
@@ -271,7 +286,7 @@ export default function Week() {
         const opponent = matchupsRes.find(
           (m: any) =>
             m.matchup_id === matchup.matchup_id &&
-            m.roster_id !== matchup.roster_id
+            m.roster_id !== matchup.roster_id,
         );
         owner.weekPointsAgainst = opponent?.points ?? 0;
 
@@ -296,11 +311,15 @@ export default function Week() {
       // Determine weekly winner
       // ------------------
       const maxPoints = Math.max(
-        ...ownersData.map((o) => o.matchupPoints ?? 0)
+        ...ownersData.map((o) => o.matchupPoints ?? 0),
       );
-      const weeklyWinnerId = ownersData.find(
-        (o) => (o.matchupPoints ?? 0) === maxPoints
-      )?.roster_id;
+      // Preseason (and any week before kickoff) has everyone on 0, which
+      // would otherwise hand the win to whoever comes first in the list.
+      const weeklyWinnerId =
+        isPreseason || maxPoints <= 0
+          ? undefined
+          : ownersData.find((o) => (o.matchupPoints ?? 0) === maxPoints)
+              ?.roster_id;
       ownersData.forEach((o) => {
         o.isWeeklyWinner = o.roster_id === weeklyWinnerId;
       });
@@ -317,7 +336,7 @@ export default function Week() {
       // ------------------
       ownersData.forEach((owner) => {
         const matchup = matchupsRes.find(
-          (m: any) => m.roster_id === owner.roster_id
+          (m: any) => m.roster_id === owner.roster_id,
         );
         if (!matchup?.players_points) return;
 
@@ -336,7 +355,7 @@ export default function Week() {
         let topBench = { player_id: "", points: 0 };
         const benchPlayers =
           matchup.players?.filter(
-            (pid: string) => !matchup.starters?.includes(pid)
+            (pid: string) => !matchup.starters?.includes(pid),
           ) ?? [];
         benchPlayers.forEach((pid: string) => {
           const pts = Number(matchup.players_points[pid] ?? 0);
@@ -352,24 +371,27 @@ export default function Week() {
       // ------------------
       const totalWeeks = Number(week);
       const seasonPlayerPoints: Record<number, Record<string, number>> = {};
-      for (let w = 1; w <= totalWeeks; w++) {
-        const matchupsWeekRes = await fetch(
-          `https://api.sleeper.app/v1/league/${LEAGUE_ID}/matchups/${w}`
-        );
-        const matchupsWeek: any[] = await matchupsWeekRes.json();
+      if (!isPreseason) {
+        for (let w = 1; w <= totalWeeks; w++) {
+          const matchupsWeekRes = await fetch(
+            `https://api.sleeper.app/v1/league/${LEAGUE_ID}/matchups/${w}`,
+          );
+          const matchupsWeek: any[] = await matchupsWeekRes.json();
 
-        matchupsWeek.forEach((matchup) => {
-          const rosterId = matchup.roster_id;
-          if (!seasonPlayerPoints[rosterId]) seasonPlayerPoints[rosterId] = {};
-          if (matchup.players_points && matchup.starters) {
-            matchup.starters.forEach((pid: string) => {
-              const pts = Number(matchup.players_points[pid] ?? 0);
-              if (!seasonPlayerPoints[rosterId][pid])
-                seasonPlayerPoints[rosterId][pid] = 0;
-              seasonPlayerPoints[rosterId][pid] += pts;
-            });
-          }
-        });
+          matchupsWeek.forEach((matchup) => {
+            const rosterId = matchup.roster_id;
+            if (!seasonPlayerPoints[rosterId])
+              seasonPlayerPoints[rosterId] = {};
+            if (matchup.players_points && matchup.starters) {
+              matchup.starters.forEach((pid: string) => {
+                const pts = Number(matchup.players_points[pid] ?? 0);
+                if (!seasonPlayerPoints[rosterId][pid])
+                  seasonPlayerPoints[rosterId][pid] = 0;
+                seasonPlayerPoints[rosterId][pid] += pts;
+              });
+            }
+          });
+        }
       }
 
       ownersData.forEach((owner) => {
@@ -389,11 +411,11 @@ export default function Week() {
       const pointsAgainstRanks = computeTiedRanks(ownersData, "pointsAgainst");
       const pointsPossibleRanks = computeTiedRanks(
         ownersData,
-        "pointsPossible"
+        "pointsPossible",
       );
       const pointsPossiblePercRanks = computeTiedRanks(
         ownersData,
-        "pointsPossiblePerc"
+        "pointsPossiblePerc",
       );
       const addDropRanks = computeTiedRanks(ownersData, "addDropCount");
       const tradeRanks = computeTiedRanks(ownersData, "TradeCount");
@@ -431,8 +453,11 @@ export default function Week() {
         .from("weekly_data")
         .select("*")
         .eq("week", Number(week));
+      console.log("supabase rows:", data, error); // add this line
+
       if (!error && data) {
         const extras: Config["teamExtras"] = {};
+
         data.forEach((row: any) => {
           extras[row.team_id] = {
             blurb: row.blurb,
@@ -441,9 +466,26 @@ export default function Week() {
             username: rosterToUsername[row.team_id],
             topWeeks: row.top_weeks || "",
           };
+
+          if (row.manual_rank != null) {
+            const owner = ownersData.find(
+              (o) => o.roster_id === Number(row.team_id),
+            );
+            if (owner) owner.manualRank = row.manual_rank;
+          }
         });
         setWeeklyExtras(extras);
       }
+
+      setOwners(ownersData);
+      console.log(
+        "manual ranks:",
+        ownersData.map((o) => ({
+          team: o.teamName,
+          roster_id: o.roster_id,
+          manualRank: o.manualRank,
+        })),
+      );
 
       setOwners(ownersData);
       setMatchups(matchupsMap);
@@ -466,14 +508,38 @@ export default function Week() {
 
   return (
     <div className="body">
+      <NavDrawer />
       {leagueData && (
         <>
           <header>
-            <img alt="logo" className="sleeper-logo" src={logo} />
+            <Link to="/">
+              <img alt="logo" className="sleeper-logo" src={logo} />
+            </Link>
             <h1>{leagueData.season} Power Rankings</h1>
             <h2>
               {leagueData.name} - Week {week}
             </h2>
+            <nav className="week-nav">
+              {Array.from({ length: 17 }, (_, i) => i).map((w) => {
+                const currentLeagueWeek = leagueData.settings?.leg ?? 1;
+                const isActive = w === Number(week);
+                const isUnlocked = w <= currentLeagueWeek; // week 0 always true
+
+                return isUnlocked ? (
+                  <Link
+                    key={w}
+                    to={`/week/${w}`}
+                    className={`week-link ${isActive ? "active" : ""}`}
+                  >
+                    {w === 0 ? "Preseason" : w}
+                  </Link>
+                ) : (
+                  <span key={w} className="week-link disabled">
+                    {w}
+                  </span>
+                );
+              })}
+            </nav>
           </header>
         </>
       )}

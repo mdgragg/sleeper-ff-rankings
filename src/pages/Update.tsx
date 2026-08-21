@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
 import type { OwnerWithRanks } from "../types";
 
@@ -8,6 +8,7 @@ interface WeeklyDataRow {
   team_id: number;
   blurb: string;
   gifs?: string;
+  manual_rank?: number | null;
 }
 
 const LEAGUE_ID = import.meta.env.VITE_LEAGUE_ID;
@@ -18,6 +19,8 @@ export default function Update() {
   const [loading, setLoading] = useState(true);
   const [selectedWeek, setSelectedWeek] = useState(1);
   const [savingAll, setSavingAll] = useState(false);
+  const [draftRanks, setDraftRanks] = useState<Record<number, string>>({});
+  const fetchIdRef = useRef(0);
 
   // Map Supabase team_id to display names
   const teamIdToName: Record<number, string> = {
@@ -41,10 +44,10 @@ export default function Update() {
       try {
         const [rostersRes, usersRes] = await Promise.all([
           fetch(`https://api.sleeper.app/v1/league/${LEAGUE_ID}/rosters`).then(
-            (r) => r.json()
+            (r) => r.json(),
           ),
           fetch(`https://api.sleeper.app/v1/league/${LEAGUE_ID}/users`).then(
-            (r) => r.json()
+            (r) => r.json(),
           ),
         ]);
 
@@ -67,7 +70,8 @@ export default function Update() {
           };
         });
 
-        // Sort owners (same logic as standings)
+        // Sort owners (same logic as standings) - this becomes the
+        // "Sleeper order" fallback used when a team has no manual_rank
         const ownersSorted = ownersData.slice().sort((a, b) => {
           if (a.manualRank !== undefined && b.manualRank !== undefined)
             return a.manualRank - b.manualRank;
@@ -86,8 +90,24 @@ export default function Update() {
     fetchOwners();
   }, []);
 
+  // Sort configs: manual_rank first (ascending), then fall back to
+  // each team's original Sleeper-order position for anyone unranked
+  const sortConfigs = (list: WeeklyDataRow[], ownerList: OwnerWithRanks[]) => {
+    return [...list].sort((a, b) => {
+      if (a.manual_rank != null && b.manual_rank != null)
+        return a.manual_rank - b.manual_rank;
+      if (a.manual_rank != null) return -1;
+      if (b.manual_rank != null) return 1;
+
+      const aIdx = ownerList.findIndex((o) => o.roster_id === a.team_id);
+      const bIdx = ownerList.findIndex((o) => o.roster_id === b.team_id);
+      return aIdx - bIdx;
+    });
+  };
+
   // Fetch weekly data from Supabase
   const fetchConfigs = async (week: number) => {
+    const requestId = ++fetchIdRef.current;
     setLoading(true);
     try {
       const { data, error } = await supabase
@@ -97,9 +117,14 @@ export default function Update() {
 
       if (error) throw error;
 
+      // A newer fetchConfigs call has started since this one began
+      // (e.g. the user switched weeks again) - drop this stale response
+      // so it can't overwrite more recent state.
+      if (requestId !== fetchIdRef.current) return;
+
       const merged: WeeklyDataRow[] = owners.map((owner) => {
         const existing = data?.find(
-          (d) => Number(d.team_id) === Number(owner.roster_id)
+          (d) => Number(d.team_id) === Number(owner.roster_id),
         );
         return {
           id: existing?.id,
@@ -107,15 +132,16 @@ export default function Update() {
           team_id: owner.roster_id,
           blurb: existing?.blurb ?? "",
           gifs: existing?.gifs ?? "",
+          manual_rank: existing?.manual_rank ?? null,
         };
       });
 
-      setConfigs(merged);
+      setConfigs(sortConfigs(merged, owners));
     } catch (err) {
       console.error("Failed to fetch configs:", err);
-      setConfigs([]);
+      if (requestId === fetchIdRef.current) setConfigs([]);
     } finally {
-      setLoading(false);
+      if (requestId === fetchIdRef.current) setLoading(false);
     }
   };
 
@@ -128,8 +154,88 @@ export default function Update() {
 
   const handleChange = (team_id: number, value: string) => {
     setConfigs((prev) =>
-      prev.map((c) => (c.team_id === team_id ? { ...c, blurb: value } : c))
+      prev.map((c) => (c.team_id === team_id ? { ...c, blurb: value } : c)),
     );
+  };
+
+  // While typing, just track the raw text - no validation, no blocking,
+  // so multi-digit ranks (e.g. "12") can be typed freely even if "1" is
+  // momentarily taken by another team.
+  const handleRankDraftChange = (team_id: number, value: string) => {
+    setDraftRanks((prev) => ({ ...prev, [team_id]: value }));
+  };
+
+  // On blur, commit the typed value as a literal slot (1..maxRank).
+  // If another team already holds that exact number, it gets bumped down
+  // by one (toward rank 1), cascading further only if that slot is also
+  // taken. If it can't go down (already at rank 1), it cascades up
+  // instead. Either way this always terminates at the target team's own
+  // previously-vacated slot (or an unranked gap), so it can never overflow
+  // past maxRank or produce a duplicate.
+  const commitRank = (team_id: number) => {
+    const raw = draftRanks[team_id];
+
+    setDraftRanks((prev) => {
+      const next = { ...prev };
+      delete next[team_id];
+      return next;
+    });
+
+    if (raw === undefined) return; // untouched, nothing to commit
+
+    const trimmed = raw.trim();
+
+    if (trimmed === "") {
+      setConfigs((prev) => {
+        const updated = prev.map((c) =>
+          c.team_id === team_id ? { ...c, manual_rank: null } : c,
+        );
+        return sortConfigs(updated, owners);
+      });
+      return;
+    }
+
+    const requested = Number(trimmed);
+    if (!Number.isFinite(requested) || requested < 1) return;
+
+    setConfigs((prev) => {
+      const maxRank = owners.length || prev.length;
+      const clamped = Math.min(Math.max(Math.round(requested), 1), maxRank);
+      const updated = prev.map((c) => ({ ...c }));
+
+      // Ensures `rank` is empty by relocating whoever occupies it further
+      // in `direction`, recursively clearing space as needed. Returns
+      // false if it runs off the end of the board.
+      const freeSlot = (
+        rank: number,
+        direction: 1 | -1,
+        visited: Set<number>,
+      ): boolean => {
+        if (rank < 1 || rank > maxRank) return false;
+
+        const occupant = updated.find(
+          (c) => c.team_id !== team_id && c.manual_rank === rank,
+        );
+        if (!occupant) return true; // already empty
+
+        if (visited.has(occupant.team_id)) return false; // safety net
+        visited.add(occupant.team_id);
+
+        const dest = rank + direction;
+        if (!freeSlot(dest, direction, visited)) return false;
+
+        occupant.manual_rank = dest;
+        return true;
+      };
+
+      let cleared = freeSlot(clamped, -1, new Set([team_id]));
+      if (!cleared) cleared = freeSlot(clamped, 1, new Set([team_id]));
+
+      const target = updated.find((c) => c.team_id === team_id);
+      if (target) target.manual_rank = clamped;
+
+      return sortConfigs(updated, owners);
+    });
   };
 
   const handleSaveAll = async () => {
@@ -142,8 +248,9 @@ export default function Update() {
           team_id: c.team_id,
           blurb: c.blurb,
           gifs: c.gifs ? [c.gifs] : [],
+          manual_rank: c.manual_rank,
         })),
-        { onConflict: "team_id,week" }
+        { onConflict: "team_id,week" },
       );
 
       if (error) throw error;
@@ -153,6 +260,33 @@ export default function Update() {
     } catch (err) {
       console.error("Save all failed:", err);
       alert("Save all failed!");
+    } finally {
+      setSavingAll(false);
+    }
+  };
+
+  const handleRevertRanks = async () => {
+    if (
+      !confirm(
+        `Revert all manual rank overrides for ${
+          selectedWeek === 0 ? "Preseason" : `Week ${selectedWeek}`
+        }? This can't be undone.`,
+      )
+    )
+      return;
+
+    setSavingAll(true);
+    try {
+      const { error } = await supabase
+        .from("weekly_data")
+        .update({ manual_rank: null })
+        .eq("week", selectedWeek);
+      if (error) throw error;
+      await fetchConfigs(selectedWeek);
+      alert("Reverted to Sleeper ranking!");
+    } catch (err) {
+      console.error("Revert failed:", err);
+      alert("Revert failed!");
     } finally {
       setSavingAll(false);
     }
@@ -180,9 +314,9 @@ export default function Update() {
             onChange={(e) => setSelectedWeek(Number(e.target.value))}
             className="rounded px-2 py-1 bg-gray-800 text-white"
           >
-            {Array.from({ length: 16 }, (_, i) => i + 1).map((w) => (
+            {Array.from({ length: 17 }, (_, i) => i).map((w) => (
               <option key={w} value={w}>
-                Week {w}
+                {w === 0 ? "Preseason" : `Week ${w}`}
               </option>
             ))}
           </select>
@@ -195,12 +329,20 @@ export default function Update() {
         >
           {savingAll ? "Saving..." : "SAVE"}
         </button>
+
+        <button
+          onClick={handleRevertRanks}
+          disabled={savingAll}
+          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 disabled:opacity-50"
+        >
+          Revert back to Sleeper Rankings
+        </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {configs.map((team) => {
           const ownerLabel = owners.find(
-            (o) => o.roster_id === team.team_id
+            (o) => o.roster_id === team.team_id,
           )?.teamName;
 
           return (
@@ -209,21 +351,44 @@ export default function Update() {
               className="border rounded-lg p-4 shadow-sm bg-[#283142]"
             >
               <h2 className="font-semibold mb-2">{ownerLabel}</h2>
-              <input
-                type="text"
-                value={team.gifs || ""}
-                onChange={(e) =>
-                  setConfigs((prev) =>
-                    prev.map((c) =>
-                      c.team_id === team.team_id
-                        ? { ...c, gifs: e.target.value }
-                        : c
+
+              <div className="flex gap-2 mb-2">
+                <input
+                  type="number"
+                  min={1}
+                  max={owners.length || 12}
+                  value={
+                    draftRanks[team.team_id] ??
+                    team.manual_rank?.toString() ??
+                    ""
+                  }
+                  onChange={(e) =>
+                    handleRankDraftChange(team.team_id, e.target.value)
+                  }
+                  onBlur={() => commitRank(team.team_id)}
+                  placeholder="Rank"
+                  title="Manual rank override"
+                  className="rounded bg-gray-900 text-white p-2"
+                  style={{ width: "12%", marginRight: "10px" }}
+                />
+                <input
+                  type="text"
+                  value={team.gifs || ""}
+                  onChange={(e) =>
+                    setConfigs((prev) =>
+                      prev.map((c) =>
+                        c.team_id === team.team_id
+                          ? { ...c, gifs: e.target.value }
+                          : c,
+                      ),
                     )
-                  )
-                }
-                placeholder="Enter GIF/image link (optional)"
-                className="w-full rounded bg-gray-900 text-white p-2"
-              />
+                  }
+                  placeholder="Enter GIF/image link (optional)"
+                  className="rounded bg-gray-900 text-white p-2"
+                  style={{ width: "68%" }}
+                />
+              </div>
+
               <textarea
                 value={team.blurb}
                 onChange={(e) => handleChange(team.team_id, e.target.value)}

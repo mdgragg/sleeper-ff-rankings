@@ -1,22 +1,66 @@
-function SeasonRecap() {
+import { Link } from "react-router-dom";
+import NavDrawer from "../components/NavDrawer";
+import { useLeague } from "../features/league/hooks";
+import logo from "/images/logo_with_text.png";
+
+const LEAGUE_ID = import.meta.env.VITE_LEAGUE_ID;
+
+export default function Home() {
+  const { data: league } = useLeague(LEAGUE_ID);
+  const currentWeek = league?.settings?.leg ?? 1;
+
+  const pages = [
+    {
+      to: `/week/${currentWeek}`,
+      emoji: "🏈",
+      title: "Power Rankings",
+      desc: "Weekly rankings, matchups and awards",
+    },
+    {
+      to: "/history",
+      emoji: "🏆",
+      title: "History / Record Book",
+      desc: "All-time records, hall of fame and shame",
+    },
+    {
+      to: "/market-share",
+      emoji: "📈",
+      title: "Market Share",
+      desc: "Who keeps rostering the same players",
+    },
+    {
+      to: "/activity",
+      emoji: "🔄",
+      title: "Activity",
+      desc: "Ai Reporters and transactions",
+    },
+  ];
+
   return (
-    <>
+    <div className="body home-page">
+      <NavDrawer />
       <header>
-        <div className="inner">
-          <h1>
-            Go to <a href="/week/1">/week/#</a>
-          </h1>
-          <h3>
-            Or <a href="/update">/update</a>
-          </h3>
-        </div>
+        <img alt="logo" className="sleeper-logo" src={logo} />
+        <h1>{league?.name || "Fantasy Football"}</h1>
+        {/* <h2>
+          {league?.season ? `${league.season} Season` : " "}
+          {league?.settings?.leg ? ` - Week ${currentWeek}` : ""}
+        </h2> */}
       </header>
 
-      <main>
-        {/* <Standings leagueData={leagueData!} config={config} /> */}
-      </main>
-    </>
+      <nav className="home-links">
+        {pages.map((page) => (
+          <Link key={page.to} to={page.to} className="home-link">
+            <span className="emoji">{page.emoji}</span>
+            <span className="home-link-title">{page.title}</span>
+            <span className="home-link-desc">{page.desc}</span>
+          </Link>
+        ))}
+      </nav>
+
+      <p className="home-footer">
+        <Link to="/update">Update weekly blurbs</Link>
+      </p>
+    </div>
   );
 }
-
-export default SeasonRecap;
