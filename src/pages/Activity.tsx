@@ -13,6 +13,8 @@ const LEAGUE_ID = import.meta.env.VITE_LEAGUE_ID;
 // VITE_DISCORD_INVITE_CODE is the part after discord.gg/ in your invite
 // link — optional, it just controls the join button.
 const DISCORD_INVITE_CODE = import.meta.env.VITE_DISCORD_INVITE_CODE ?? "";
+// Kept for the "Join our Discord" button, which is commented out below.
+void DISCORD_INVITE_CODE;
 
 // Keep this below MESSAGE_LIMIT in the sync script — Discord's image URLs
 // expire, and only the messages inside the sync window get refreshed.

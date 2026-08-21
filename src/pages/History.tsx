@@ -82,6 +82,11 @@ export default function History() {
   >([]);
   const [leagueName, setLeagueName] = useState("");
 
+  // Still populated below, but the Lowest Scores and Longest Playoff
+  // Streak sections are commented out in the markup.
+  void lowScores;
+  void longestPlayoffStreak;
+
   useEffect(() => {
     const run = async () => {
       setLoading(true);
