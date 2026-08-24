@@ -520,10 +520,10 @@ export default function Week() {
               {leagueData.name} - Week {week}
             </h2>
             <nav className="week-nav">
-              {Array.from({ length: 17 }, (_, i) => i).map((w) => {
+              {Array.from({ length: 17 }, (_, i) => i + 1).map((w) => {
                 const currentLeagueWeek = leagueData.settings?.leg ?? 1;
                 const isActive = w === Number(week);
-                const isUnlocked = w <= currentLeagueWeek; // week 0 always true
+                const isUnlocked = w <= currentLeagueWeek;
 
                 return isUnlocked ? (
                   <Link
@@ -531,7 +531,7 @@ export default function Week() {
                     to={`/week/${w}`}
                     className={`week-link ${isActive ? "active" : ""}`}
                   >
-                    {w === 0 ? "Preseason" : w}
+                    {w}
                   </Link>
                 ) : (
                   <span key={w} className="week-link disabled">

@@ -103,7 +103,8 @@ export default function Standings({
         ))}
       </div>
 
-      {currentWeek > 0 && (
+      {/* Week 1 has no prior week to compare against, so awards start at 2 */}
+      {currentWeek > 1 && (
         <WeeklyAwards owners={ownersWithRanks} currentWeek={currentWeek} />
       )}
       <div className="note">

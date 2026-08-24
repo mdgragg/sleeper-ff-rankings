@@ -314,9 +314,9 @@ export default function Update() {
             onChange={(e) => setSelectedWeek(Number(e.target.value))}
             className="rounded px-2 py-1 bg-gray-800 text-white"
           >
-            {Array.from({ length: 17 }, (_, i) => i).map((w) => (
+            {Array.from({ length: 16 }, (_, i) => i + 1).map((w) => (
               <option key={w} value={w}>
-                {w === 0 ? "Preseason" : `Week ${w}`}
+                Week {w}
               </option>
             ))}
           </select>
@@ -335,7 +335,7 @@ export default function Update() {
           disabled={savingAll}
           className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 disabled:opacity-50"
         >
-          Revert back to Sleeper Rankings
+          SLEEPER RANKINGS
         </button>
       </div>
 
@@ -368,8 +368,7 @@ export default function Update() {
                   onBlur={() => commitRank(team.team_id)}
                   placeholder="Rank"
                   title="Manual rank override"
-                  className="rounded bg-gray-900 text-white p-2"
-                  style={{ width: "12%", marginRight: "10px" }}
+                  className="rounded bg-gray-900 text-white p-2 rank"
                 />
                 <input
                   type="text"
@@ -383,9 +382,8 @@ export default function Update() {
                       ),
                     )
                   }
-                  placeholder="Enter GIF/image link (optional)"
-                  className="rounded bg-gray-900 text-white p-2"
-                  style={{ width: "68%" }}
+                  placeholder="GIF/image link (optional)"
+                  className="rounded bg-gray-900 text-white p-2 gifs"
                 />
               </div>
 

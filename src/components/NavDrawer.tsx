@@ -16,7 +16,7 @@ export default function NavDrawer() {
     { to: `/week/${currentWeek}`, label: "Power Rankings" },
     { to: "/history", label: "History / Record Book" },
     { to: "/market-share", label: "Market Share" },
-    { to: "/activity", label: "Activity" },
+    { to: "/activity", label: "League Activity" },
   ];
 
   return (

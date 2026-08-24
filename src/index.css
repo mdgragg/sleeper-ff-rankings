@@ -238,12 +238,12 @@ header h2 {
 }
 
 .awards .weekly-winner {
-  border: #00fff9 3px solid;
+  border: #28e757 3px solid;
 }
 
 .weekly-winner .emoji {
   z-index: 1;
-  border: #00fff9 3px solid;
+  border: #28e757 3px solid;
 }
 
 .awards .award-avatar {
@@ -273,7 +273,7 @@ header h2 {
 
 .awards .good,
 .good {
-  color: #00fff9;
+  color: #28e757;
 }
 
 .awards .bad,
@@ -322,7 +322,7 @@ header h2 {
 }
 
 .container .weekly-winner-rank {
-  background: #00fff9;
+  background: #28e757;
   color: #2e384a;
 }
 
@@ -332,7 +332,7 @@ header h2 {
 }
 
 .container .clinched {
-  background: #00fff9;
+  background: #28e757;
   color: #2e384a;
 }
 
@@ -425,8 +425,8 @@ header h2 {
 } */
 
 .weekly-winner {
-  border: #00fff9 4px solid;
-  box-shadow: 0px 0px 10px 5px #00fff9;
+  border: #28e757 4px solid;
+  box-shadow: 0px 0px 10px 5px #28e757;
 }
 
 /* .container-0,
@@ -447,7 +447,7 @@ header h2 {
 }
 
 .weekly-winner-circle {
-  border: #00fff9 4px solid;
+  border: #28e757 4px solid;
 }
 
 .playoffs-circle {
@@ -630,10 +630,10 @@ header h2 {
 }
 
 .current-champ {
-  color: #161c29;
+  color: #ffdc00;
   font-weight: 600;
   height: 20px;
-  background: #ffdc00;
+  background: #161c29;
   padding: 6px 20px 12px 15px;
   margin-top: -15px;
   border-bottom-right-radius: 34px;
@@ -708,7 +708,7 @@ header h2 {
     padding: 7px 10px 0px 5px;
   }
   .current-champ {
-    color: #28e757;
+    color: #ffdc00;
     font-weight: 600;
     height: 20px;
     background: #161c29;
@@ -816,19 +816,19 @@ header h2 {
     display: block;
     /* margin-top: 7px; */
     padding: 7px 20px 10px;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 800;
   }
 
   .current-champ {
-    color: #161c29;
+    color: #ffdc00;
     font-weight: 600;
     height: 20px;
-    background: #28e757;
+    background: #161c29;
     padding: 10px 5px 5px 5px;
     border-bottom-right-radius: 32px;
     border-bottom-left-radius: 32px;
-    font-size: 16px;
+    font-size: 14px;
     border-top: solid #283142 3px;
   }
 
@@ -980,10 +980,20 @@ header h2 {
   margin-bottom: 15px;
 }
 
+.update-page input.rank {
+  width: 15%;
+  margin-right: 10px;
+  text-align: center;
+}
+
+.update-page input.gifs {
+  width: 72%;
+}
+
 .update-page textarea:focus,
 .update-page input:focus {
-  border-color: #28e757;
-  box-shadow: 0 0 6px #28e757;
+  border-color: #00fff9;
+  box-shadow: 0 0 6px #00fff9;
 }
 .update-page hr {
   border: 1px solid #283142;
@@ -1006,8 +1016,8 @@ header h2 {
 
 .update-page select:focus,
 .filter-row select:focus {
-  border-color: #28e757;
-  box-shadow: 0 0 6px #28e757;
+  border-color: #00fff9;
+  box-shadow: 0 0 6px #00fff9;
 }
 
 /* Button */
@@ -1817,6 +1827,14 @@ header h2 {
 }
 
 @media all and (max-width: 600px) {
+  .update-page input.rank {
+    width: 12%;
+  }
+
+  .update-page input.gifs {
+    width: 62%;
+  }
+
   .panel {
     border-radius: 24px;
     padding: 18px 14px 20px;

@@ -31,7 +31,7 @@ export default function Home() {
     {
       to: "/activity",
       emoji: "🔄",
-      title: "Activity",
+      title: "League Activity",
       desc: "Ai Reporters and transactions",
     },
   ];

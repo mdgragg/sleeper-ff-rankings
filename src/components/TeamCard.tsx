@@ -37,10 +37,11 @@ export default function TeamCard({
   const extras = weeklyExtras[owner.roster_id] || {};
 
   // No games have been played in the preseason, so there's no last/next
-  // week to show. With no scores to crown a winner, the highlight goes to
-  // the top ranked team instead.
+  // week to show.
   const isPreseason = currentWeek === 0;
-  const isHighlighted = isPreseason ? idx === 0 : !!owner.isWeeklyWinner;
+  // Week 1 highlights the top ranked team, since there's no previous week
+  // to have won. Week 2 on, it's whoever actually scored highest.
+  const isHighlighted = currentWeek <= 1 ? idx === 0 : !!owner.isWeeklyWinner;
   const isChamp =
     owner.roster_id === currentChampRosterId ||
     !!previousChampsByOwner[owner.ownerID];
