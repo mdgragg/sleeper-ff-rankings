@@ -108,8 +108,8 @@ export default function Standings({
         <WeeklyAwards owners={ownersWithRanks} currentWeek={currentWeek} />
       )}
       <div className="note">
-        <h3>Update </h3>
-        <p>View other pages by clicking nav in top right of page</p>
+        <h3>Season Stats</h3>
+        <p>Click on team image to see season stats and rankings.</p>
       </div>
 
       <div className="standings">

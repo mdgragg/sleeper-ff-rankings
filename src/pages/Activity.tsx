@@ -407,6 +407,7 @@ export default function Activity() {
       <section className="panel discord-section">
         <span className="emoji">💬</span>
         <h2>Ai League Reporters</h2>
+
         <div className="scroll-container">
           {discordPosts.length === 0 ? (
             <p className="panel-note">
