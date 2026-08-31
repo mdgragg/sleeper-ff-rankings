@@ -238,12 +238,12 @@ header h2 {
 }
 
 .awards .weekly-winner {
-  border: #28e757 3px solid;
+  border: #0f812b 3px solid;
 }
 
 .weekly-winner .emoji {
   z-index: 1;
-  border: #28e757 3px solid;
+  border: #0f812b 3px solid;
 }
 
 .awards .award-avatar {
@@ -323,13 +323,13 @@ header h2 {
 }
 
 .container .weekly-winner-rank {
-  background: #28e757;
-  color: #2e384a;
+  background: #0f812b;
+  color: white;
 }
 
 .container-11 .ranking {
-  background: #ff005c;
-  color: #2e384a;
+  background: #b30040;
+  color: white;
 }
 
 .container .clinched {
@@ -426,7 +426,7 @@ header h2 {
 } */
 
 .weekly-winner {
-  border: #28e757 4px solid;
+  border: #0f812b 4px solid;
   box-shadow: 0px 0px 10px 5px #28e757;
 }
 
@@ -448,7 +448,7 @@ header h2 {
 }
 
 .weekly-winner-circle {
-  border: #28e757 4px solid;
+  border: #0f812b 4px solid;
 }
 
 .playoffs-circle {
@@ -456,11 +456,11 @@ header h2 {
 }
 
 .container-11 {
-  border: #ff005c 4px solid;
+  border: #b30040 4px solid;
   box-shadow: 0px 0px 10px 5px #ff005c;
 }
 .container-11 .avatar {
-  border: #ff005c 4px solid;
+  border: #b30040 4px solid;
 }
 
 .name-desc {
@@ -1553,6 +1553,7 @@ header h2 {
 .tx-team {
   color: lightgrey;
   font-weight: 400;
+  font-style: italic;
 }
 
 /* Trade rows — one card per team showing what they received */
@@ -1727,13 +1728,13 @@ header h2 {
   margin: 8px 0;
 }
 .author-ai-schefter .discord-card {
-  border-left: #3b82f6 3px solid;
+  border-left: #2563eb 3px solid;
 }
 .author-ian-rapoprompt .discord-card {
-  border-left: #00fff9 3px solid;
+  border-left: #d97706 3px solid;
 }
-.author-tony-grossai .discord-card {
-  border-left: #ffdc00 3px solid;
+.author-mike-florai .discord-card {
+  border-left: #f43f5e 3px solid;
 }
 
 .discord-card-title {
@@ -1795,17 +1796,31 @@ header h2 {
   font-weight: 600;
 }
 
-.scroll-container .author-ai-schefter .discord-headline,
+.scroll-container .author-ai-schefter .discord-author {
+  /* color: #00ad4a; */
+  background: linear-gradient(180deg, transparent 50%, #0a59da 50%);
+  display: inline;
+}
+.scroll-container .author-ian-rapoprompt .discord-author {
+  background: linear-gradient(180deg, transparent 50%, #c06905 50%);
+  display: inline;
+}
+.scroll-container .author-mike-florai .discord-author {
+  color: white;
+  background: linear-gradient(180deg, transparent 50%, #9a0037 50%);
+  display: inline;
+}
 .scroll-container .author-ai-schefter .discord-text strong {
-  color: #3b82f6;
+  color: #2563eb;
 }
-.scroll-container .author-ian-rapoprompt .discord-headline,
 .scroll-container .author-ian-rapoprompt .discord-text strong {
-  color: #00fff9;
+  color: #d97706;
 }
-.scroll-container .author-tony-grossai .discord-headline,
-.scroll-container .author-tony-grossai .discord-text strong {
-  color: #ffdc00;
+.scroll-container .author-mike-florai .discord-text strong {
+  color: #f43f5e;
+}
+.discord-post .discord-card .discord-text:nth-last-child(1 of .discord-text) {
+  display: none;
 }
 
 .discord-image {

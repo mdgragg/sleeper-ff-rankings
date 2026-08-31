@@ -144,24 +144,82 @@ const rows = collected
     synced_at: new Date().toISOString(),
   }));
 
-if (rows.length === 0) {
-  console.log("No messages to sync.");
-  process.exit(0);
-}
-
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
   auth: { persistSession: false },
 });
 
-const { error } = await supabase
-  .from("discord_posts")
-  .upsert(rows, { onConflict: "id" });
+if (rows.length > 0) {
+  const { error } = await supabase
+    .from("discord_posts")
+    .upsert(rows, { onConflict: "id" });
 
-if (error) {
-  console.error("Supabase upsert failed:", error.message);
-  process.exit(1);
+  if (error) {
+    console.error("Supabase upsert failed:", error.message);
+    process.exit(1);
+  }
 }
 
 console.log(
   `Synced ${rows.length} messages from ${channelIds.length} channel(s)`,
 );
+
+// Discord messages deleted since the last run never show up in the fetch
+// above, so upsert alone can't remove them. For each channel, anything
+// still in Supabase within the timestamp range we just re-fetched but not
+// in this run's id set was deleted upstream. The window comes from the raw
+// fetch (before the author/type filters), so this still catches deletions
+// even when every remaining message in range now fails those filters.
+const fetchedIdsByChannel = new Map();
+for (const row of rows) {
+  const set = fetchedIdsByChannel.get(row.channel_id) ?? new Set();
+  set.add(row.id);
+  fetchedIdsByChannel.set(row.channel_id, set);
+}
+
+const rawByChannel = new Map();
+for (const { message, channelId } of collected) {
+  const bucket = rawByChannel.get(channelId) ?? [];
+  bucket.push(message.timestamp);
+  rawByChannel.set(channelId, bucket);
+}
+
+for (const [channelId, timestamps] of rawByChannel) {
+  const fetchedIds = fetchedIdsByChannel.get(channelId) ?? new Set();
+  const oldestPostedAt = timestamps.reduce((min, ts) =>
+    ts < min ? ts : min,
+  );
+
+  const { data: existing, error: selectError } = await supabase
+    .from("discord_posts")
+    .select("id")
+    .eq("channel_id", channelId)
+    .gte("posted_at", oldestPostedAt);
+
+  if (selectError) {
+    console.error(
+      `Failed to check for deleted posts in ${channelId}:`,
+      selectError.message,
+    );
+    continue;
+  }
+
+  const staleIds = existing
+    .map((r) => r.id)
+    .filter((id) => !fetchedIds.has(id));
+
+  if (staleIds.length === 0) continue;
+
+  const { error: deleteError } = await supabase
+    .from("discord_posts")
+    .delete()
+    .in("id", staleIds);
+
+  if (deleteError) {
+    console.error(
+      `Failed to delete stale posts in ${channelId}:`,
+      deleteError.message,
+    );
+  } else {
+    console.log(`Removed ${staleIds.length} deleted post(s) from ${channelId}`);
+  }
+}
