@@ -1035,6 +1035,17 @@ header h2 {
     background-color 0.2s,
     transform 0.1s;
 }
+.update-page button.nav-toggle,
+.update-page button.nav-close {
+  color: #161c29;
+  background-color: #283142;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 28px;
+}
 
 .update-page button:hover:not(:disabled) {
   opacity: 0.7;
@@ -1141,7 +1152,7 @@ header h2 {
 }
 
 .home-footer a {
-  color: lightgrey;
+  color: #161c29;
   font-size: 14px;
 }
 

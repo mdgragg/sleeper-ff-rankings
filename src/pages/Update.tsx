@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
 import type { OwnerWithRanks } from "../types";
+import NavDrawer from "../components/NavDrawer";
 
 interface WeeklyDataRow {
   id?: number;
@@ -304,6 +305,7 @@ export default function Update() {
 
   return (
     <div className="update-page p-6 max-w-4xl mx-auto">
+      <NavDrawer />
       <h1 className="text-2xl font-bold mb-6">Update Weekly Rankings</h1>
 
       <div className="mb-6 flex items-center gap-4">
