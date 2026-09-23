@@ -5,7 +5,7 @@ interface WeeklyAwardsProps {
   currentWeek: number;
 }
 
-export default function WeeklyAwards({ owners }: WeeklyAwardsProps) {
+export default function WeeklyAwards({ owners, currentWeek }: WeeklyAwardsProps) {
   if (!owners || owners.length === 0) return null;
 
   // const ownersSorted = [...owners];
@@ -51,7 +51,7 @@ export default function WeeklyAwards({ owners }: WeeklyAwardsProps) {
   return (
     <>
       <div id="weekly-awards">
-        <h2>Weekly Awards</h2>
+        <h2>Weekly Awards - Week {currentWeek}</h2>
         <div className="awards">
           <div className="box weekly-winner">
             <h3>

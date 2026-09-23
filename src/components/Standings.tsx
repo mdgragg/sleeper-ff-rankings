@@ -13,6 +13,7 @@ interface StandingsProps {
   currentChampRosterId: number;
   matchups: Record<string, Owner[]>;
   nextMatchups: Record<string, Owner[]>;
+  prevWeekOwners?: Owner[];
 }
 
 export default function Standings({
@@ -23,6 +24,7 @@ export default function Standings({
   currentChampRosterId,
   matchups,
   nextMatchups,
+  prevWeekOwners = [],
 }: StandingsProps) {
   // Step 1: Sort owners for display (manual rank > wins > points)
   const ownersSorted = owners.slice().sort((a, b) => {
@@ -104,8 +106,8 @@ export default function Standings({
       </div>
 
       {/* Week 1 has no prior week to compare against, so awards start at 2 */}
-      {currentWeek > 1 && (
-        <WeeklyAwards owners={ownersWithRanks} currentWeek={currentWeek} />
+      {currentWeek > 1 && prevWeekOwners.length > 0 && (
+        <WeeklyAwards owners={prevWeekOwners} currentWeek={currentWeek - 1} />
       )}
       <div className="note">
         <h3>Season Stats</h3>

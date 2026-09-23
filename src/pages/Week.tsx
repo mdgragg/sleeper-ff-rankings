@@ -45,9 +45,16 @@ export default function Week() {
     Record<string, OwnerWithRanks[]>
   >({});
   const [leagueData, setLeagueData] = useState<any>(null);
+  const [prevWeekOwners, setPrevWeekOwners] = useState<OwnerWithRanks[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
+      interface PlayerData {
+        pid: string;
+        pos: string;
+        pts: number;
+      }
+
       console.log("Fetching data for week:", week);
 
       const isPreseason = Number(week) === 0;
@@ -310,16 +317,20 @@ export default function Week() {
       // ------------------
       // Determine weekly winner
       // ------------------
-      const maxPoints = Math.max(
-        ...ownersData.map((o) => o.matchupPoints ?? 0),
-      );
-      // Preseason (and any week before kickoff) has everyone on 0, which
-      // would otherwise hand the win to whoever comes first in the list.
-      const weeklyWinnerId =
-        isPreseason || maxPoints <= 0
-          ? undefined
-          : ownersData.find((o) => (o.matchupPoints ?? 0) === maxPoints)
-              ?.roster_id;
+      let weeklyWinnerId: number | undefined;
+      if (Number(week) > 1) {
+        weeklyWinnerId = undefined; // Will be set after prevWeekOwnersData is calculated
+      } else if (!isPreseason) {
+        // For week 1, use current week's winner
+        const maxPoints = Math.max(
+          ...ownersData.map((o) => o.matchupPoints ?? 0),
+        );
+        weeklyWinnerId =
+          maxPoints <= 0
+            ? undefined
+            : ownersData.find((o) => (o.matchupPoints ?? 0) === maxPoints)
+                ?.roster_id;
+      }
       ownersData.forEach((o) => {
         o.isWeeklyWinner = o.roster_id === weeklyWinnerId;
       });
@@ -490,6 +501,163 @@ export default function Week() {
       setOwners(ownersData);
       setMatchups(matchupsMap);
       setNextMatchups(nextMatchupsMap);
+
+      // Fetch previous week's data for awards (week N-1 awards shown on week N)
+      if (Number(week) > 1) {
+        const prevWeekNum = Number(week) - 1;
+        const prevMatchupsRes = await fetch(
+          `https://api.sleeper.app/v1/league/${LEAGUE_ID}/matchups/${prevWeekNum}`,
+        ).then((r) => r.json());
+        const prevTxRes = await fetch(
+          `https://api.sleeper.app/v1/league/${LEAGUE_ID}/transactions/${prevWeekNum}`,
+        ).then((r) => r.json());
+
+        const prevWeekOwnersData: OwnerWithRanks[] = rostersRes.map(
+          (roster: any) => {
+            const user = usersRes.find((u: any) => u.user_id === roster.owner_id);
+            const pointsFor = parseFloat(
+              `${roster.settings.fpts}.${roster.settings.fpts_decimal ?? 0}`,
+            );
+            const pointsAgainst = parseFloat(
+              `${roster.settings.fpts_against}.${roster.settings.fpts_against_decimal ?? 0}`,
+            );
+            const pointsPossible = parseFloat(
+              `${roster.settings.ppts}.${roster.settings.ppts_decimal ?? 0}`,
+            );
+            const pointsPossiblePerc =
+              pointsPossible > 0 ? (pointsFor / pointsPossible) * 100 : 0;
+
+            return {
+              ownerID: roster.owner_id,
+              roster_id: roster.roster_id,
+              userName: user?.display_name || "Unknown",
+              teamName: user?.metadata?.team_name || user?.display_name || "",
+              wins: roster.settings?.wins ?? 0,
+              losses: roster.settings?.losses ?? 0,
+              ties: roster.settings?.ties ?? 0,
+              streak: roster.metadata?.streak || "",
+              matchupPoints: 0,
+              waiverOrder: roster.settings?.waiver_position ?? 0,
+              pointsFor,
+              pointsAgainst,
+              pointsPossible,
+              pointsPossiblePerc,
+              addDropCount: 0,
+              TradeCount: 0,
+              teamAvatar: user?.metadata?.avatar || avatarUrlBase + user?.avatar,
+              topScorerWeek: "",
+              topScorerWeekPoints: 0,
+              topScorerSeason: "",
+              topScorerSeasonPoints: 0,
+            };
+          },
+        );
+
+        // Count adds/drops for previous week
+        prevTxRes.forEach((tx: any) => {
+          tx.roster_ids.forEach((rid: number) => {
+            const owner = prevWeekOwnersData.find((o) => o.roster_id === rid);
+            if (!owner) return;
+            if (tx.type === "free_agent")
+              owner.addDropCount = (owner.addDropCount || 0) + 1;
+            if (tx.type === "trade")
+              owner.TradeCount = (owner.TradeCount || 0) + 1;
+          });
+        });
+
+        // Assign matchup points for previous week
+        prevMatchupsRes.forEach((matchup: any) => {
+          const owner = prevWeekOwnersData.find(
+            (o) => o.roster_id === matchup.roster_id,
+          );
+          if (!owner) return;
+
+          const matchupID = matchup.matchup_id?.toString() || "";
+          owner.matchupID = matchupID;
+          owner.matchupPoints = matchup.points ?? 0;
+
+          // Optimal Lineup Calculation for previous week
+          const allPlayers: PlayerData[] =
+            matchup.players?.map((pid: string): PlayerData => {
+              const pts = Number(matchup.players_points?.[pid] ?? 0);
+              const pos = playersRes[pid]?.position || "UNK";
+              return { pid, pos, pts };
+            }) ?? [];
+
+          // Separate by position
+          const qbs: PlayerData[] = allPlayers
+            .filter((p) => p.pos === "QB")
+            .sort((a, b) => b.pts - a.pts);
+          const rbs: PlayerData[] = allPlayers
+            .filter((p) => p.pos === "RB")
+            .sort((a, b) => b.pts - a.pts);
+          const wrs: PlayerData[] = allPlayers
+            .filter((p) => p.pos === "WR")
+            .sort((a, b) => b.pts - a.pts);
+          const tes: PlayerData[] = allPlayers
+            .filter((p) => p.pos === "TE")
+            .sort((a, b) => b.pts - a.pts);
+          const defs: PlayerData[] = allPlayers
+            .filter((p) => p.pos === "DEF")
+            .sort((a, b) => b.pts - a.pts);
+          const ks: PlayerData[] = allPlayers
+            .filter((p) => p.pos === "K")
+            .sort((a, b) => b.pts - a.pts);
+
+          // Build optimal lineup
+          const lineup: PlayerData[] = [];
+          if (qbs[0]) lineup.push(qbs[0]);
+          lineup.push(...rbs.slice(0, 2));
+          lineup.push(...wrs.slice(0, 2));
+          if (tes[0]) lineup.push(tes[0]);
+          if (ks[0]) lineup.push(ks[0]);
+          if (defs[0]) lineup.push(defs[0]);
+
+          // Flex = next 2 highest from RB/WR/TE not already used
+          const usedPids = new Set(lineup.map((p) => p.pid));
+          const flexPool: PlayerData[] = [
+            ...rbs.slice(2),
+            ...wrs.slice(2),
+            ...tes.slice(1),
+          ]
+            .filter((p) => !usedPids.has(p.pid))
+            .sort((a, b) => b.pts - a.pts);
+          lineup.push(...flexPool.slice(0, 2));
+
+          // Calculate possible points
+          const optimalPoints = lineup.reduce((sum, p) => sum + p.pts, 0);
+          owner.weekPointsPossible = optimalPoints;
+          owner.weekPointsPossiblePerc =
+            optimalPoints > 0 ? (owner.matchupPoints / optimalPoints) * 100 : 0;
+
+          // Opponent points
+          const opponent = prevMatchupsRes.find(
+            (m: any) =>
+              m.matchup_id === matchup.matchup_id &&
+              m.roster_id !== matchup.roster_id,
+          );
+          owner.weekPointsAgainst = opponent?.points ?? 0;
+        });
+
+        // Determine weekly winner from previous week
+        const prevMaxPoints = Math.max(
+          ...prevWeekOwnersData.map((o) => o.matchupPoints ?? 0),
+        );
+        const prevWeekWinnerId =
+          prevMaxPoints <= 0
+            ? undefined
+            : prevWeekOwnersData.find(
+                (o) => (o.matchupPoints ?? 0) === prevMaxPoints,
+              )?.roster_id;
+
+        // Set isWeeklyWinner on current week's owners based on previous week's winner
+        ownersData.forEach((o) => {
+          o.isWeeklyWinner = o.roster_id === prevWeekWinnerId;
+        });
+
+        setPrevWeekOwners(prevWeekOwnersData);
+      }
+
       setLoading(false);
     };
 
@@ -551,6 +719,7 @@ export default function Week() {
         currentChampRosterId={currentChampRosterId}
         matchups={matchups}
         nextMatchups={nextMatchups}
+        prevWeekOwners={prevWeekOwners}
       />
     </div>
   );
