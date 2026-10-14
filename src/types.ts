@@ -19,6 +19,7 @@ export interface Owner {
   pointsPossiblePerc: number;
   matchupID?: string;
   nextMatchupID?: string;
+  prevMatchupID?: string;
   manualRank?: number;
 
   topScorerWeek?: string;

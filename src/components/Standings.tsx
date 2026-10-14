@@ -11,7 +11,7 @@ interface StandingsProps {
   currentWeek: number;
   previousChampsByOwner: Record<string, string>;
   currentChampRosterId: number;
-  matchups: Record<string, Owner[]>;
+  prevMatchups: Record<string, Owner[]>;
   nextMatchups: Record<string, Owner[]>;
   prevWeekOwners?: Owner[];
 }
@@ -22,7 +22,7 @@ export default function Standings({
   currentWeek,
   previousChampsByOwner,
   currentChampRosterId,
-  matchups,
+  prevMatchups,
   nextMatchups,
   prevWeekOwners = [],
 }: StandingsProps) {
@@ -123,7 +123,7 @@ export default function Standings({
             idx={idx}
             weeklyExtras={weeklyExtras}
             currentWeek={currentWeek}
-            matchups={matchups}
+            prevMatchups={prevMatchups}
             nextMatchups={nextMatchups}
             previousChampsByOwner={previousChampsByOwner}
             currentChampRosterId={currentChampRosterId}

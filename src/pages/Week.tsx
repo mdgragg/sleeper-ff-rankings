@@ -33,19 +33,49 @@ const previousChampsByOwner: Record<string, string> = {
 
 const currentChampRosterId = 3;
 
+// Top starter and top bench player for one roster's matchup
+function getTopPlayers(matchup: any, playersRes: Record<string, any>) {
+  const points = matchup.players_points ?? {};
+
+  let topStarter = { player_id: "", points: 0 };
+  matchup.starters?.forEach((pid: string) => {
+    const pts = Number(points[pid] ?? 0);
+    if (pts > topStarter.points) topStarter = { player_id: pid, points: pts };
+  });
+
+  let topBench = { player_id: "", points: 0 };
+  const benchPlayers =
+    matchup.players?.filter(
+      (pid: string) => !matchup.starters?.includes(pid),
+    ) ?? [];
+  benchPlayers.forEach((pid: string) => {
+    const pts = Number(points[pid] ?? 0);
+    if (pts > topBench.points) topBench = { player_id: pid, points: pts };
+  });
+
+  return {
+    topScorerWeek:
+      playersRes[topStarter.player_id]?.full_name || topStarter.player_id,
+    topScorerWeekPoints: topStarter.points,
+    topBenchWeek:
+      playersRes[topBench.player_id]?.full_name || topBench.player_id,
+    topBenchWeekPoints: topBench.points,
+  };
+}
+
 export default function Week() {
   const { week } = useParams<{ week: string }>();
   const [owners, setOwners] = useState<OwnerWithRanks[]>([]);
   const [weeklyExtras, setWeeklyExtras] = useState<Config["teamExtras"]>({});
   const [loading, setLoading] = useState(true);
-  const [matchups, setMatchups] = useState<Record<string, OwnerWithRanks[]>>(
-    {},
-  );
   const [nextMatchups, setNextMatchups] = useState<
     Record<string, OwnerWithRanks[]>
   >({});
   const [leagueData, setLeagueData] = useState<any>(null);
   const [prevWeekOwners, setPrevWeekOwners] = useState<OwnerWithRanks[]>([]);
+  const [prevMatchups, setPrevMatchups] = useState<
+    Record<string, OwnerWithRanks[]>
+  >({});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -59,45 +89,33 @@ export default function Week() {
 
       const isPreseason = Number(week) === 0;
 
-      const [
-        leagueRes,
-        rostersRes,
-        usersRes,
-        matchupsRes,
-        nextMatchupsRes,
-        txRes,
-        playersRes,
-      ] = await Promise.all([
-        fetch(`https://api.sleeper.app/v1/league/${LEAGUE_ID}`).then((r) =>
-          r.json(),
-        ),
-        fetch(`https://api.sleeper.app/v1/league/${LEAGUE_ID}/rosters`).then(
-          (r) => r.json(),
-        ),
-        fetch(`https://api.sleeper.app/v1/league/${LEAGUE_ID}/users`).then(
-          (r) => r.json(),
-        ),
-        isPreseason
-          ? Promise.resolve([])
-          : fetch(
-              `https://api.sleeper.app/v1/league/${LEAGUE_ID}/matchups/${week}`,
-            ).then((r) => r.json()),
-        isPreseason
-          ? Promise.resolve([])
-          : fetch(
-              `https://api.sleeper.app/v1/league/${LEAGUE_ID}/matchups/${Number(week) + 1}`,
-            ).then((r) => r.json()),
-        isPreseason
-          ? Promise.resolve([])
-          : fetch(
-              `https://api.sleeper.app/v1/league/${LEAGUE_ID}/transactions/${week}`,
-            ).then((r) => r.json()),
-        isPreseason
-          ? Promise.resolve({})
-          : fetch(`https://api.sleeper.app/v1/players/nfl`).then((r) =>
-              r.json(),
-            ),
-      ]);
+      const [leagueRes, rostersRes, usersRes, matchupsRes, txRes, playersRes] =
+        await Promise.all([
+          fetch(`https://api.sleeper.app/v1/league/${LEAGUE_ID}`).then((r) =>
+            r.json(),
+          ),
+          fetch(`https://api.sleeper.app/v1/league/${LEAGUE_ID}/rosters`).then(
+            (r) => r.json(),
+          ),
+          fetch(`https://api.sleeper.app/v1/league/${LEAGUE_ID}/users`).then(
+            (r) => r.json(),
+          ),
+          isPreseason
+            ? Promise.resolve([])
+            : fetch(
+                `https://api.sleeper.app/v1/league/${LEAGUE_ID}/matchups/${week}`,
+              ).then((r) => r.json()),
+          isPreseason
+            ? Promise.resolve([])
+            : fetch(
+                `https://api.sleeper.app/v1/league/${LEAGUE_ID}/transactions/${week}`,
+              ).then((r) => r.json()),
+          isPreseason
+            ? Promise.resolve({})
+            : fetch(`https://api.sleeper.app/v1/players/nfl`).then((r) =>
+                r.json(),
+              ),
+        ]);
       setLeagueData(leagueRes);
 
       const avatarUrlBase = "https://sleepercdn.com/avatars/thumbs/";
@@ -207,7 +225,6 @@ export default function Week() {
       // ------------------
       // Assign matchupPoints & matchupIDs
       // ------------------
-      const matchupsMap: Record<string, OwnerWithRanks[]> = {};
       matchupsRes.forEach((matchup: any) => {
         const owner = ownersData.find((o) => o.roster_id === matchup.roster_id);
         if (!owner) return;
@@ -296,16 +313,13 @@ export default function Week() {
             m.roster_id !== matchup.roster_id,
         );
         owner.weekPointsAgainst = opponent?.points ?? 0;
-
-        if (!matchupsMap[matchupID]) matchupsMap[matchupID] = [];
-        matchupsMap[matchupID].push(owner);
       });
 
       // ------------------
       // Assign next matchups
       // ------------------
       const nextMatchupsMap: Record<string, OwnerWithRanks[]> = {};
-      nextMatchupsRes.forEach((m: any) => {
+      matchupsRes.forEach((m: any) => {
         const owner = ownersData.find((o) => o.roster_id === m.roster_id);
         if (!owner) return;
         const matchupID = m.matchup_id?.toString() || "";
@@ -340,41 +354,6 @@ export default function Week() {
         if (!owner) return;
         owner.matchupID = matchup.matchup_id?.toString() || "";
         owner.matchupPoints = matchup.points ?? 0;
-      });
-
-      // ------------------
-      // Top Scorer Week & Bench
-      // ------------------
-      ownersData.forEach((owner) => {
-        const matchup = matchupsRes.find(
-          (m: any) => m.roster_id === owner.roster_id,
-        );
-        if (!matchup?.players_points) return;
-
-        // Starter MVP
-        let topStarter = { player_id: "", points: 0 };
-        matchup.starters?.forEach((pid: string) => {
-          const pts = Number(matchup.players_points[pid] ?? 0);
-          if (pts > topStarter.points)
-            topStarter = { player_id: pid, points: pts };
-        });
-        owner.topScorerWeek =
-          playersRes[topStarter.player_id]?.full_name || topStarter.player_id;
-        owner.topScorerWeekPoints = topStarter.points;
-
-        // Bench MVP
-        let topBench = { player_id: "", points: 0 };
-        const benchPlayers =
-          matchup.players?.filter(
-            (pid: string) => !matchup.starters?.includes(pid),
-          ) ?? [];
-        benchPlayers.forEach((pid: string) => {
-          const pts = Number(matchup.players_points[pid] ?? 0);
-          if (pts > topBench.points) topBench = { player_id: pid, points: pts };
-        });
-        owner.topBenchWeek =
-          playersRes[topBench.player_id]?.full_name || topBench.player_id;
-        owner.topBenchWeekPoints = topBench.points;
       });
 
       // ------------------
@@ -499,7 +478,6 @@ export default function Week() {
       );
 
       setOwners(ownersData);
-      setMatchups(matchupsMap);
       setNextMatchups(nextMatchupsMap);
 
       // Fetch previous week's data for awards (week N-1 awards shown on week N)
@@ -514,7 +492,9 @@ export default function Week() {
 
         const prevWeekOwnersData: OwnerWithRanks[] = rostersRes.map(
           (roster: any) => {
-            const user = usersRes.find((u: any) => u.user_id === roster.owner_id);
+            const user = usersRes.find(
+              (u: any) => u.user_id === roster.owner_id,
+            );
             const pointsFor = parseFloat(
               `${roster.settings.fpts}.${roster.settings.fpts_decimal ?? 0}`,
             );
@@ -544,7 +524,8 @@ export default function Week() {
               pointsPossiblePerc,
               addDropCount: 0,
               TradeCount: 0,
-              teamAvatar: user?.metadata?.avatar || avatarUrlBase + user?.avatar,
+              teamAvatar:
+                user?.metadata?.avatar || avatarUrlBase + user?.avatar,
               topScorerWeek: "",
               topScorerWeekPoints: 0,
               topScorerSeason: "",
@@ -639,6 +620,18 @@ export default function Week() {
           owner.weekPointsAgainst = opponent?.points ?? 0;
         });
 
+        // Week MVP and Bench MVP in the team modal show last week's players
+        prevWeekOwnersData.forEach((prev) => {
+          const matchup = prevMatchupsRes.find(
+            (m: any) => m.roster_id === prev.roster_id,
+          );
+          const current = ownersData.find(
+            (c) => c.roster_id === prev.roster_id,
+          );
+          if (current)
+            Object.assign(current, getTopPlayers(matchup ?? {}, playersRes));
+        });
+
         // Determine weekly winner from previous week
         const prevMaxPoints = Math.max(
           ...prevWeekOwnersData.map((o) => o.matchupPoints ?? 0),
@@ -654,6 +647,18 @@ export default function Week() {
         ownersData.forEach((o) => {
           o.isWeeklyWinner = o.roster_id === prevWeekWinnerId;
         });
+
+        // Map last week's matchups onto this week's owners so the
+        // "Last Week" line shows week N-1 results
+        const prevMatchupsMap: Record<string, OwnerWithRanks[]> = {};
+        prevWeekOwnersData.forEach((o) => {
+          if (!o.matchupID) return;
+          if (!prevMatchupsMap[o.matchupID]) prevMatchupsMap[o.matchupID] = [];
+          prevMatchupsMap[o.matchupID].push(o);
+          const current = ownersData.find((c) => c.roster_id === o.roster_id);
+          if (current) current.prevMatchupID = o.matchupID;
+        });
+        setPrevMatchups(prevMatchupsMap);
 
         setPrevWeekOwners(prevWeekOwnersData);
       }
@@ -717,7 +722,7 @@ export default function Week() {
         currentWeek={Number(week)}
         previousChampsByOwner={previousChampsByOwner}
         currentChampRosterId={currentChampRosterId}
-        matchups={matchups}
+        prevMatchups={prevMatchups}
         nextMatchups={nextMatchups}
         prevWeekOwners={prevWeekOwners}
       />

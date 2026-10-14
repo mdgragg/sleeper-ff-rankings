@@ -16,7 +16,7 @@ interface TeamCardProps {
     }
   >;
   currentWeek: number;
-  matchups: Record<string, Owner[]>;
+  prevMatchups: Record<string, Owner[]>;
   nextMatchups: Record<string, Owner[]>;
   previousChampsByOwner: Record<string, string>;
   currentChampRosterId: number;
@@ -28,7 +28,7 @@ export default function TeamCard({
   idx,
   weeklyExtras,
   currentWeek,
-  matchups,
+  prevMatchups,
   nextMatchups,
   previousChampsByOwner,
   currentChampRosterId,
@@ -139,10 +139,10 @@ export default function TeamCard({
                 <span className="matchup">
                   Last Week:{" "}
                   <b>
-                    {matchups[owner.matchupID || ""]?.length === 2
+                    {prevMatchups[owner.prevMatchupID || ""]?.length === 2
                       ? (() => {
                           const [teamA, teamB] =
-                            matchups[owner.matchupID || ""];
+                            prevMatchups[owner.prevMatchupID || ""];
                           const isCurrentOwnerA =
                             teamA.roster_id === owner.roster_id;
                           const self = isCurrentOwnerA ? teamA : teamB;
@@ -166,7 +166,7 @@ export default function TeamCard({
                         })()
                       : "—"}
                   </b>{" "}
-                  {"    "}| {"    "} Next Week:{" "}
+                  {"    "}| {"    "} This Week:{" "}
                   <b>
                     {nextOpp.length
                       ? nextOpp.map((o) => `@${o.userName}`).join(", ")
