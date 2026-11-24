@@ -10,5 +10,6 @@ export const Sleeper = {
     `${API}/league/${leagueId}/transactions/${week}`,
   draft: (draftId: string) => `${API}/draft/${draftId}`,
   draftPicks: (draftId: string) => `${API}/draft/${draftId}/picks`,
+  players: `${API}/players/nfl`,
   nflState: () => `${API}/state/nfl`,
 };

@@ -8,6 +8,8 @@ import History from "../pages/History";
 import Update from "../pages/Update";
 import MarketShare from "../pages/MarketShare";
 import Activity from "../pages/Activity";
+import DraftReport from "../pages/DraftReport";
+import Standings from "../pages/Standings";
 
 // import Awards from "../pages/Awards";
 
@@ -49,6 +51,23 @@ export const router = createBrowserRouter([
     element: (
       <>
         <Activity />{" "}
+      </>
+    ),
+  },
+  {
+    path: "/draft-report",
+    element: (
+      <>
+        <DraftReport />
+      </>
+    ),
+  },
+
+  {
+    path: "/standings",
+    element: (
+      <>
+        <Standings />
       </>
     ),
   },

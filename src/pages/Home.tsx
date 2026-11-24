@@ -34,6 +34,18 @@ export default function Home() {
       title: "League Activity",
       desc: "Ai Reporters and transactions",
     },
+    {
+      to: "/draft-report",
+      emoji: "🎯",
+      title: "Draft Grades",
+      desc: "Who had the best draft, and who got unlucky",
+    },
+    {
+      to: "/standings",
+      emoji: "🧮",
+      title: "Playoff Picture",
+      desc: "Standings, clinch and elimination status",
+    },
   ];
 
   return (

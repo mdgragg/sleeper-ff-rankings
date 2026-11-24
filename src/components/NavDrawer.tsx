@@ -17,6 +17,8 @@ export default function NavDrawer() {
     { to: "/history", label: "History / Record Book" },
     { to: "/market-share", label: "Market Share" },
     { to: "/activity", label: "League Activity" },
+    { to: "/draft-report", label: "Draft Grades" },
+    { to: "/standings", label: "Playoff Picture" },
   ];
 
   return (

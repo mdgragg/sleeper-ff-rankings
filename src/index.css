@@ -440,7 +440,7 @@ header h2 {
 
 .wins {
   font-size: 14px;
-  color: #0f812b;
+  color: #28e757;
 }
 .losses {
   font-size: 14px;
@@ -1940,4 +1940,224 @@ header h2 {
     order: 3;
     grid-column: 1 / -1;
   }
+}
+
+/* ---------- Draft Report ---------- */
+
+.draft-page {
+  max-width: 1000px;
+  margin: auto;
+  padding: 5px;
+}
+
+.draft-page .panel {
+  margin-top: 30px;
+}
+
+.draft-table-wrap {
+  overflow-x: auto;
+}
+
+.draft-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.draft-table th,
+.draft-table td {
+  padding: 8px 10px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.draft-table th {
+  font-weight: 600;
+  opacity: 0.7;
+}
+
+.draft-table .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.draft-good {
+  color: #28e757;
+}
+
+.draft-bad {
+  color: #ff005c;
+}
+
+.draft-muted {
+  opacity: 0.6;
+}
+
+.draft-status {
+  margin-left: 6px;
+  color: #ff005c;
+  font-size: 0.8em;
+}
+
+.draft-mobile-only {
+  display: none;
+}
+
+/* Phones: drop the rank and manager columns (the manager goes in brackets
+   next to the player) and tighten the table so it fits without scrolling. */
+@media all and (max-width: 600px) {
+  .draft-mobile-only {
+    display: inline;
+  }
+
+  .draft-hide-mobile {
+    display: none;
+  }
+
+  .draft-page .panel {
+    padding: 14px;
+  }
+
+  .draft-table {
+    font-size: 0.85rem;
+  }
+
+  .draft-table th,
+  .draft-table td {
+    padding: 6px 4px;
+  }
+}
+
+/* Playoff line on the Standings page */
+.draft-table tr.standings-cutline td {
+  border-bottom: 2px dashed #00fff9;
+}
+
+/* Teams outside the playoff spots */
+.draft-table tr.standings-out td {
+  opacity: 0.5;
+}
+
+/* Standings: odds delta + what-if picker */
+.standings-delta {
+  margin-left: 6px;
+  font-size: 0.75em;
+}
+
+.standings-reset {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 20px;
+  color: white;
+  padding: 4px 14px;
+  cursor: pointer;
+  margin-bottom: 6px;
+}
+
+.standings-reset:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.standings-week h3 {
+  margin: 16px 0 8px;
+  font-size: 1rem;
+  opacity: 0.7;
+}
+
+.standings-game {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.standings-pick {
+  background: #161c29;
+  border: 2px solid #2e384a;
+  border-radius: 20px;
+  color: white;
+  padding: 8px 10px;
+  font: inherit;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+}
+
+.standings-pick:hover,
+.standings-pick:focus-visible {
+  border-color: #00fff9;
+  outline: none;
+}
+
+.standings-pick.picked {
+  background: rgba(40, 231, 87, 0.18);
+  border-color: #28e757;
+}
+
+.standings-side {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  gap: 4px;
+}
+
+/* Row reads: median 1 | team 1 | team 2 | median 2, so the median buttons
+   sit on the outside edges. */
+.standings-side:first-child {
+  grid-template-columns: 1fr 3fr;
+}
+
+.standings-side:first-child .standings-median {
+  order: -1;
+}
+
+.standings-median-short {
+  display: none;
+}
+
+/* Phones: the button only has room for an M. */
+@media all and (max-width: 600px) {
+  .standings-median-full {
+    display: none;
+  }
+
+  .standings-median-short {
+    display: inline;
+    font-weight: 600;
+  }
+}
+
+/* The team that lost a picked game */
+.standings-pick.lost {
+  opacity: 0.35;
+}
+
+.standings-median {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  color: lightgrey;
+  padding: 2px 4px;
+  font: inherit;
+  font-size: 0.75rem;
+  line-height: 1.1;
+  cursor: pointer;
+}
+
+.standings-median:hover:not(:disabled),
+.standings-median:focus-visible {
+  border-color: #00fff9;
+  outline: none;
+}
+
+.standings-median.picked {
+  background: rgba(0, 255, 249, 0.15);
+  border-color: #00fff9;
+  color: white;
+}
+
+.standings-median:disabled {
+  opacity: 0.3;
+  cursor: default;
 }
