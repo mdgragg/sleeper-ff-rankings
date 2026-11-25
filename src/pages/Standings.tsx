@@ -13,8 +13,8 @@ import {
 } from "../lib/playoffOdds";
 import {
   buildStandings,
-  type PlayoffStatus,
   type ScheduleMatchup,
+  type PlayoffStatus,
   type StandingRow,
   type StandingsData,
   type StandingsRoster,
@@ -24,6 +24,7 @@ import logo from "/images/logo_with_text.png";
 const LEAGUE_ID = import.meta.env.VITE_LEAGUE_ID;
 const DEFAULT_PLAYOFF_TEAMS = 6;
 const DEFAULT_PLAYOFF_START = 15;
+const AVATAR_BASE = "https://sleepercdn.com/avatars/thumbs/";
 const PICKER_WEEKS = 3; // how many upcoming weeks get what-if buttons
 
 interface League {
@@ -40,6 +41,8 @@ interface League {
 interface LeagueUser {
   user_id: string;
   display_name?: string;
+  avatar?: string;
+  metadata?: { avatar?: string; team_name?: string };
 }
 
 interface Loaded {
@@ -47,22 +50,38 @@ interface Loaded {
   schedule: ScheduleMatchup[][];
   weeksPlayed: number;
   resultsPerWeek: number;
+  teams: Record<number, { avatar: string; teamName: string }>;
 }
 
-const STATUS_LABEL: Record<PlayoffStatus, string> = {
-  clinched: "Clinched",
-  eliminated: "Eliminated",
-  hunt: "In the hunt",
-};
-
 // Simulated odds at or above this, without a mathematical clinch, read "Near lock".
-const NEAR_LOCK_PCT = 99.5;
+const NEAR_LOCK_PCT = 90.5;
+// Teams outside the playoff line with odds under this "need a miracle".
+const MIRACLE_PCT = 3;
 
-const STATUS_CLASS: Record<PlayoffStatus, string> = {
-  clinched: "draft-good",
-  eliminated: "draft-bad",
-  hunt: "draft-muted",
-};
+// Odds come from the simulation, which already uses points for as the tiebreaker.
+function statusFor(
+  status: PlayoffStatus,
+  rank: number,
+  playoffTeams: number,
+  makePct: number,
+): { label: string; className: string } {
+  // The simulation never lets these teams in / out, so call it.
+  if (status === "hunt" && makePct >= 100) status = "clinched";
+  if (status === "hunt" && makePct <= 0) status = "eliminated";
+  if (status === "clinched")
+    return { label: "Clinched", className: "draft-good" };
+  if (status === "eliminated")
+    return { label: "Eliminated", className: "draft-bad" };
+  const inPosition = rank <= playoffTeams;
+  if (inPosition) {
+    return makePct >= NEAR_LOCK_PCT
+      ? { label: "Near lock", className: "draft-good" }
+      : { label: "In playoffs", className: "draft" };
+  }
+  return makePct < MIRACLE_PCT
+    ? { label: "Needs a miracle", className: "draft-bad" }
+    : { label: "In the hunt", className: "draft-muted" };
+}
 
 // Never show a simulated 0% or 100%: it's a probability, not a guarantee.
 function fmtPct(p: number): string {
@@ -71,6 +90,15 @@ function fmtPct(p: number): string {
   if (p >= 100) return "100%";
   if (p >= 99.5) return ">99%";
   return `${Math.round(p)}%`;
+}
+
+function ordinal(n: number): string {
+  const v = n % 100;
+  const suffix =
+    ["th", "st", "nd", "rd"][(v - 20) % 10] ??
+    ["th", "st", "nd", "rd"][v] ??
+    "th";
+  return `${n}${suffix}`;
 }
 
 function OddsCell({ odds, base }: { odds?: TeamOdds; base?: TeamOdds }) {
@@ -100,6 +128,8 @@ export default function Standings() {
   const [picks, setPicks] = useState<Record<string, number>>({});
   // medianKey -> true for teams picked to beat the weekly median
   const [medianPicks, setMedianPicks] = useState<Record<string, true>>({});
+  // Team whose full stats are open in the modal
+  const [selectedId, setSelectedId] = useState<number | null>(null);
 
   useEffect(() => {
     const run = async () => {
@@ -131,9 +161,16 @@ export default function Standings() {
         ]);
 
         const owners: Record<number, string> = {};
+        const teams: Loaded["teams"] = {};
         for (const roster of rosters) {
           const user = users.find((u) => u.user_id === roster.owner_id);
           owners[roster.roster_id] = user?.display_name || "Unknown";
+          teams[roster.roster_id] = {
+            avatar:
+              user?.metadata?.avatar ||
+              (user?.avatar ? AVATAR_BASE + user.avatar : ""),
+            teamName: user?.metadata?.team_name || user?.display_name || "",
+          };
         }
 
         setLoaded({
@@ -149,6 +186,7 @@ export default function Standings() {
           schedule,
           weeksPlayed,
           resultsPerWeek,
+          teams,
         });
       } catch (err) {
         setError(err instanceof Error ? err.message : String(err));
@@ -238,21 +276,123 @@ export default function Standings() {
   }
 
   const { data } = loaded;
+  const selectedRow = data.rows.find((r) => r.rosterId === selectedId);
+  const selectedTeam = selectedRow
+    ? loaded.teams[selectedRow.rosterId]
+    : undefined;
+  const selectedOdds = selectedRow
+    ? odds?.get(selectedRow.rosterId)
+    : undefined;
   const ownerOf = (rosterId: number) =>
     data.rows.find((r) => r.rosterId === rosterId)?.owner ?? "Unknown";
 
-  // Based on the no-picks odds so the label doesn't flip while you play with picks.
-  const nearLock = (r: StandingRow) =>
-    r.status === "hunt" &&
-    (baseOdds?.get(r.rosterId)?.makePct ?? 0) >= NEAR_LOCK_PCT;
+  // Picks move teams: order by current wins plus the wins picked for them,
+  // then points for. With no picks this is just the current standings.
+  const pickedWins = new Map<number, number>();
+  for (const id of Object.values(picks))
+    pickedWins.set(id, (pickedWins.get(id) ?? 0) + 1);
+  for (const key of Object.keys(medianPicks)) {
+    const id = Number(key.split(":")[1]);
+    pickedWins.set(id, (pickedWins.get(id) ?? 0) + 1);
+  }
+  const displayRows = hasPicks
+    ? [...data.rows].sort(
+        (a, b) =>
+          b.winTotal +
+            (pickedWins.get(b.rosterId) ?? 0) -
+            (a.winTotal + (pickedWins.get(a.rosterId) ?? 0)) ||
+          b.pointsFor - a.pointsFor,
+      )
+    : data.rows;
 
-  // Cut line under the last playoff spot, and everyone below it dimmed.
-  const rowClass = (seed: number) =>
-    seed === data.playoffTeams
+  // Teams below the line only dim once every remaining game has a pick.
+  const allPicked = games.every((g) => picks[gameKey(g)] != null);
+
+  // Clinched / eliminated, redone with the picks counted. A team picked to
+  // lose a game loses a win from its ceiling. Once everything is picked the
+  // table order decides it.
+  const lostPicks = new Map<number, number>();
+  for (const g of games) {
+    const w = picks[gameKey(g)];
+    if (w == null) continue;
+    const loser = w === g.a ? g.b : g.a;
+    lostPicks.set(loser, (lostPicks.get(loser) ?? 0) + 1);
+  }
+  const adj = data.rows.map((r) => ({
+    id: r.rosterId,
+    win: r.winTotal + (pickedWins.get(r.rosterId) ?? 0),
+    max: r.maxWins - (lostPicks.get(r.rosterId) ?? 0),
+  }));
+  const statusMap = new Map<number, { label: string; className: string }>();
+  displayRows.forEach((r, i) => {
+    const rank = i + 1;
+    let status: PlayoffStatus = r.status;
+    if (hasPicks) {
+      const me = adj.find((a) => a.id === r.rosterId)!;
+      const ahead = adj.filter((o) => o.id !== me.id && o.win > me.max).length;
+      const couldPass = adj.filter(
+        (o) => o.id !== me.id && o.max >= me.win,
+      ).length;
+      status = "hunt";
+      if (allPicked)
+        status = rank <= data.playoffTeams ? "clinched" : "eliminated";
+      else if (ahead >= data.playoffTeams) status = "eliminated";
+      else if (couldPass < data.playoffTeams) status = "clinched";
+    }
+    statusMap.set(
+      r.rosterId,
+      statusFor(
+        status,
+        rank,
+        data.playoffTeams,
+        odds?.get(r.rosterId)?.makePct ?? 50,
+      ),
+    );
+  });
+  const statusOf = (r: StandingRow) => statusMap.get(r.rosterId)!;
+
+  const resetPicks = () => {
+    setPicks({});
+    setMedianPicks({});
+  };
+
+  // Cut line under the last playoff spot.
+  const rowClass = (rank: number) =>
+    rank === data.playoffTeams
       ? "standings-cutline"
-      : seed > data.playoffTeams
+      : rank > data.playoffTeams && allPicked
         ? "standings-out"
         : "";
+
+  const recordOf = (r: StandingRow) =>
+    `${r.wins}-${r.losses}${r.ties > 0 ? `-${r.ties}` : ""}`;
+
+  // Projected final record: simulated average wins over every result left.
+  const projRecord = (r: StandingRow, o?: TeamOdds) => {
+    if (!o) return "–";
+    const total =
+      r.wins + r.losses + r.ties + r.gamesLeft * loaded.resultsPerWeek;
+    const w = Math.min(total, Math.round(o.projWins));
+    return `${w}-${total - w}`;
+  };
+
+  // Strength of schedule: hardest remaining schedules go full red, easiest full
+  // green, and the middle fades out, ranked among teams with games left.
+  const sosRanked = data.rows
+    .filter((r) => r.sosLeft != null)
+    .sort((a, b) => (a.sosLeft as number) - (b.sosLeft as number));
+  const sosRank = (rosterId: number) => {
+    const i = sosRanked.findIndex((r) => r.rosterId === rosterId);
+    return i < 0 ? null : i + 1;
+  };
+  const sosStyle = (rosterId: number) => {
+    const i = sosRanked.findIndex((r) => r.rosterId === rosterId);
+    if (i < 0) return undefined;
+    const t = sosRanked.length > 1 ? i / (sosRanked.length - 1) : 0.5; // 0 easy, 1 hard
+    const strength = Math.abs(t - 0.5) * 2; // 0 in the middle, 1 at the extremes
+    const rgb = t < 0.5 ? "40, 231, 87" : "255, 0, 92";
+    return { color: `rgba(${rgb}, ${(0.35 + 0.65 * strength).toFixed(2)})` };
+  };
 
   const pickerWeeks = [...new Set(games.map((g) => g.week))].slice(
     0,
@@ -290,64 +430,80 @@ export default function Standings() {
       <section className="panel">
         <h2>Standings</h2>
         <p className="panel-note">
-          Top {data.playoffTeams} make the playoffs. Ranked by wins, then points
-          for. Clinched and eliminated ignore tiebreakers and your picks, so a
-          team that can only tie for the last spot stays in the hunt. Near lock
-          means the team isn't mathematically in yet but makes it in over 99% of
-          simulations. Odds come from simulating the rest of the season 10,000
-          times.
+          Click on each row for all of that teams stats. Picking teams below (in
+          Playoff Paths section) move teams up and down and update their status.
         </p>
-        <div className="draft-table-wrap">
+        <div className="standings-whatif-bar">
+          <button
+            className="standings-reset"
+            disabled={!hasPicks}
+            onClick={resetPicks}
+          >
+            Back to current standings
+          </button>
+          {hasPicks && (
+            <span className="standings-whatif-badge">
+              Not current standings
+            </span>
+          )}
+        </div>
+        <div
+          className={`draft-table-wrap ${hasPicks ? "standings-whatif" : ""}`}
+        >
           <table className="draft-table">
             <thead>
               <tr>
-                <th>#</th>
                 <th>Manager</th>
                 <th className="num">Record</th>
+                <th className="num">Proj.</th>
                 <th className="num draft-hide-mobile">PF</th>
-                <th className="num draft-hide-mobile">PA</th>
-                <th className="num draft-hide-mobile">Left</th>
-                <th className="num draft-hide-mobile">Left SOS</th>
-                <th className="num">Odds</th>
-                <th>Status</th>
+                <th className="num draft-hide-mobile">Max wins</th>
+                <th className="num">Playoffs</th>
+                <th className="num draft-hide-mobile">Bye</th>
+                <th className="num">SOS</th>
+                <th className="draft-hide-mobile">Status</th>
               </tr>
             </thead>
             <tbody>
-              {data.rows.map((r) => (
-                <tr key={r.rosterId} className={rowClass(r.seed)}>
-                  <td>{r.seed}</td>
-                  <td>{r.owner}</td>
-                  <td className="num">
-                    {r.wins}-{r.losses}
-                    {r.ties > 0 ? `-${r.ties}` : ""}
-                  </td>
-                  <td className="num draft-hide-mobile">
-                    {r.pointsFor.toFixed(1)}
-                  </td>
-                  <td className="num draft-hide-mobile">
-                    {r.pointsAgainst.toFixed(1)}
-                  </td>
-                  <td className="num draft-hide-mobile">{r.gamesLeft}</td>
-                  <td className="num draft-hide-mobile">
-                    {r.sosLeft == null ? "–" : r.sosLeft.toFixed(3)}
-                  </td>
-                  <td
-                    className={`num ${r.seed <= data.playoffTeams ? "draft-good" : ""}`}
+              {displayRows.map((r, i) => {
+                const rank = i + 1;
+                const teamOdds = odds?.get(r.rosterId);
+                const status = statusOf(r);
+                return (
+                  <tr
+                    key={r.rosterId}
+                    className={`standings-row ${rowClass(rank)}`}
+                    tabIndex={0}
+                    onClick={() => setSelectedId(r.rosterId)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") setSelectedId(r.rosterId);
+                    }}
                   >
-                    <OddsCell
-                      odds={odds?.get(r.rosterId)}
-                      base={hasPicks ? baseOdds?.get(r.rosterId) : undefined}
-                    />
-                  </td>
-                  <td
-                    className={
-                      nearLock(r) ? "draft-good" : STATUS_CLASS[r.status]
-                    }
-                  >
-                    {nearLock(r) ? "Near lock" : STATUS_LABEL[r.status]}
-                  </td>
-                </tr>
-              ))}
+                    <td>{r.owner}</td>
+                    <td className="num">{recordOf(r)}</td>
+                    <td className="num">{projRecord(r, teamOdds)}</td>
+                    <td className="num draft-hide-mobile">
+                      {r.pointsFor.toFixed(1)}
+                    </td>
+                    <td className="num draft-hide-mobile">{r.maxWins}</td>
+                    <td className="num">
+                      <OddsCell
+                        odds={teamOdds}
+                        base={hasPicks ? baseOdds?.get(r.rosterId) : undefined}
+                      />
+                    </td>
+                    <td className="num draft-hide-mobile">
+                      {teamOdds ? fmtPct(teamOdds.byePct) : "–"}
+                    </td>
+                    <td className="num" style={sosStyle(r.rosterId)}>
+                      {r.sosLeft == null ? "–" : r.sosLeft.toFixed(3)}
+                    </td>
+                    <td className={`draft-hide-mobile ${status.className}`}>
+                      {status.label}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -355,21 +511,17 @@ export default function Standings() {
 
       {pickerWeeks.length > 0 && (
         <section className="panel">
-          <h2>What-If Picker</h2>
+          <h2>Playoff Paths</h2>
           <p className="panel-note">
-            Tap a team to add a win for that matchup.
+            Pick a team to add a win for that matchup.
             {loaded.resultsPerWeek === 2 &&
-              " Use the Median button to give that team the median win."}{" "}
-            Playoff teams are shown below depending on what you select. Anything
-            you leave alone is still simulated.
+              " Use the Median button (M) to give that team the median win."}{" "}
+            Anything you leave alone is still simulated.
           </p>
           <button
             className="standings-reset"
             disabled={!hasPicks}
-            onClick={() => {
-              setPicks({});
-              setMedianPicks({});
-            }}
+            onClick={resetPicks}
           >
             Reset picks
           </button>
@@ -426,55 +578,77 @@ export default function Standings() {
         </section>
       )}
 
-      <section className="panel">
-        <h2>Playoff Odds</h2>
-        {/* <p className="panel-note">
-          Chance of making the playoffs and of finishing as the top seed, from
-          the same simulation as above. Teams in a playoff spot right now are in
-          green, above the dashed line. Max wins is the best a team can finish
-          if it wins every game, counting median wins (up to{" "}
-          {loaded.resultsPerWeek} a week). Includes any picks above.
-        </p> */}
-        <div className="draft-table-wrap">
-          <table className="draft-table">
-            <thead>
-              <tr>
-                <th>Manager</th>
-                <th className="num">Max wins</th>
-                <th className="num">Playoffs</th>
-                <th className="num">Top seed</th>
-                <th className="draft-hide-mobile">Next up</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.rows.map((r) => {
-                const teamOdds = odds?.get(r.rosterId);
-                return (
-                  <tr key={r.rosterId} className={rowClass(r.seed)}>
-                    <td>{r.owner}</td>
-                    <td className="num">{r.maxWins}</td>
-                    <td
-                      className={`num ${r.seed <= data.playoffTeams ? "draft-good" : ""}`}
-                    >
-                      {teamOdds ? fmtPct(teamOdds.makePct) : "–"}
-                    </td>
-                    <td className="num">
-                      {teamOdds ? fmtPct(teamOdds.topSeedPct) : "–"}
-                    </td>
-                    <td className="draft-hide-mobile">
-                      {r.nextOpponents.length ? (
-                        r.nextOpponents.join(", ")
-                      ) : (
-                        <span className="draft-muted">Regular season done</span>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+      {selectedRow && (
+        <div className="modal-overlay" onClick={() => setSelectedId(null)}>
+          <div
+            className="modal-content standings-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="close-button"
+              aria-label="Close"
+              onClick={() => setSelectedId(null)}
+            >
+              ×
+            </button>
+            {selectedTeam?.avatar && (
+              <img
+                src={selectedTeam.avatar}
+                alt="team avatar"
+                className="modal-avatar"
+              />
+            )}
+            <h2>
+              {selectedTeam?.teamName || selectedRow.owner}{" "}
+              <span className="owner-name">(@{selectedRow.owner})</span>
+            </h2>
+            <dl className="standings-stats">
+              {[
+                ["Record", recordOf(selectedRow)],
+                ["Proj. record", projRecord(selectedRow, selectedOdds)],
+                ["Points for", selectedRow.pointsFor.toFixed(1)],
+                ["Points against", selectedRow.pointsAgainst.toFixed(1)],
+                ["Games left", String(selectedRow.gamesLeft)],
+                ["Max wins", String(selectedRow.maxWins)],
+                [
+                  "SOS",
+                  selectedRow.sosLeft == null
+                    ? "–"
+                    : `${selectedRow.sosLeft.toFixed(3)} (${ordinal(sosRank(selectedRow.rosterId) ?? 0)})`,
+                ],
+                [
+                  "Playoffs",
+                  <OddsCell
+                    key="p"
+                    odds={selectedOdds}
+                    base={
+                      hasPicks ? baseOdds?.get(selectedRow.rosterId) : undefined
+                    }
+                  />,
+                ],
+                ["Bye", selectedOdds ? fmtPct(selectedOdds.byePct) : "–"],
+                [
+                  "Status",
+                  <span key="s" className={statusOf(selectedRow).className}>
+                    {statusOf(selectedRow).label}
+                  </span>,
+                ],
+                [
+                  "Next up",
+                  selectedRow.nextOpponents.length
+                    ? selectedRow.nextOpponents.join(", ")
+                    : "Regular season done",
+                ],
+              ].map(([label, value]) => (
+                <div key={label as string} className="standings-stat">
+                  <dt>{label}</dt>
+                  <dd>{value}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
         </div>
-      </section>
+      )}
     </div>
   );
 }

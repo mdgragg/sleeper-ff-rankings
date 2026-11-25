@@ -44,7 +44,7 @@ export default function Home() {
       to: "/standings",
       emoji: "🧮",
       title: "Playoff Picture",
-      desc: "Standings, clinch and elimination status",
+      desc: "Standings, path to playoffs",
     },
   ];
 

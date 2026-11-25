@@ -22,7 +22,8 @@ export interface Profile {
 
 export interface TeamOdds {
   makePct: number; // 0-100
-  topSeedPct: number;
+  byePct: number; // top two seeds
+  projWins: number; // average final win total across sims
 }
 
 const SIMS = 10000;
@@ -155,7 +156,8 @@ export function simulateOdds(opts: {
     }));
 
   const made = new Array(n).fill(0);
-  const top = new Array(n).fill(0);
+  const bye = new Array(n).fill(0);
+  const winSum = new Array(n).fill(0);
 
   const wins = new Array(n);
   const pf = new Array(n);
@@ -200,8 +202,9 @@ export function simulateOdds(opts: {
     order.forEach((teamIdx, rank) => {
       const inPlayoffs = rank < playoffTeams;
       if (inPlayoffs) made[teamIdx]++;
-      if (rank === 0) top[teamIdx]++;
+      if (rank < 2) bye[teamIdx]++;
     });
+    for (let i = 0; i < n; i++) winSum[i] += wins[i];
   }
 
   return new Map(
@@ -209,7 +212,8 @@ export function simulateOdds(opts: {
       r.rosterId,
       {
         makePct: (made[i] / SIMS) * 100,
-        topSeedPct: (top[i] / SIMS) * 100,
+        byePct: (bye[i] / SIMS) * 100,
+        projWins: winSum[i] / SIMS,
       },
     ]),
   );

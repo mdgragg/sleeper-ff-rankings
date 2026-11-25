@@ -2030,7 +2030,7 @@ header h2 {
 
 /* Playoff line on the Standings page */
 .draft-table tr.standings-cutline td {
-  border-bottom: 2px dashed #00fff9;
+  border-bottom: 1px dashed #00fff9;
 }
 
 /* Teams outside the playoff spots */
@@ -2051,7 +2051,9 @@ header h2 {
   color: white;
   padding: 4px 14px;
   cursor: pointer;
-  margin-bottom: 6px;
+  display: block;
+  margin: 0 auto 6px;
+  text-align: center;
 }
 
 .standings-reset:disabled {
@@ -2061,13 +2063,14 @@ header h2 {
 
 .standings-week h3 {
   margin: 16px 0 8px;
+  text-align: center;
   font-size: 1rem;
   opacity: 0.7;
 }
 
 .standings-game {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 8px;
   margin-bottom: 8px;
 }
@@ -2079,6 +2082,11 @@ header h2 {
   color: white;
   padding: 8px 10px;
   font: inherit;
+  min-width: 0;
+  min-height: 40px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   cursor: pointer;
   transition:
     border-color 0.15s,
@@ -2098,14 +2106,14 @@ header h2 {
 
 .standings-side {
   display: grid;
-  grid-template-columns: 3fr 1fr;
+  grid-template-columns: minmax(0, 1fr) 64px;
   gap: 4px;
 }
 
 /* Row reads: median 1 | team 1 | team 2 | median 2, so the median buttons
    sit on the outside edges. */
 .standings-side:first-child {
-  grid-template-columns: 1fr 3fr;
+  grid-template-columns: 64px minmax(0, 1fr);
 }
 
 .standings-side:first-child .standings-median {
@@ -2118,6 +2126,19 @@ header h2 {
 
 /* Phones: the button only has room for an M. */
 @media all and (max-width: 600px) {
+  .standings-side {
+    grid-template-columns: minmax(0, 1fr) 36px;
+  }
+
+  .standings-side:first-child {
+    grid-template-columns: 36px minmax(0, 1fr);
+  }
+
+  .standings-pick {
+    padding: 8px 6px;
+    font-size: 0.85rem;
+  }
+
   .standings-median-full {
     display: none;
   }
@@ -2138,7 +2159,7 @@ header h2 {
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 20px;
   color: lightgrey;
-  padding: 2px 4px;
+  padding: 2px 0;
   font: inherit;
   font-size: 0.75rem;
   line-height: 1.1;
@@ -2160,4 +2181,79 @@ header h2 {
 .standings-median:disabled {
   opacity: 0.3;
   cursor: default;
+}
+
+/* Standings: clickable rows + team stats modal */
+.draft-table tr.standings-row {
+  cursor: pointer;
+}
+
+.draft-table tr.standings-row:hover td {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.standings-modal h2 {
+  margin-top: 0;
+}
+
+.standings-stats {
+  margin: 0;
+}
+
+.standings-stat {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.standings-stat dt {
+  opacity: 0.7;
+}
+
+.standings-stat dd {
+  margin: 0;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Standings: what-if state */
+.standings-whatif-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.standings-whatif-bar .standings-reset {
+  margin: 0;
+}
+
+.standings-whatif-bar .standings-reset:not(:disabled) {
+  border-color: #00fff9;
+  color: #00fff9;
+}
+
+.standings-whatif-badge {
+  font-size: 0.8rem;
+  color: #00fff9;
+  background: rgba(0, 255, 249, 0.12);
+  border-radius: 20px;
+  padding: 3px 12px;
+  animation: standings-pulse 2s ease-in-out infinite;
+}
+
+.draft-table-wrap.standings-whatif {
+  /* outline: 1px dashed rgba(0, 255, 249, 0.6); */
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+@keyframes standings-pulse {
+  50% {
+    opacity: 0.55;
+  }
 }
