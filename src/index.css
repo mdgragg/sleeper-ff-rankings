@@ -2257,3 +2257,15 @@ header h2 {
     opacity: 0.55;
   }
 }
+
+/* Standings on phones: record rides next to the manager, status wraps small */
+.standings-mobile-record {
+  opacity: 0.6;
+}
+
+@media all and (max-width: 600px) {
+  .standings-status {
+    font-size: 0.75rem;
+    line-height: 1.2;
+  }
+}

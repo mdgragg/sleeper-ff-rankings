@@ -454,14 +454,14 @@ export default function Standings() {
             <thead>
               <tr>
                 <th>Manager</th>
-                <th className="num">Record</th>
+                <th className="num draft-hide-mobile">Record</th>
                 <th className="num">Proj.</th>
                 <th className="num draft-hide-mobile">PF</th>
                 <th className="num draft-hide-mobile">Max wins</th>
                 <th className="num">Playoffs</th>
                 <th className="num draft-hide-mobile">Bye</th>
-                <th className="num">SOS</th>
-                <th className="draft-hide-mobile">Status</th>
+                <th className="num draft-hide-mobile">SOS</th>
+                <th>Status</th>
               </tr>
             </thead>
             <tbody>
@@ -479,8 +479,14 @@ export default function Standings() {
                       if (e.key === "Enter") setSelectedId(r.rosterId);
                     }}
                   >
-                    <td>{r.owner}</td>
-                    <td className="num">{recordOf(r)}</td>
+                    <td>
+                      {r.owner}
+                      <span className="draft-mobile-only standings-mobile-record">
+                        {" "}
+                        ({recordOf(r)})
+                      </span>
+                    </td>
+                    <td className="num draft-hide-mobile">{recordOf(r)}</td>
                     <td className="num">{projRecord(r, teamOdds)}</td>
                     <td className="num draft-hide-mobile">
                       {r.pointsFor.toFixed(1)}
@@ -495,10 +501,13 @@ export default function Standings() {
                     <td className="num draft-hide-mobile">
                       {teamOdds ? fmtPct(teamOdds.byePct) : "–"}
                     </td>
-                    <td className="num" style={sosStyle(r.rosterId)}>
+                    <td
+                      className="num draft-hide-mobile"
+                      style={sosStyle(r.rosterId)}
+                    >
                       {r.sosLeft == null ? "–" : r.sosLeft.toFixed(3)}
                     </td>
-                    <td className={`draft-hide-mobile ${status.className}`}>
+                    <td className={`standings-status ${status.className}`}>
                       {status.label}
                     </td>
                   </tr>
