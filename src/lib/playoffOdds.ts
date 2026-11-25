@@ -91,6 +91,29 @@ export function scoringProfiles(
   return profiles;
 }
 
+// Chance roster `a` outscores roster `b`, from the same score profiles the
+// simulation uses (normal scores, so the difference is normal too).
+export function winProbability(
+  profiles: Map<number, Profile>,
+  a: number,
+  b: number,
+): number {
+  const pa = profiles.get(a) ?? { mean: FALLBACK_MEAN, std: FALLBACK_STD };
+  const pb = profiles.get(b) ?? { mean: FALLBACK_MEAN, std: FALLBACK_STD };
+  const z = (pa.mean - pb.mean) / Math.sqrt(pa.std ** 2 + pb.std ** 2);
+  // Normal CDF via the Abramowitz-Stegun erf approximation.
+  const x = Math.abs(z) / Math.SQRT2;
+  const t = 1 / (1 + 0.3275911 * x);
+  const erf =
+    1 -
+    ((((1.061405429 * t - 1.453152027) * t + 1.421413741) * t - 0.284496736) *
+      t +
+      0.254829592) *
+      t *
+      Math.exp(-x * x);
+  return z >= 0 ? 0.5 + erf / 2 : 0.5 - erf / 2;
+}
+
 // Small seeded RNG so odds don't jitter between renders, and so toggling a
 // pick only changes the sims that pick touches.
 function mulberry32(seed: number) {

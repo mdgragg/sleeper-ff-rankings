@@ -9,6 +9,7 @@ import {
   remainingGames,
   scoringProfiles,
   simulateOdds,
+  winProbability,
   type TeamOdds,
 } from "../lib/playoffOdds";
 import {
@@ -210,6 +211,12 @@ export default function Standings() {
     [loaded],
   );
 
+  const profiles = useMemo(
+    () =>
+      loaded ? scoringProfiles(loaded.schedule, loaded.weeksPlayed) : null,
+    [loaded],
+  );
+
   // Odds with no picks, kept so the table can show how picks move them.
   const baseOdds = useMemo(
     () =>
@@ -217,7 +224,7 @@ export default function Standings() {
         ? simulateOdds({
             rows: loaded.data.rows,
             games,
-            profiles: scoringProfiles(loaded.schedule, loaded.weeksPlayed),
+            profiles: profiles!,
             picks: {},
             medianPicks: {},
             resultsPerWeek: loaded.resultsPerWeek,
@@ -235,7 +242,7 @@ export default function Standings() {
         ? simulateOdds({
             rows: loaded.data.rows,
             games,
-            profiles: scoringProfiles(loaded.schedule, loaded.weeksPlayed),
+            profiles: profiles!,
             picks,
             medianPicks,
             resultsPerWeek: loaded.resultsPerWeek,
@@ -557,7 +564,19 @@ export default function Standings() {
                               aria-pressed={picked}
                               onClick={() => togglePick(key, id)}
                             >
-                              {ownerOf(id)}
+                              <span className="standings-pick-name">
+                                {ownerOf(id)}
+                              </span>
+                              <span className="standings-pick-pct">
+                                {Math.round(
+                                  winProbability(
+                                    profiles!,
+                                    id,
+                                    id === g.a ? g.b : g.a,
+                                  ) * 100,
+                                )}
+                                %
+                              </span>
                             </button>
                             {loaded.resultsPerWeek === 2 && (
                               <button
